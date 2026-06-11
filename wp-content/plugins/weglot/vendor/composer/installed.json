@@ -1,0 +1,508 @@
+{
+    "packages": [
+        {
+            "name": "gmulti/morphism-php",
+            "version": "dev-dev-bugfix",
+            "version_normalized": "dev-dev-bugfix",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/glx77/morphism-php.git",
+                "reference": "578752d5a21b57dd6e6cf4c04f12c96c3df42372"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/glx77/morphism-php/zipball/578752d5a21b57dd6e6cf4c04f12c96c3df42372",
+                "reference": "578752d5a21b57dd6e6cf4c04f12c96c3df42372",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^6.5"
+            },
+            "time": "2023-10-09T06:46:30+00:00",
+            "type": "project",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Morphism\\": "lib/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Thomas DENEULIN",
+                    "email": "thomas@delipress.io"
+                }
+            ],
+            "support": {
+                "source": "https://github.com/glx77/morphism-php/tree/dev-bugfix"
+            },
+            "install-path": "../gmulti/morphism-php"
+        },
+        {
+            "name": "matomo/device-detector",
+            "version": "6.5.0",
+            "version_normalized": "6.5.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/matomo-org/device-detector.git",
+                "reference": "e0fff2309dad83eb3cfb2564e524be715cfcf3cf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/matomo-org/device-detector/zipball/e0fff2309dad83eb3cfb2564e524be715cfcf3cf",
+                "reference": "e0fff2309dad83eb3cfb2564e524be715cfcf3cf",
+                "shasum": ""
+            },
+            "require": {
+                "mustangostang/spyc": "*",
+                "php": "^7.2|^8.0"
+            },
+            "replace": {
+                "piwik/device-detector": "self.version"
+            },
+            "require-dev": {
+                "matthiasmullie/scrapbook": "^1.4.7",
+                "mayflower/mo4-coding-standard": "^v9.0.0",
+                "phpstan/phpstan": "^1.10.44",
+                "phpunit/phpunit": "^8.5.2 || ^9 || ^10 || ^11 || ^12",
+                "psr/cache": "^1.0.1 || ^2.0 || ^3.0",
+                "psr/simple-cache": "^1.0.1 || ^2.0 || ^3.0",
+                "slevomat/coding-standard": "<8.16.0",
+                "symfony/yaml": "^5.1.7"
+            },
+            "suggest": {
+                "ext-yaml": "Necessary for using the Pecl YAML parser"
+            },
+            "time": "2026-01-21T07:53:39+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DeviceDetector\\": ""
+                },
+                "exclude-from-classmap": [
+                    "Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "The Matomo Team",
+                    "email": "hello@matomo.org",
+                    "homepage": "https://matomo.org/team/"
+                }
+            ],
+            "description": "The Universal Device Detection library, that parses User Agents and detects devices (desktop, tablet, mobile, tv, cars, console, etc.), clients (browsers, media players, mobile apps, feed readers, libraries, etc), operating systems, devices, brands and models.",
+            "homepage": "https://matomo.org",
+            "keywords": [
+                "devicedetection",
+                "parser",
+                "useragent"
+            ],
+            "support": {
+                "forum": "https://forum.matomo.org/",
+                "issues": "https://github.com/matomo-org/device-detector/issues",
+                "source": "https://github.com/matomo-org/matomo",
+                "wiki": "https://dev.matomo.org/"
+            },
+            "install-path": "../matomo/device-detector"
+        },
+        {
+            "name": "mustangostang/spyc",
+            "version": "0.6.3",
+            "version_normalized": "0.6.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mustangostang/spyc.git",
+                "reference": "4627c838b16550b666d15aeae1e5289dd5b77da0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mustangostang/spyc/zipball/4627c838b16550b666d15aeae1e5289dd5b77da0",
+                "reference": "4627c838b16550b666d15aeae1e5289dd5b77da0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.3.*@dev"
+            },
+            "time": "2019-09-10T13:16:29+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.5.x-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "files": [
+                    "Spyc.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "mustangostang",
+                    "email": "vlad.andersen@gmail.com"
+                }
+            ],
+            "description": "A simple YAML loader/dumper class for PHP",
+            "homepage": "https://github.com/mustangostang/spyc/",
+            "keywords": [
+                "spyc",
+                "yaml",
+                "yml"
+            ],
+            "support": {
+                "issues": "https://github.com/mustangostang/spyc/issues",
+                "source": "https://github.com/mustangostang/spyc/tree/0.6.3"
+            },
+            "install-path": "../mustangostang/spyc"
+        },
+        {
+            "name": "psr/cache",
+            "version": "1.0.1",
+            "version_normalized": "1.0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/cache.git",
+                "reference": "d11b50ad223250cf17b86e38383413f5a6764bf8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/cache/zipball/d11b50ad223250cf17b86e38383413f5a6764bf8",
+                "reference": "d11b50ad223250cf17b86e38383413f5a6764bf8",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "time": "2016-08-06T20:24:11+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Cache\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for caching libraries",
+            "keywords": [
+                "cache",
+                "psr",
+                "psr-6"
+            ],
+            "support": {
+                "source": "https://github.com/php-fig/cache/tree/master"
+            },
+            "install-path": "../psr/cache"
+        },
+        {
+            "name": "symfony/polyfill-php80",
+            "version": "v1.37.0",
+            "version_normalized": "1.37.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-php80.git",
+                "reference": "dfb55726c3a76ea3b6459fcfda1ec2d80a682411"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-php80/zipball/dfb55726c3a76ea3b6459fcfda1ec2d80a682411",
+                "reference": "dfb55726c3a76ea3b6459fcfda1ec2d80a682411",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2"
+            },
+            "time": "2026-04-10T16:19:22+00:00",
+            "type": "library",
+            "extra": {
+                "thanks": {
+                    "url": "https://github.com/symfony/polyfill",
+                    "name": "symfony/polyfill"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "files": [
+                    "bootstrap.php"
+                ],
+                "psr-4": {
+                    "Symfony\\Polyfill\\Php80\\": ""
+                },
+                "classmap": [
+                    "Resources/stubs"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ion Bazan",
+                    "email": "ion.bazan@gmail.com"
+                },
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill backporting some PHP 8.0+ features to lower PHP versions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/polyfill-php80/tree/v1.37.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "install-path": "../symfony/polyfill-php80"
+        },
+        {
+            "name": "weglot/simplehtmldom",
+            "version": "0.8.4",
+            "version_normalized": "0.8.4.0",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:weglot/simple_html_dom.git",
+                "reference": "e0d2aeaeac88734ca8bbd8ee5a71d2597652dcf0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/weglot/simple_html_dom/zipball/e0d2aeaeac88734ca8bbd8ee5a71d2597652dcf0",
+                "reference": "e0d2aeaeac88734ca8bbd8ee5a71d2597652dcf0",
+                "shasum": ""
+            },
+            "require": {
+                "ext-iconv": "*",
+                "php": ">=5.3.0"
+            },
+            "time": "2025-06-03T09:06:26+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-0": {
+                    "WGSimpleHtmlDom": "src/"
+                },
+                "files": [
+                    "src/simple_html_dom.php"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "S.C. Chen",
+                    "email": "me578022@gmail.com"
+                }
+            ],
+            "description": "Composer package that gives you access to and (unlike all the others at this time) autoloads S.C. Chen's PHP Simple HTML DOM Parser Library",
+            "homepage": "http://simplehtmldom.sourceforge.net/",
+            "keywords": [
+                "dom",
+                "html",
+                "simple"
+            ],
+            "support": {
+                "source": "https://github.com/weglot/simple_html_dom/tree/0.8.4"
+            },
+            "install-path": "../weglot/simplehtmldom"
+        },
+        {
+            "name": "weglot/translation-definitions",
+            "version": "v2.3.4",
+            "version_normalized": "2.3.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/weglot/weglot-translation-definitions.git",
+                "reference": "f54b91a863e529f3efbc0c68acde7731a57176de"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/weglot/weglot-translation-definitions/zipball/f54b91a863e529f3efbc0c68acde7731a57176de",
+                "reference": "f54b91a863e529f3efbc0c68acde7731a57176de",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5"
+            },
+            "time": "2021-02-18T14:47:45+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "classmap": [
+                    "index.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mehdi Rejraji",
+                    "email": "mehdi@weglot.com"
+                }
+            ],
+            "description": "Weglot's shared definitions",
+            "support": {
+                "issues": "https://github.com/weglot/weglot-translation-definitions/issues",
+                "source": "https://github.com/weglot/weglot-translation-definitions/tree/v2.3.4"
+            },
+            "install-path": "../weglot/translation-definitions"
+        },
+        {
+            "name": "weglot/weglot-php",
+            "version": "1.9.6",
+            "version_normalized": "1.9.6.0",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:weglot/weglot-php.git",
+                "reference": "e021337e0ed1d5166e9a93f484a350d93c801355"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/weglot/weglot-php/zipball/e021337e0ed1d5166e9a93f484a350d93c801355",
+                "reference": "e021337e0ed1d5166e9a93f484a350d93c801355",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "matomo/device-detector": "^6.3",
+                "php": ">=7.2",
+                "psr/cache": "^1.0 || ^2.0 || ^3.0",
+                "symfony/polyfill-php80": "^1.31",
+                "weglot/simplehtmldom": "^0.8",
+                "weglot/translation-definitions": "^2.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2 || ^3.64",
+                "phpstan/phpstan": "^1.11",
+                "phpstan/phpstan-deprecation-rules": "^1.1",
+                "phpunit/phpunit": "^5.7 || ^6.5 || ^7.5 || ^8.5 || ^9.6 || ^10.5 || ^11.4",
+                "symfony/cache": "^3.4 || 4.4 || ^5.4 || ^6.4 || ^7.1",
+                "symfony/dotenv": "^3.4 || 4.4 || ^5.4 || ^6.4 || ^7.1"
+            },
+            "time": "2026-04-21T14:23:06+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Weglot\\": "src/",
+                    "WeglotLanguages\\": "node_modules/@weglot/languages/dist/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Weglot\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "cs": [
+                    "vendor/bin/php-cs-fixer fix"
+                ],
+                "phpstan": [
+                    "vendor/bin/phpstan"
+                ],
+                "test": [
+                    "vendor/bin/phpunit tests"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Baptiste Leduc",
+                    "email": "baptiste@weglot.com",
+                    "homepage": "https://baptiste-leduc.now.sh/",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Thomas Deneulin",
+                    "email": "thomas@weglot.com",
+                    "role": "Review"
+                },
+                {
+                    "name": "Edson Galina Fortes",
+                    "email": "edson@weglot.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP library for the Weglot API",
+            "homepage": "https://weglot.com/",
+            "keywords": [
+                "i18n",
+                "languages",
+                "localization",
+                "php",
+                "translate",
+                "translation",
+                "translator",
+                "weglot",
+                "weglot-library"
+            ],
+            "support": {
+                "email": "support@weglot.com",
+                "source": "https://github.com/weglot/weglot-php",
+                "docs": "https://weglot.github.io/weglot-documentation/",
+                "issues": "https://github.com/weglot/weglot-php/issues"
+            },
+            "install-path": "../weglot/weglot-php"
+        }
+    ],
+    "dev": false,
+    "dev-package-names": []
+}

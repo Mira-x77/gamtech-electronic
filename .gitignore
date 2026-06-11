@@ -1,0 +1,6 @@
+wp-content/cache/
+wp-content/uploads/cache/
+*.log
+error_log
+wordpress-6.6.1-fr_FR.zip
+wp-config.php
