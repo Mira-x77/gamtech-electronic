@@ -28,25 +28,25 @@ body::before {
    GAMTECH DARK MODE — CSS CUSTOM PROPERTIES
    ============================================================ */
 :root {
-    --gt-bg-primary:    #0d0d0d;
-    --gt-bg-secondary:  #141414;
-    --gt-bg-card:       #1a1a1a;
-    --gt-bg-elevated:   #222222;
-    --gt-border:        rgba(255,255,255,0.08);
-    --gt-accent:        #7c3aed;
-    --gt-accent-hover:  #6d28d9;
-    --gt-accent-light:  rgba(124,58,237,0.15);
-    --gt-text-primary:  #f0f0f0;
-    --gt-text-secondary:#a0a0a0;
-    --gt-text-muted:    #666666;
+    --gt-bg-primary:    #050505;
+    --gt-bg-secondary:  rgba(10, 10, 10, 0.85);
+    --gt-bg-card:       rgba(20, 20, 20, 0.6);
+    --gt-bg-elevated:   rgba(35, 35, 35, 0.6);
+    --gt-border:        rgba(255,255,255,0.06);
+    --gt-accent:        #00f2fe;
+    --gt-accent-hover:  #00c6ff;
+    --gt-accent-light:  rgba(0, 242, 254, 0.15);
+    --gt-text-primary:  #ffffff;
+    --gt-text-secondary:#b3b3b3;
+    --gt-text-muted:    #737373;
     --gt-price:         #ffffff;
-    --gt-sale-price:    #f43f5e;
-    --gt-success:       #10b981;
-    --gt-radius:        12px;
-    --gt-radius-sm:     8px;
-    --gt-shadow:        0 4px 24px rgba(0,0,0,0.4);
-    --gt-shadow-hover:  0 8px 32px rgba(124,58,237,0.25);
-    --gt-transition:    all 0.25s ease;
+    --gt-sale-price:    #ff0844;
+    --gt-success:       #00f2fe;
+    --gt-radius:        16px;
+    --gt-radius-sm:     10px;
+    --gt-shadow:        0 8px 32px rgba(0,0,0,0.5);
+    --gt-shadow-hover:  0 12px 48px rgba(0, 242, 254, 0.3);
+    --gt-transition:    all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 /* ============================================================
@@ -95,9 +95,12 @@ header.whb-scroll-stick .whb-general-header,
 .woodmart-logo img,
 .woodmart-main-logo img,
 .woodmart-sticky-logo img {
-    max-width: 160px !important;
+    max-width: 250px !important;
     height: auto !important;
-    filter: brightness(0) invert(1);
+    transition: var(--gt-transition);
+}
+.woodmart-logo img:hover {
+    filter: drop-shadow(0 0 12px rgba(0, 242, 254, 0.4));
 }
 
 /* Header text / links */
@@ -230,6 +233,8 @@ ul.products li.product,
 .wd-product-grid .product,
 .products .product {
     background-color: var(--gt-bg-card) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
     border: 1px solid var(--gt-border) !important;
     border-radius: var(--gt-radius) !important;
     transition: var(--gt-transition) !important;
