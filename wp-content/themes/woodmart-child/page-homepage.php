@@ -6,15 +6,6 @@
 get_header();
 ?>
 
-<div class="hero-banner" style="margin-top: 20px;">
-    <div class="hero-text">
-        <span>New Collection</span>
-        <h1>Upgrade Your Setup,<br>Level Up Your Game ✨</h1>
-        <p>Discover the latest in high-performance electronics, components, and gaming gear.</p>
-        <a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>" class="hero-btn">Shop Now →</a>
-    </div>
-</div>
-
 <div class="categories-row">
     <div class="cat-item">
         <a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>" style="text-decoration:none; color:inherit; display:flex; flex-direction:column; align-items:center; gap:8px;">
@@ -85,11 +76,11 @@ get_header();
 </div>
 
 <?php
-// Fetch more products (12 for deals, 12 for recommended)
-$args = array('limit' => 24, 'status' => 'publish');
+// Fetch more products (36 for deals, 36 for recommended to fit 6x6 grid)
+$args = array('limit' => 72, 'status' => 'publish');
 $products = wc_get_products($args);
-$best_deals = array_slice($products, 0, 12);
-$recommended = array_slice($products, 12, 12);
+$best_deals = array_slice($products, 0, 36);
+$recommended = array_slice($products, 36, 36);
 ?>
 
 <div class="section-header">

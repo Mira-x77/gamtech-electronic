@@ -51,8 +51,8 @@
 
         /* --- Left Sidebar --- */
         .sidebar-left {
-            width: 250px;
-            min-width: 250px;
+            width: 320px;
+            min-width: 320px;
             background: var(--white);
             border-radius: var(--radius);
             padding: 24px;
@@ -70,8 +70,11 @@
             justify-content: center;
         }
         .logo-wrap img { 
-            max-width: 180px !important; 
+            max-width: 280px !important; 
+            width: 100%;
             height: auto; 
+            display: block;
+            margin: 0 auto;
             /* Using the light logo because the background is now dark */
             content: url("<?php echo get_stylesheet_directory_uri(); ?>/assets/images/logo-light.png") !important;
         }
@@ -333,7 +336,7 @@
 
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(6, 1fr);
             gap: 20px;
             margin-bottom: 40px;
         }
@@ -482,6 +485,17 @@
                     <input type="hidden" name="post_type" value="product" />
                 </form>
             </div>
+            
+            <?php if ( is_front_page() || is_shop() ): ?>
+            <div class="hero-banner" style="margin-bottom: 30px;">
+                <div class="hero-text">
+                    <span>New Collection</span>
+                    <h1>Upgrade Your Setup,<br>Level Up Your Game ✨</h1>
+                    <p>Discover the latest in high-performance electronics, components, and gaming gear.</p>
+                    <a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>" class="hero-btn">Shop Now →</a>
+                </div>
+            </div>
+            <?php endif; ?>
             
             <?php woodmart_page_top_part(); ?>
             <!-- WooCommerce content / Main page content begins here -->
