@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="300" height="300">
+  <!-- Hexagon -->
+  <polygon
+    points="250,30 470,130 470,370 250,470 30,370 30,130"
+    fill="#141414"
+  />
+  <!-- GT geometric mark — white strokes rendered as filled paths -->
+  <!-- Left vertical -->
+  <rect x="148" y="175" width="26" height="165" fill="white"/>
+  <!-- Top horizontal full -->
+  <rect x="148" y="175" width="207" height="26" fill="white"/>
+  <!-- Bottom horizontal (G base, left half) -->
+  <rect x="148" y="314" width="137" height="26" fill="white"/>
+  <!-- Mid horizontal (G crossbar) -->
+  <rect x="148" y="255" width="137" height="26" fill="white"/>
+  <!-- Right vertical (T stem, full height) -->
+  <rect x="329" y="175" width="26" height="165" fill="white"/>
+  <!-- Inner connector (T stem down to G mid) -->
+  <rect x="259" y="255" width="26" height="85" fill="white"/>
+</svg>
