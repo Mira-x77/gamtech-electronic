@@ -1,9 +1,638 @@
 /*
  Theme Name:   Woodmart Child
- Description:  Woodmart Child Theme
+ Description:  Woodmart Child Theme — Dark Mode Redesign
  Author:       XTemos
  Author URI:   http://xtemos.com
  Template:     woodmart
- Version:      1.0.0
+ Version:      2.0.0
  Text Domain:  woodmart
 */
+
+/* ============================================================
+   GAMTECH DARK MODE — CSS CUSTOM PROPERTIES
+   ============================================================ */
+:root {
+    --gt-bg-primary:    #0d0d0d;
+    --gt-bg-secondary:  #141414;
+    --gt-bg-card:       #1a1a1a;
+    --gt-bg-elevated:   #222222;
+    --gt-border:        rgba(255,255,255,0.08);
+    --gt-accent:        #7c3aed;
+    --gt-accent-hover:  #6d28d9;
+    --gt-accent-light:  rgba(124,58,237,0.15);
+    --gt-text-primary:  #f0f0f0;
+    --gt-text-secondary:#a0a0a0;
+    --gt-text-muted:    #666666;
+    --gt-price:         #ffffff;
+    --gt-sale-price:    #f43f5e;
+    --gt-success:       #10b981;
+    --gt-radius:        12px;
+    --gt-radius-sm:     8px;
+    --gt-shadow:        0 4px 24px rgba(0,0,0,0.4);
+    --gt-shadow-hover:  0 8px 32px rgba(124,58,237,0.25);
+    --gt-transition:    all 0.25s ease;
+}
+
+/* ============================================================
+   BASE — DARK BACKGROUNDS
+   ============================================================ */
+body,
+.site-wrapper,
+.wd-header,
+.woodmart-theme {
+    background-color: var(--gt-bg-primary) !important;
+    color: var(--gt-text-primary) !important;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.whb-general-header,
+.whb-row,
+.whb-header-bottom .whb-row,
+header.whb-scroll-stick .whb-general-header,
+.whb-top-bar,
+.whb-top-bar .whb-row {
+    background-color: var(--gt-bg-secondary) !important;
+    border-bottom: 1px solid var(--gt-border) !important;
+}
+
+/* Top bar */
+.whb-top-bar,
+.whb-top-bar .whb-row {
+    background-color: var(--gt-bg-primary) !important;
+    border-bottom: 1px solid var(--gt-border) !important;
+}
+
+/* Header bottom / nav bar */
+.whb-header-bottom .whb-row {
+    background-color: var(--gt-bg-secondary) !important;
+}
+
+/* Logo area */
+.site-logo a,
+.woodmart-logo-wrap {
+    display: flex;
+    align-items: center;
+}
+
+.woodmart-logo img,
+.woodmart-main-logo img,
+.woodmart-sticky-logo img {
+    max-width: 160px !important;
+    height: auto !important;
+    filter: brightness(0) invert(1);
+}
+
+/* Header text / links */
+.whb-general-header a,
+.whb-header-bottom a,
+.whb-top-bar a,
+.navigation-style-default .menu > li > a,
+.woodmart-navigation .menu > li > a {
+    color: var(--gt-text-primary) !important;
+}
+
+.navigation-style-default .menu > li > a:hover,
+.woodmart-navigation .menu > li > a:hover {
+    color: var(--gt-accent) !important;
+}
+
+/* Search bar */
+.wd-search-form input,
+.search-field,
+.searchform input[type="text"] {
+    background-color: var(--gt-bg-elevated) !important;
+    border: 1px solid var(--gt-border) !important;
+    color: var(--gt-text-primary) !important;
+    border-radius: var(--gt-radius-sm) !important;
+}
+
+.wd-search-form input::placeholder,
+.search-field::placeholder {
+    color: var(--gt-text-muted) !important;
+}
+
+/* Search button */
+.wd-search-form button,
+.searchform button[type="submit"] {
+    background-color: var(--gt-accent) !important;
+    color: #fff !important;
+    border: none !important;
+}
+
+/* Cart / icons */
+.woodmart-cart-number,
+.wd-header-cart .count {
+    background-color: var(--gt-accent) !important;
+    color: #fff !important;
+}
+
+/* ============================================================
+   NAVIGATION / MEGA MENU
+   ============================================================ */
+.woodmart-navigation .menu > li > a,
+ul.menu > li > a {
+    color: var(--gt-text-primary) !important;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+}
+
+.woodmart-navigation ul li,
+.sub-menu,
+.wd-dropdown,
+.wd-mega-menu {
+    background-color: var(--gt-bg-card) !important;
+    border: 1px solid var(--gt-border) !important;
+    border-radius: var(--gt-radius-sm) !important;
+}
+
+.sub-menu li a,
+.wd-dropdown li a {
+    color: var(--gt-text-secondary) !important;
+}
+
+.sub-menu li a:hover,
+.wd-dropdown li a:hover {
+    color: var(--gt-accent) !important;
+    background-color: var(--gt-accent-light) !important;
+}
+
+/* Categories sidebar in header */
+.wd-categories-btn,
+.woodmart-categories-menu-button {
+    background-color: var(--gt-accent) !important;
+    color: #fff !important;
+    border-radius: var(--gt-radius-sm) !important;
+}
+
+.woodmart-categories-menu,
+.wd-categories-dropdown {
+    background-color: var(--gt-bg-card) !important;
+    border: 1px solid var(--gt-border) !important;
+}
+
+.woodmart-categories-menu li a {
+    color: var(--gt-text-secondary) !important;
+}
+
+.woodmart-categories-menu li a:hover {
+    color: var(--gt-accent) !important;
+}
+
+/* ============================================================
+   MAIN CONTENT AREA
+   ============================================================ */
+#content,
+.site-content,
+main.site-main,
+.wd-page-content,
+.container,
+.container-fluid {
+    background-color: var(--gt-bg-primary) !important;
+}
+
+/* Section headings */
+h1, h2, h3, h4, h5, h6,
+.woodmart-title,
+.section-title,
+.wd-entities-title,
+.title-text {
+    color: var(--gt-text-primary) !important;
+}
+
+p, span, li, td, th {
+    color: var(--gt-text-secondary) !important;
+}
+
+/* ============================================================
+   PRODUCT CARDS
+   ============================================================ */
+.product-grid-item,
+.product.type-product,
+ul.products li.product,
+.wd-product-grid .product,
+.products .product {
+    background-color: var(--gt-bg-card) !important;
+    border: 1px solid var(--gt-border) !important;
+    border-radius: var(--gt-radius) !important;
+    transition: var(--gt-transition) !important;
+    overflow: hidden;
+}
+
+.product-grid-item:hover,
+.product.type-product:hover,
+ul.products li.product:hover,
+.wd-product-grid .product:hover {
+    border-color: var(--gt-accent) !important;
+    box-shadow: var(--gt-shadow-hover) !important;
+    transform: translateY(-4px) !important;
+}
+
+/* Product title */
+.woocommerce-loop-product__title,
+h2.woocommerce-loop-product__title,
+.product-title,
+.wd-entities-title,
+.product .wd-entities-title a {
+    color: var(--gt-text-primary) !important;
+    font-size: 0.95rem !important;
+    font-weight: 500 !important;
+}
+
+/* Product price */
+.price,
+.woocommerce-Price-amount,
+.product .price {
+    color: var(--gt-price) !important;
+    font-weight: 700 !important;
+}
+
+.price ins .woocommerce-Price-amount,
+.price ins {
+    color: var(--gt-price) !important;
+}
+
+.price del .woocommerce-Price-amount,
+.price del {
+    color: var(--gt-text-muted) !important;
+    font-weight: 400 !important;
+}
+
+/* Sale badge */
+.onsale,
+.woodmart-label-sale,
+.wd-product-label.wd-label-sale {
+    background-color: var(--gt-sale-price) !important;
+    color: #fff !important;
+    border-radius: 6px !important;
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+}
+
+/* Hot badge */
+.woodmart-label-hot,
+.wd-product-label.wd-label-hot {
+    background-color: var(--gt-accent) !important;
+    color: #fff !important;
+    border-radius: 6px !important;
+}
+
+/* Add to cart button */
+.add_to_cart_button,
+.button.product_type_simple,
+.woocommerce a.button,
+.woocommerce button.button,
+.single_add_to_cart_button,
+.woodmart-add-btn {
+    background-color: var(--gt-accent) !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: var(--gt-radius-sm) !important;
+    font-weight: 600 !important;
+    transition: var(--gt-transition) !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    font-size: 0.8rem !important;
+}
+
+.add_to_cart_button:hover,
+.woocommerce a.button:hover,
+.woocommerce button.button:hover,
+.single_add_to_cart_button:hover {
+    background-color: var(--gt-accent-hover) !important;
+    color: #fff !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Product image wrapper */
+.product-image-wrapper,
+.wd-product-grid .product .woodmart-product-image,
+.attachment-woocommerce_thumbnail {
+    background-color: var(--gt-bg-elevated) !important;
+    border-radius: var(--gt-radius) var(--gt-radius) 0 0 !important;
+}
+
+/* Wishlist button */
+.woodmart-wishlist-btn,
+.yith-wcwl-add-to-wishlist a,
+.tinvwl_add_to_wishlist_button {
+    color: var(--gt-text-muted) !important;
+    background: var(--gt-bg-elevated) !important;
+    border-radius: 50% !important;
+}
+
+.woodmart-wishlist-btn:hover,
+.yith-wcwl-add-to-wishlist a:hover {
+    color: var(--gt-sale-price) !important;
+}
+
+/* ============================================================
+   SECTIONS & BANNERS
+   ============================================================ */
+.woodmart-section,
+.vc_row,
+.elementor-section,
+.elementor-top-section {
+    background-color: var(--gt-bg-primary) !important;
+}
+
+/* Section title underline accent */
+.woodmart-title-container::after,
+.woodmart-title::after {
+    background-color: var(--gt-accent) !important;
+}
+
+/* Promo banners */
+.woodmart-banner,
+.wd-banner {
+    border-radius: var(--gt-radius) !important;
+    overflow: hidden;
+}
+
+/* ============================================================
+   SIDEBAR & WIDGETS
+   ============================================================ */
+.widget,
+.sidebar .widget,
+.woodmart-sidebar .widget {
+    background-color: var(--gt-bg-card) !important;
+    border: 1px solid var(--gt-border) !important;
+    border-radius: var(--gt-radius) !important;
+    padding: 20px !important;
+    margin-bottom: 16px !important;
+}
+
+.widget-title,
+.widgettitle {
+    color: var(--gt-text-primary) !important;
+    border-bottom: 1px solid var(--gt-border) !important;
+    padding-bottom: 10px !important;
+    margin-bottom: 16px !important;
+}
+
+/* Price filter */
+.ui-slider,
+.price_slider {
+    background-color: var(--gt-border) !important;
+}
+
+.ui-slider-range,
+.price_slider_amount .price_label {
+    background-color: var(--gt-accent) !important;
+}
+
+/* Filter links */
+.woocommerce-widget-layered-nav a,
+.widget_product_categories a {
+    color: var(--gt-text-secondary) !important;
+}
+
+.woocommerce-widget-layered-nav a:hover,
+.widget_product_categories a:hover {
+    color: var(--gt-accent) !important;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.site-footer,
+footer.site-footer,
+.footer-container,
+.woodmart-footer {
+    background-color: var(--gt-bg-secondary) !important;
+    border-top: 1px solid var(--gt-border) !important;
+    color: var(--gt-text-secondary) !important;
+}
+
+.site-footer a,
+footer.site-footer a {
+    color: var(--gt-text-secondary) !important;
+}
+
+.site-footer a:hover,
+footer.site-footer a:hover {
+    color: var(--gt-accent) !important;
+}
+
+.footer-title,
+.widget-title,
+.footer-container .widget-title {
+    color: var(--gt-text-primary) !important;
+}
+
+/* Footer bottom bar */
+.footer-bottom,
+.woodmart-copyright {
+    background-color: var(--gt-bg-primary) !important;
+    border-top: 1px solid var(--gt-border) !important;
+    color: var(--gt-text-muted) !important;
+}
+
+/* ============================================================
+   FORMS & INPUTS
+   ============================================================ */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+textarea,
+select {
+    background-color: var(--gt-bg-elevated) !important;
+    border: 1px solid var(--gt-border) !important;
+    color: var(--gt-text-primary) !important;
+    border-radius: var(--gt-radius-sm) !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--gt-accent) !important;
+    box-shadow: 0 0 0 3px var(--gt-accent-light) !important;
+    outline: none !important;
+}
+
+/* ============================================================
+   CART / CHECKOUT
+   ============================================================ */
+.cart-contents,
+.widget_shopping_cart,
+.woocommerce-cart-form,
+.woocommerce-checkout {
+    background-color: var(--gt-bg-card) !important;
+    color: var(--gt-text-primary) !important;
+}
+
+table.shop_table,
+table.woocommerce-checkout-review-order-table {
+    background-color: var(--gt-bg-card) !important;
+    border: 1px solid var(--gt-border) !important;
+    border-radius: var(--gt-radius) !important;
+    overflow: hidden;
+}
+
+table.shop_table th,
+table.shop_table td {
+    border-color: var(--gt-border) !important;
+    color: var(--gt-text-primary) !important;
+}
+
+table.shop_table thead th {
+    background-color: var(--gt-bg-elevated) !important;
+}
+
+/* ============================================================
+   PRODUCT SINGLE PAGE
+   ============================================================ */
+.product.single-product,
+.woocommerce div.product {
+    background-color: var(--gt-bg-primary) !important;
+}
+
+.woocommerce div.product .product_title {
+    color: var(--gt-text-primary) !important;
+}
+
+.woocommerce-tabs .tabs li a,
+.woodmart-tabs .tabs li a {
+    color: var(--gt-text-secondary) !important;
+    background-color: var(--gt-bg-card) !important;
+    border: 1px solid var(--gt-border) !important;
+}
+
+.woocommerce-tabs .tabs li.active a,
+.woodmart-tabs .tabs li.active a {
+    color: var(--gt-accent) !important;
+    background-color: var(--gt-bg-elevated) !important;
+    border-bottom-color: transparent !important;
+}
+
+.woocommerce-Tabs-panel,
+.woodmart-tab-content {
+    background-color: var(--gt-bg-card) !important;
+    border: 1px solid var(--gt-border) !important;
+    border-radius: 0 var(--gt-radius) var(--gt-radius) var(--gt-radius) !important;
+    color: var(--gt-text-secondary) !important;
+}
+
+/* ============================================================
+   NOTICES & ALERTS
+   ============================================================ */
+.woocommerce-message,
+.woocommerce-info {
+    background-color: var(--gt-accent-light) !important;
+    border-top-color: var(--gt-accent) !important;
+    color: var(--gt-text-primary) !important;
+}
+
+.woocommerce-error {
+    background-color: rgba(244,63,94,0.1) !important;
+    border-top-color: var(--gt-sale-price) !important;
+    color: var(--gt-text-primary) !important;
+}
+
+/* ============================================================
+   PAGINATION
+   ============================================================ */
+.woocommerce-pagination .page-numbers li a,
+.woocommerce-pagination .page-numbers li span {
+    background-color: var(--gt-bg-card) !important;
+    border: 1px solid var(--gt-border) !important;
+    color: var(--gt-text-secondary) !important;
+    border-radius: var(--gt-radius-sm) !important;
+}
+
+.woocommerce-pagination .page-numbers li .current,
+.woocommerce-pagination .page-numbers li a:hover {
+    background-color: var(--gt-accent) !important;
+    color: #fff !important;
+    border-color: var(--gt-accent) !important;
+}
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--gt-bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--gt-text-muted);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--gt-accent);
+}
+
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+.woodmart-divider,
+hr {
+    border-color: var(--gt-border) !important;
+}
+
+.woodmart-box,
+.wd-info-box {
+    background-color: var(--gt-bg-card) !important;
+    border: 1px solid var(--gt-border) !important;
+    border-radius: var(--gt-radius) !important;
+}
+
+/* Star ratings */
+.star-rating span::before,
+.star-rating::before {
+    color: #f59e0b !important;
+}
+
+/* Breadcrumbs */
+.woocommerce-breadcrumb,
+.woodmart-breadcrumbs {
+    color: var(--gt-text-muted) !important;
+}
+
+.woocommerce-breadcrumb a,
+.woodmart-breadcrumbs a {
+    color: var(--gt-text-secondary) !important;
+}
+
+.woocommerce-breadcrumb a:hover {
+    color: var(--gt-accent) !important;
+}
+
+/* ============================================================
+   ELEMENTOR OVERRIDES
+   ============================================================ */
+.elementor-widget-container,
+.elementor-section .elementor-container {
+    color: var(--gt-text-secondary) !important;
+}
+
+.elementor-heading-title {
+    color: var(--gt-text-primary) !important;
+}
+
+/* ============================================================
+   MOBILE RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+    .mobile-menu-wrapper,
+    .woodmart-mobile-menu,
+    .wd-mobile-menu {
+        background-color: var(--gt-bg-secondary) !important;
+        border-right: 1px solid var(--gt-border) !important;
+    }
+
+    .mobile-menu-wrapper a,
+    .woodmart-mobile-menu a {
+        color: var(--gt-text-primary) !important;
+        border-bottom: 1px solid var(--gt-border) !important;
+    }
+}
