@@ -1,0 +1,49 @@
+services:
+
+  db:
+    image: mysql:8.0
+    container_name: gamtech_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: gamtech_local
+      MYSQL_USER: gamtech
+      MYSQL_PASSWORD: gamtech
+    volumes:
+      - db_data:/var/lib/mysql
+      # Drop a .sql dump in ./docker/db-init/ to auto-import on first run
+      - ./docker/db-init:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+
+  wordpress:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile
+    container_name: gamtech_wordpress
+    restart: unless-stopped
+    depends_on:
+      - db
+    volumes:
+      # Mount the entire WordPress project into the container
+      - .:/var/www/html
+      # Override wp-config.php with the local Docker version
+      - ./docker/wp-config.local.php:/var/www/html/wp-config.php
+    ports:
+      - "8080:80"
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: gamtech_phpmyadmin
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      PMA_HOST: db
+      PMA_USER: gamtech
+      PMA_PASSWORD: gamtech
+    ports:
+      - "8081:80"
+
+volumes:
+  db_data:
