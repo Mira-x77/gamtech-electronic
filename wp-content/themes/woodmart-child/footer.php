@@ -38,7 +38,7 @@
                 <?php 
                 if ( empty($cart_items) ) {
                     echo '<p style="color: var(--text-muted); font-size: 13px; text-align: center; margin-top: 20px;">Your cart is currently empty.</p>';
-                    echo '<a href="' . esc_url( wc_get_page_permalink( 'shop' ) ) . '" style="display: block; text-align: center; margin-top: 10px; color: var(--purple); font-weight: 600; text-decoration: none;">Browse Products</a>';
+                    echo '<a href="' . esc_url( wc_get_page_permalink( 'shop' ) ) . '" style="display: block; text-align: center; margin-top: 10px; color: var(--accent); font-weight: 600; text-decoration: none;">Browse Products</a>';
                 } else {
                     foreach ( $cart_items as $cart_item_key => $cart_item ) {
                         $_product   = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
@@ -80,7 +80,7 @@
                 </div>
                 <div class="summary-row total">
                     <span>Subtotal</span>
-                    <span><?php echo $cart_subtotal; ?></span>
+                    <span style="color: var(--accent);"><?php echo $cart_subtotal; ?></span>
                 </div>
                 <a href="<?php echo esc_url( wc_get_checkout_url() ); ?>" class="checkout-btn">
                     🔒 Checkout (<?php echo esc_html($cart_count); ?>) 
@@ -96,6 +96,60 @@
         </aside>
 
     </div> <!-- close website-wrapper / dashboard -->
+
+    <!-- MOBILE BOTTOM NAVIGATION -->
+    <style>
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--white);
+            border-top: 1px solid var(--border);
+            z-index: 9999;
+            padding: 12px 20px;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.2);
+        }
+        .mobile-nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 11px;
+            gap: 6px;
+            font-weight: 500;
+        }
+        .mobile-nav a.active, .mobile-nav a:hover {
+            color: var(--accent);
+        }
+        .mobile-nav a svg { width: 22px; height: 22px; stroke: currentColor; }
+        
+        @media (max-width: 900px) {
+            .mobile-nav { display: flex; }
+        }
+    </style>
+    <div class="mobile-nav">
+        <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="<?php echo is_front_page() ? 'active' : ''; ?>">
+            <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            Home
+        </a>
+        <a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>" class="<?php echo is_shop() ? 'active' : ''; ?>">
+            <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            Shop
+        </a>
+        <a href="<?php echo esc_url( wc_get_cart_url() ); ?>">
+            <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+            Cart
+        </a>
+        <a href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' ) ); ?>">
+            <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            Profile
+        </a>
+    </div>
     
     <div class="woodmart-close-side"></div>
     <?php do_action( 'woodmart_before_wp_footer' ); ?>
