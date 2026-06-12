@@ -4,3 +4,6 @@ wp-content/uploads/cache/
 error_log
 wordpress-6.6.1-fr_FR.zip
 wp-config.php
+
+# Docker — local db dumps (may contain sensitive data)
+docker/db-init/*.sql
