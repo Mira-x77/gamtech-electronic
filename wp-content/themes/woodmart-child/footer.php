@@ -1,158 +1,140 @@
-            <!-- Main content ends here -->
-        </main> <!-- close main-content -->
+<?php
+/**
+ * Footer template — Gamtech Electronic (Cello-style)
+ */
+?>
+    </div><!-- .main-page-wrapper -->
 
-        <!-- RIGHT SIDEBAR (CART) -->
-        <aside class="sidebar-right">
-            <div class="profile-top">
-                <a href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' ) ); ?>" class="icon">
-                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                </a>
-                <a href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' ) ); ?>" class="icon">
-                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-                </a>
-                <a href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' ) ); ?>" class="avatar"><img src="https://ui-avatars.com/api/?name=User&background=random" alt=""></a>
-                <span>Profile ⌄</span>
-            </div>
+    <!-- ======================================
+         FOOTER
+         ====================================== -->
+    <footer class="gt-footer">
+        <div class="container">
+            <div class="gt-footer-grid">
 
-            <?php
-            // Get WooCommerce Cart
-            $cart_count = 0;
-            $cart_subtotal = 0;
-            $cart_items = array();
-            
-            if ( function_exists( 'WC' ) && WC()->cart ) {
-                $cart_count = WC()->cart->get_cart_contents_count();
-                $cart_subtotal = WC()->cart->get_cart_subtotal();
-                $cart_items = WC()->cart->get_cart();
-            }
-            ?>
-
-            <div class="cart-header">
-                <h3>My Cart (<?php echo esc_html($cart_count); ?>)</h3>
-                <a href="<?php echo esc_url( wc_get_cart_url() ); ?>" class="close">
-                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                </a>
-            </div>
-
-            <div class="cart-items">
-                <?php 
-                if ( empty($cart_items) ) {
-                    echo '<p style="color: var(--text-muted); font-size: 13px; text-align: center; margin-top: 20px;">Your cart is currently empty.</p>';
-                    echo '<a href="' . esc_url( wc_get_page_permalink( 'shop' ) ) . '" style="display: block; text-align: center; margin-top: 10px; color: var(--accent); font-weight: 600; text-decoration: none;">Browse Products</a>';
-                } else {
-                    foreach ( $cart_items as $cart_item_key => $cart_item ) {
-                        $_product   = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
-                        $product_id = apply_filters( 'woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key );
-
-                        if ( $_product && $_product->exists() && $cart_item['quantity'] > 0 && apply_filters( 'woocommerce_widget_cart_item_visible', true, $cart_item, $cart_item_key ) ) {
-                            $product_name      = apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key );
-                            $thumbnail         = apply_filters( 'woocommerce_cart_item_thumbnail', $_product->get_image(), $cart_item, $cart_item_key );
-                            $product_price     = apply_filters( 'woocommerce_cart_item_price', WC()->cart->get_product_price( $_product ), $cart_item, $cart_item_key );
-                            
-                            // Extract just URL from thumbnail img tag
-                            preg_match( '/src="([^"]*)"/i', $thumbnail, $matches ) ;
-                            $img_url = isset($matches[1]) ? $matches[1] : 'https://via.placeholder.com/150';
-                            ?>
-                            <div class="cart-item">
-                                <img src="<?php echo esc_url($img_url); ?>" alt="">
-                                <div class="cart-item-info">
-                                    <h4><?php echo esc_html(substr($product_name, 0, 30)); ?>...</h4>
-                                    <div class="cart-item-price"><?php echo $product_price; ?></div>
-                                    <div class="qty-controls">
-                                        <span>Qty: <?php echo $cart_item['quantity']; ?></span>
-                                        <a href="<?php echo esc_url( wc_get_cart_remove_url( $cart_item_key ) ); ?>" class="remove">
-                                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <?php
-                        }
+                <!-- Col 1: Brand -->
+                <div class="gt-footer-col gt-footer-brand">
+                    <?php
+                    $logo_id = get_theme_mod( 'custom_logo' );
+                    if ( $logo_id ) {
+                        echo wp_get_attachment_image( $logo_id, 'full', false, array(
+                            'alt'   => get_bloginfo( 'name' ),
+                            'style' => 'max-height:48px;width:auto;filter:brightness(0) invert(1);margin-bottom:16px;',
+                        ) );
+                    } else {
+                        echo '<span style="font-size:22px;font-weight:900;color:#fff;">' . esc_html( get_bloginfo( 'name' ) ) . '</span>';
                     }
-                }
-                ?>
-            </div>
-
-            <div class="cart-summary">
-                <div class="promo-code">
-                    <input type="text" placeholder="Promo Code">
-                    <button>Apply</button>
+                    ?>
+                    <p><?php echo esc_html( get_bloginfo( 'description' ) ?: __( 'Your trusted electronics store. Quality products, fast delivery.', 'woodmart' ) ); ?></p>
+                    <div class="gt-social-links">
+                        <a href="#" aria-label="Facebook" rel="noopener noreferrer">
+                            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                        </a>
+                        <a href="#" aria-label="Instagram" rel="noopener noreferrer">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                        </a>
+                        <a href="#" aria-label="WhatsApp" rel="noopener noreferrer">
+                            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                        </a>
+                    </div>
                 </div>
-                <div class="summary-row total">
-                    <span>Subtotal</span>
-                    <span style="color: var(--accent);"><?php echo $cart_subtotal; ?></span>
+
+                <!-- Col 2: Quick Links -->
+                <div class="gt-footer-col">
+                    <h4><?php esc_html_e( 'Quick Links', 'woodmart' ); ?></h4>
+                    <ul>
+                        <li><a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php esc_html_e( 'Home', 'woodmart' ); ?></a></li>
+                        <li><a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>"><?php esc_html_e( 'Shop', 'woodmart' ); ?></a></li>
+                        <li><a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) . '?on_sale=1' ); ?>"><?php esc_html_e( 'Deals & Offers', 'woodmart' ); ?></a></li>
+                        <li><a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) . '?orderby=date' ); ?>"><?php esc_html_e( 'New Arrivals', 'woodmart' ); ?></a></li>
+                        <li><a href="<?php echo esc_url( get_permalink( get_page_by_path( 'about' ) ) ); ?>"><?php esc_html_e( 'About Us', 'woodmart' ); ?></a></li>
+                        <li><a href="<?php echo esc_url( get_permalink( get_page_by_path( 'contact' ) ) ); ?>"><?php esc_html_e( 'Contact', 'woodmart' ); ?></a></li>
+                    </ul>
                 </div>
-                <a href="<?php echo esc_url( wc_get_checkout_url() ); ?>" class="checkout-btn">
-                    🔒 Checkout (<?php echo esc_html($cart_count); ?>) 
-                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                </a>
+
+                <!-- Col 3: Customer Service -->
+                <div class="gt-footer-col">
+                    <h4><?php esc_html_e( 'Customer Service', 'woodmart' ); ?></h4>
+                    <ul>
+                        <li><a href="<?php echo esc_url( wc_get_account_endpoint_url( 'orders' ) ); ?>"><?php esc_html_e( 'Track Your Order', 'woodmart' ); ?></a></li>
+                        <li><a href="<?php echo esc_url( wc_get_account_endpoint_url( 'orders' ) ); ?>"><?php esc_html_e( 'Returns & Exchanges', 'woodmart' ); ?></a></li>
+                        <li><a href="<?php echo esc_url( get_permalink( get_page_by_path( 'faq' ) ) ); ?>"><?php esc_html_e( 'FAQs', 'woodmart' ); ?></a></li>
+                        <li><a href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' ) ); ?>"><?php esc_html_e( 'My Account', 'woodmart' ); ?></a></li>
+                        <li><a href="<?php echo esc_url( get_permalink( get_page_by_path( 'privacy-policy' ) ) ); ?>"><?php esc_html_e( 'Privacy Policy', 'woodmart' ); ?></a></li>
+                        <li><a href="<?php echo esc_url( get_permalink( get_page_by_path( 'terms-and-conditions' ) ) ); ?>"><?php esc_html_e( 'Terms & Conditions', 'woodmart' ); ?></a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 4: Contact Info -->
+                <div class="gt-footer-col">
+                    <h4><?php esc_html_e( 'Contact Us', 'woodmart' ); ?></h4>
+                    <ul class="gt-contact-list">
+                        <li>
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                            <?php esc_html_e( 'Algiers, Algeria', 'woodmart' ); ?>
+                        </li>
+                        <li>
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.21h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.09 6.09l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                            <a href="tel:+213000000000">+213 000 000 000</a>
+                        </li>
+                        <li>
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                            <a href="mailto:contact@gamtech-electronic.com">contact@gamtech-electronic.com</a>
+                        </li>
+                        <li>
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            <?php esc_html_e( 'Sat–Thu: 9am – 7pm', 'woodmart' ); ?>
+                        </li>
+                    </ul>
+
+                    <!-- Payment icons -->
+                    <div style="margin-top: 20px;">
+                        <p style="font-size:12px;opacity:0.6;margin-bottom:8px;"><?php esc_html_e( 'We Accept', 'woodmart' ); ?></p>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                            <?php
+                            $payment_methods = array( 'Visa', 'MC', 'PayPal', 'CIB' );
+                            foreach ( $payment_methods as $pm ) :
+                            ?>
+                            <span style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:4px;padding:4px 10px;font-size:11px;font-weight:700;">
+                                <?php echo esc_html( $pm ); ?>
+                            </span>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- .gt-footer-grid -->
+        </div><!-- .container -->
+
+        <!-- Footer Bottom Bar -->
+        <div class="gt-footer-bottom">
+            <div class="container">
+                <div class="gt-footer-bottom-inner">
+                    <p>&copy; <?php echo esc_html( date( 'Y' ) ); ?> <a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php bloginfo( 'name' ); ?></a>. <?php esc_html_e( 'All rights reserved.', 'woodmart' ); ?></p>
+                    <p style="font-size:12px;opacity:0.5;"><?php esc_html_e( 'Powered by WooCommerce', 'woodmart' ); ?></p>
+                </div>
             </div>
+        </div>
+    </footer><!-- .gt-footer -->
 
-            <div class="club-banner">
-                <h3>Join Gamtech Club</h3>
-                <p>Get exclusive tech offers and early access!</p>
-                <a href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' ) ); ?>">Join Now</a>
-            </div>
-        </aside>
+</div><!-- .website-wrapper -->
 
-    </div> <!-- close website-wrapper / dashboard -->
+<!-- Mobile nav toggle script -->
+<script>
+(function() {
+    var toggle = document.getElementById('gt-menu-toggle');
+    var mobileNav = document.getElementById('gt-mobile-nav');
+    if ( toggle && mobileNav ) {
+        toggle.addEventListener('click', function() {
+            var isOpen = mobileNav.style.display === 'block';
+            mobileNav.style.display = isOpen ? 'none' : 'block';
+        });
+    }
+})();
+</script>
 
-    <!-- MOBILE BOTTOM NAVIGATION -->
-    <style>
-        .mobile-nav {
-            display: none;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: var(--white);
-            border-top: 1px solid var(--border);
-            z-index: 9999;
-            padding: 12px 20px;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 -4px 15px rgba(0,0,0,0.2);
-        }
-        .mobile-nav a {
-            color: var(--text-muted);
-            text-decoration: none;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-size: 11px;
-            gap: 6px;
-            font-weight: 500;
-        }
-        .mobile-nav a.active, .mobile-nav a:hover {
-            color: var(--accent);
-        }
-        .mobile-nav a svg { width: 22px; height: 22px; stroke: currentColor; }
-        
-        @media (max-width: 900px) {
-            .mobile-nav { display: flex; }
-        }
-    </style>
-    <div class="mobile-nav">
-        <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="<?php echo is_front_page() ? 'active' : ''; ?>">
-            <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-            Home
-        </a>
-        <a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>" class="<?php echo is_shop() ? 'active' : ''; ?>">
-            <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-            Shop
-        </a>
-        <a href="<?php echo esc_url( wc_get_cart_url() ); ?>">
-            <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
-            Cart
-        </a>
-        <a href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' ) ); ?>">
-            <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-            Profile
-        </a>
-    </div>
-    
-    <div class="woodmart-close-side"></div>
-    <?php do_action( 'woodmart_before_wp_footer' ); ?>
-    <?php wp_footer(); ?>
+<div class="woodmart-close-side"></div>
+<?php do_action( 'woodmart_before_wp_footer' ); ?>
+<?php wp_footer(); ?>
 </body>
 </html>
