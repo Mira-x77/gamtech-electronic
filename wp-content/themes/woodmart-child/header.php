@@ -401,17 +401,21 @@
         /* Mobile specific fixes */
         @media (max-width: 1200px) {
             .sidebar-right { display: none; }
-            .product-grid { grid-template-columns: repeat(3, 1fr); }
+            .product-grid { grid-template-columns: repeat(4, 1fr); }
             .promo-row { grid-template-columns: repeat(2, 1fr); }
         }
         @media (max-width: 900px) {
+            body { overflow: auto !important; }
+            .website-wrapper.dashboard { display: block !important; height: auto !important; min-height: 100vh; padding: 0 !important; gap: 0 !important; }
             .sidebar-left { display: none; }
-            .website-wrapper.dashboard { padding: 0 !important; gap: 0 !important; }
-            .main-content { border-radius: 0; padding: 16px; padding-bottom: 80px; } /* Space for bottom nav */
-            .top-bar { margin-top: 10px; }
-            .product-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .main-content { display: block !important; overflow: visible !important; height: auto !important; border-radius: 0; padding: 16px; padding-bottom: 80px; }
+            .top-bar { margin-top: 10px; position: static; }
+            .product-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 12px; }
             .promo-row { grid-template-columns: 1fr; }
             .categories-row { padding-bottom: 15px; }
+            .hero-images { display: none !important; }
+            .hero-banner { padding: 24px; flex-direction: column; text-align: center; }
+            .hero-text { max-width: 100%; }
         }
     </style>
 </head>
@@ -485,17 +489,6 @@
                     <input type="hidden" name="post_type" value="product" />
                 </form>
             </div>
-            
-            <?php if ( is_front_page() || is_shop() ): ?>
-            <div class="hero-banner" style="margin-bottom: 30px;">
-                <div class="hero-text">
-                    <span>New Collection</span>
-                    <h1>Upgrade Your Setup,<br>Level Up Your Game ✨</h1>
-                    <p>Discover the latest in high-performance electronics, components, and gaming gear.</p>
-                    <a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>" class="hero-btn">Shop Now →</a>
-                </div>
-            </div>
-            <?php endif; ?>
             
             <?php woodmart_page_top_part(); ?>
             <!-- WooCommerce content / Main page content begins here -->
