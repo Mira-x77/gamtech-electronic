@@ -6,14 +6,14 @@
 <?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
-<?php wp_body_open(); ?>
+<?php if ( function_exists( 'wp_body_open' ) ) { wp_body_open(); } ?>
 
 <header class="gt-header">
 
   <!-- Topbar -->
   <div class="gt-topbar">
     <div class="gt-container">
-      <span class="gt-topbar-text">🎉 Free Shipping on Orders Over $50 — Shop Now &amp; Save Big!</span>
+      <span class="gt-topbar-text">Free Shipping on Orders Over $50 &mdash; Shop Now &amp; Save Big!</span>
       <button class="gt-topbar-close" aria-label="Dismiss promotion">×</button>
     </div>
   </div>

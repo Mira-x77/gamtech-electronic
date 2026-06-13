@@ -76,7 +76,7 @@ add_action( 'wp_enqueue_scripts', 'gamtech_enqueue_styles', 10010 );
  *
  * @return bool True if WooCommerce is active, false otherwise.
  */
-function gamtech_woo_active(): bool {
+function gamtech_woo_active() {
 	return class_exists( 'WooCommerce' ) || function_exists( 'WC' );
 }
 
@@ -89,7 +89,7 @@ function gamtech_woo_active(): bool {
  * @param int $limit Maximum number of categories to return. Default 8.
  * @return array Array of CategoryTile associative arrays.
  */
-function gamtech_get_product_categories( int $limit = 8 ): array {
+function gamtech_get_product_categories( $limit = 8 ) {
 	// 1. Check transient cache.
 	$cached = get_transient( 'gamtech_categories_' . $limit );
 	if ( false !== $cached ) {
@@ -171,7 +171,7 @@ function gamtech_get_product_categories( int $limit = 8 ): array {
  * @param int    $limit Maximum number of products to return. Default 6.
  * @return array Array of ProductCard associative arrays.
  */
-function gamtech_get_products( string $tab = 'new_arrivals', int $limit = 6 ): array {
+function gamtech_get_products( $tab = 'new_arrivals', $limit = 6 ) {
 	// 1. Check transient cache.
 	$cache_key = 'gamtech_products_' . $tab . '_' . $limit;
 	$cached    = get_transient( $cache_key );
@@ -308,7 +308,7 @@ function gamtech_get_products( string $tab = 'new_arrivals', int $limit = 6 ): a
 
 				$result[] = array(
 					'id'            => $p->get_id(),
-					'name'          => $p->get_name() ?: 'Unnamed Product',
+					'name'          => $p->get_name() ? $p->get_name() : 'Unnamed Product',
 					'category'      => $category,
 					'price_html'    => $p->get_price_html(),
 					'sale_price'    => $p->get_sale_price(),
@@ -343,7 +343,7 @@ function gamtech_get_products( string $tab = 'new_arrivals', int $limit = 6 ): a
  * @param float $rating Numeric rating value between 0.0 and 5.0.
  * @return string HTML string containing the star elements.
  */
-function gamtech_get_star_html( float $rating ): string {
+function gamtech_get_star_html( $rating ) {
 	// 1. Clamp rating to [0, 5].
 	$rating = max( 0, min( 5, $rating ) );
 
@@ -376,7 +376,7 @@ function gamtech_get_star_html( float $rating ): string {
  *
  * @param array $p ProductCard associative array.
  */
-function gamtech_render_product_card( array $p ): void {
+function gamtech_render_product_card( $p ) {
 	?>
 	<div class="gt-product-card">
 		<?php if ( ! empty( $p['on_sale'] ) ) : ?>
@@ -412,7 +412,7 @@ function gamtech_render_product_card( array $p ): void {
  * Enqueues the inline JavaScript for UI interactions.
  * Hooked into wp_enqueue_scripts at priority 10020 (after parent scripts).
  */
-function gamtech_enqueue_inline_js(): void {
+function gamtech_enqueue_inline_js() {
 
 	$js  = '(function(){';
 	$js .= '"use strict";';
@@ -478,7 +478,7 @@ add_action( 'wp_enqueue_scripts', 'gamtech_enqueue_inline_js', 10020 );
 /**
  * Outputs a <noscript> block so the first tab panel is visible when JS is off.
  */
-function gamtech_noscript_fallback(): void {
+function gamtech_noscript_fallback() {
 	echo '<noscript><style>.gt-tab-panel:first-of-type { display: grid; grid-template-columns: repeat(6, 1fr); gap: 15px; }</style></noscript>' . "\n";
 }
 add_action( 'wp_head', 'gamtech_noscript_fallback' );
