@@ -413,9 +413,6 @@ function gamtech_render_product_card( array $p ): void {
  * Hooked into wp_enqueue_scripts at priority 10020 (after parent scripts).
  */
 function gamtech_enqueue_inline_js(): void {
-	// Register a dummy script handle to attach inline JS in the footer.
-	wp_register_script( 'gamtech-ui', '', array(), false, true );
-	wp_enqueue_script( 'gamtech-ui' );
 
 	$js  = '(function(){';
 	$js .= '"use strict";';
@@ -469,7 +466,8 @@ function gamtech_enqueue_inline_js(): void {
 	$js .= 'document.addEventListener("DOMContentLoaded",function(){initHeroSlider();initProductTabs();initTopbarDismiss();});';
 	$js .= '}());';
 
-	wp_add_inline_script( 'gamtech-ui', $js );
+	// Attach inline JS to the jquery handle (always registered in WordPress).
+	wp_add_inline_script( 'jquery', $js );
 }
 add_action( 'wp_enqueue_scripts', 'gamtech_enqueue_inline_js', 10020 );
 
