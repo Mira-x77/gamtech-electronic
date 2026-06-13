@@ -25,8 +25,8 @@ get_header();
           </div>
           <div class="gt-hero-media">
             <?php the_post_thumbnail( 'gamtech-hero', array( 'class' => 'gt-hero-img' ) ); ?>
-            <?php if ( $product->is_on_sale() ) : ?>
-              <span class="gt-save-badge"><?php echo sprintf( __( 'Save %s', 'woodmart' ), wc_price( $product->get_regular_price() - $product->get_sale_price() ) ); ?></span>
+          <?php if ( $product->is_on_sale() ) : $saving = wc_price( $product->get_regular_price() - $product->get_sale_price() ); ?>
+            <div class="gt-save-badge"><span class="save-label"><?php esc_html_e( 'Save', 'woodmart' ); ?></span><strong class="save-price"><?php echo $saving; ?></strong></div>
             <?php endif; ?>
           </div>
         </div>
@@ -58,11 +58,12 @@ get_header();
       <?php
       $cats = get_terms( array( 'taxonomy' => 'product_cat', 'hide_empty' => true, 'number' => 12, 'orderby' => 'count', 'order' => 'DESC' ) );
       if ( ! empty( $cats ) && ! is_wp_error( $cats ) ) :
-        foreach ( $cats as $c ) :
+        $i = 0;
+        foreach ( $cats as $c ) : $i++;
           $thumb = get_term_meta( $c->term_id, 'thumbnail_id', true );
           $img = $thumb ? wp_get_attachment_image_url( $thumb, 'thumbnail' ) : wc_placeholder_img_src();
           ?>
-          <a class="gt-cat-pill" href="<?php echo esc_url( get_term_link( $c ) ); ?>">
+          <a class="gt-cat-pill<?php echo $i === 1 ? ' active' : ''; ?>" href="<?php echo esc_url( get_term_link( $c ) ); ?>">
             <img src="<?php echo esc_url( $img ); ?>" alt="<?php echo esc_attr( $c->name ); ?>">
             <span><?php echo esc_html( $c->name ); ?></span>
           </a>
@@ -112,17 +113,19 @@ get_header();
           $na = new WP_Query( array( 'post_type' => 'product', 'posts_per_page' => 8, 'orderby' => 'date', 'order' => 'DESC' ) );
           if ( $na->have_posts() ) : while ( $na->have_posts() ) : $na->the_post(); global $product; ?>
             <div class="product-card">
-              <a href="<?php the_permalink(); ?>"><?php the_post_thumbnail( 'woocommerce_thumbnail' ); ?></a>
-              <div class="prod-info">
-                <a class="prod-title" href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-                <div class="prod-meta">
-                  <span class="cat"><?php echo wc_get_product_category_list( $product->get_id(), ', ', '', '' ); ?></span>
-                  <div class="rating"><?php echo gamtech_star_rating( $product->get_average_rating() ); ?></div>
+                <?php if ( $product->is_on_sale() ) { $reg=(float)$product->get_regular_price(); $sale=(float)$product->get_sale_price(); $pct = $reg>0 ? round( ($reg-$sale)/$reg*100 ) : 0; echo '<span class="prod-sale-badge">-' . esc_html( $pct ) . '%</span>'; } ?>
+                <a href="<?php the_permalink(); ?>"><?php the_post_thumbnail( 'woocommerce_thumbnail' ); ?></a>
+                <a class="prod-wishlist" href="<?php echo esc_url( function_exists( 'yith_wcwl_wishlist_url' ) ? yith_wcwl_wishlist_url() : wc_get_page_permalink( 'myaccount' ) ); ?>" title="<?php esc_attr_e( 'Add to wishlist', 'woodmart' ); ?>"><span class="dashicons dashicons-heart"></span></a>
+                <div class="prod-info">
+                  <a class="prod-title" href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                  <div class="prod-meta">
+                    <span class="cat"><?php echo wc_get_product_category_list( $product->get_id(), ', ', '', '' ); ?></span>
+                    <div class="rating"><?php echo gamtech_star_rating( $product->get_average_rating() ); ?></div>
+                  </div>
+                  <?php woocommerce_template_loop_price(); ?>
+                  <?php woocommerce_template_loop_add_to_cart(); ?>
                 </div>
-                <?php woocommerce_template_loop_price(); ?>
-                <?php woocommerce_template_loop_add_to_cart(); ?>
               </div>
-            </div>
           <?php endwhile; wp_reset_postdata(); endif; ?>
         </div>
       </div>
@@ -133,7 +136,9 @@ get_header();
           $feat = new WP_Query( array( 'post_type' => 'product', 'posts_per_page' => 8, 'tax_query' => array( array( 'taxonomy' => 'product_visibility', 'field' => 'name', 'terms' => 'featured' ) ) ) );
           if ( $feat->have_posts() ) : while ( $feat->have_posts() ) : $feat->the_post(); global $product; ?>
             <div class="product-card">
+              <?php if ( $product->is_on_sale() ) { $reg=(float)$product->get_regular_price(); $sale=(float)$product->get_sale_price(); $pct = $reg>0 ? round( ($reg-$sale)/$reg*100 ) : 0; echo '<span class="prod-sale-badge">-' . esc_html( $pct ) . '%</span>'; } ?>
               <a href="<?php the_permalink(); ?>"><?php the_post_thumbnail( 'woocommerce_thumbnail' ); ?></a>
+              <a class="prod-wishlist" href="<?php echo esc_url( function_exists( 'yith_wcwl_wishlist_url' ) ? yith_wcwl_wishlist_url() : wc_get_page_permalink( 'myaccount' ) ); ?>" title="<?php esc_attr_e( 'Add to wishlist', 'woodmart' ); ?>"><span class="dashicons dashicons-heart"></span></a>
               <div class="prod-info">
                 <a class="prod-title" href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
                 <?php woocommerce_template_loop_price(); ?>
@@ -152,7 +157,9 @@ get_header();
           $sale = wc_get_products( array( 'limit' => 8, 'status' => 'publish', 'on_sale' => true ) );
           foreach ( $sale as $s ) : $p = wc_get_product( $s->get_id() ); ?>
             <div class="product-card">
+              <?php if ( $p->is_on_sale() ) { $reg=(float)$p->get_regular_price(); $sale=(float)$p->get_sale_price(); $pct = $reg>0 ? round( ($reg-$sale)/$reg*100 ) : 0; echo '<span class="prod-sale-badge">-' . esc_html( $pct ) . '%</span>'; } ?>
               <a href="<?php echo get_permalink( $p->get_id() ); ?>"><?php echo $p->get_image(); ?></a>
+              <a class="prod-wishlist" href="<?php echo esc_url( function_exists( 'yith_wcwl_wishlist_url' ) ? yith_wcwl_wishlist_url() : wc_get_page_permalink( 'myaccount' ) ); ?>" title="<?php esc_attr_e( 'Add to wishlist', 'woodmart' ); ?>"><span class="dashicons dashicons-heart"></span></a>
               <div class="prod-info">
                 <a class="prod-title" href="<?php echo get_permalink( $p->get_id() ); ?>"><?php echo esc_html( $p->get_name() ); ?></a>
                 <?php echo $p->get_price_html(); ?>

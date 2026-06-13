@@ -10,7 +10,7 @@
   --gt-border:  #e6e6e6;
   --gt-radius:  8px;
   --gt-shadow:  0 6px 24px rgba(0,0,0,0.08);
-  --gt-font: 'Inter', 'Segoe UI', Arial, sans-serif;
+  --gt-font: 'Poppins', 'Segoe UI', Arial, sans-serif;
 }
 
 body{ font-family:var(--gt-font); color:var(--gt-text); background:var(--gt-body-bg);} 
@@ -24,15 +24,16 @@ body{ font-family:var(--gt-font); color:var(--gt-text); background:var(--gt-body
 
 /* Header */
 .gt-header-ogo{ background:var(--gt-white); border-bottom:1px solid var(--gt-border); }
-.gt-header-inner{ display:flex; align-items:center; gap:20px; padding:14px 0; }
+.gt-header-inner{ display:grid; grid-template-columns: auto 1fr auto; align-items:center; gap:20px; padding:14px 0; }
 .gt-logo img{ max-height:64px; }
 
-.gt-search-block{ flex:1; }
-.gt-search-form{ display:flex; gap:8px; }
-.gt-search-input{ flex:1; padding:12px 14px; border-radius:4px; border:1px solid var(--gt-border); background:#fff; }
+.gt-search-block{ flex:1; display:flex; justify-content:center; }
+.gt-search-form{ display:flex; gap:8px; max-width:680px; width:100%; }
+.gt-search-input{ flex:1; padding:12px 16px; border-radius:24px; border:1px solid var(--gt-border); background:#fff; }
 .gt-btn{ display:inline-block; padding:10px 18px; border-radius:6px; font-weight:700; text-decoration:none; cursor:pointer; }
 .gt-btn-primary{ background:var(--gt-primary); color:#fff; border:none; }
 .gt-btn-outline{ background:transparent; border:2px solid var(--gt-primary); color:var(--gt-primary); }
+.gt-search-btn{ border-radius:24px; padding:10px 22px; background:var(--gt-primary); color:#fff; border:none; }
 
 .gt-contact-icons{ display:flex; align-items:center; gap:16px; }
 .gt-contact-number small{ display:block; font-size:12px; color:var(--gt-muted); }
@@ -69,7 +70,9 @@ body{ font-family:var(--gt-font); color:var(--gt-text); background:var(--gt-body
 .gt-hero-dots{ position:absolute; left:50%; transform:translateX(-50%); bottom:18px; display:flex; gap:8px; }
 .gt-hero-dots button{ width:12px; height:12px; border-radius:50%; background:rgba(255,255,255,0.9); border:1px solid rgba(0,0,0,0.06); cursor:pointer; }
 .gt-hero-dots button.active{ background:var(--gt-primary); border-color:var(--gt-primary); }
-.gt-save-badge{ position:absolute; right:40px; top:40%; transform:translateY(-40%); background:var(--gt-primary); color:#fff; width:84px; height:84px; display:flex; align-items:center; justify-content:center; border-radius:50%; font-weight:800; font-size:18px; box-shadow:0 10px 30px rgba(231,76,60,0.12); }
+.gt-save-badge{ position:absolute; right:56px; top:50%; transform:translateY(-50%); background:var(--gt-primary); color:#fff; width:92px; height:92px; display:flex; align-items:center; justify-content:center; border-radius:50%; font-weight:800; box-shadow:0 18px 40px rgba(231,76,60,0.14); }
+.gt-save-badge .save-label{ display:block; font-size:12px; opacity:0.9; }
+.gt-save-badge .save-price{ display:block; font-size:20px; margin-top:4px; }
 
 /* category active state */
 .gt-cat-pill.active{ border:2px solid var(--gt-primary); box-shadow:0 8px 20px rgba(231,76,60,0.06); transform:translateY(-4px); }
@@ -77,6 +80,9 @@ body{ font-family:var(--gt-font); color:var(--gt-text); background:var(--gt-body
 
 
 /* Trust badges */
+.gt-promo-topbar{ background:#fff; text-align:center; font-size:12px; padding:6px 0; border-bottom:1px solid var(--gt-border); }
+.gt-promo-inner{ color:var(--gt-muted); text-transform:uppercase; letter-spacing:1px; font-weight:700; }
+
 .gt-trust-badges{ padding:22px 0; background:#fff; border-top:1px solid var(--gt-border); }
 .gt-badges-grid{ display:grid; grid-template-columns:repeat(5,1fr); gap:12px; align-items:center; }
 .badge{ background:transparent; text-align:center; padding:14px; }
@@ -86,8 +92,10 @@ body{ font-family:var(--gt-font); color:var(--gt-text); background:var(--gt-body
 /* Categories scroll */
 .gt-top-categories{ padding:28px 0; }
 .gt-cat-scroll{ display:flex; gap:12px; overflow:auto; padding-bottom:8px; }
-.gt-cat-pill{ display:flex; flex-direction:column; align-items:center; text-align:center; min-width:110px; text-decoration:none; color:var(--gt-text); background:#fff; padding:12px; border-radius:10px; border:1px solid var(--gt-border); }
+.gt-cat-pill{ display:flex; flex-direction:column; align-items:center; text-align:center; min-width:110px; text-decoration:none; color:var(--gt-text); background:#fff; padding:12px; border-radius:10px; border:1px solid var(--gt-border); transition:all 0.18s ease; }
 .gt-cat-pill img{ width:56px; height:56px; object-fit:contain; margin-bottom:8px; }
+.gt-cat-pill.active{ border:2px solid var(--gt-primary); box-shadow:0 8px 20px rgba(231,76,60,0.06); transform:translateY(-4px); }
+.gt-cat-pill.active img{ transform:scale(1.03); }
 
 /* Promo grid */
 .gt-promo-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:18px 0; }
@@ -98,12 +106,15 @@ body{ font-family:var(--gt-font); color:var(--gt-text); background:var(--gt-body
 
 /* Products grid */
 .gt-products-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
-.product-card{ background:#fff; padding:12px; border-radius:8px; border:1px solid var(--gt-border); }
+.product-card{ background:#fff; padding:12px; border-radius:8px; border:1px solid var(--gt-border); position:relative; overflow:visible; }
 .product-card img{ width:100%; height:160px; object-fit:contain; }
 .prod-info{ padding-top:8px; }
 .prod-title{ display:block; font-weight:600; color:var(--gt-text); text-decoration:none; margin-bottom:6px; }
 .prod-meta{ display:flex; justify-content:space-between; align-items:center; gap:8px; }
 .rating{ color:var(--gt-accent); }
+.prod-sale-badge{ position:absolute; top:10px; left:10px; background:var(--gt-primary); color:#fff; border-radius:50%; padding:6px 8px; font-weight:800; font-size:12px; }
+.prod-wishlist{ position:absolute; top:8px; right:8px; background:#fff; border-radius:50%; width:34px; height:34px; display:flex; align-items:center; justify-content:center; border:1px solid var(--gt-border); color:var(--gt-primary); text-decoration:none; }
+.gt-stars{ color:var(--gt-primary); font-size:13px; }
 
 /* Best sellers */
 .gt-best-grid{ display:grid; grid-template-columns:1fr 420px; gap:18px; align-items:start; }

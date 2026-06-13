@@ -12,6 +12,14 @@
 <body <?php body_class(); ?>>
 <?php do_action( 'woodmart_after_body_open' ); ?>
 <div class="website-wrapper">
+
+    <!-- Promo thin top -->
+    <div class="gt-promo-topbar">
+        <div class="container">
+            <div class="gt-promo-inner">FINAL CLEARANCE: Take 20% off! Sale Must-Haves</div>
+        </div>
+    </div>
+
     <!-- Top bar -->
     <div class="gt-topbar-wrap gt-topbar-dark">
         <div class="container gt-topbar-inner">

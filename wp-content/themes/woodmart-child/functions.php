@@ -18,10 +18,10 @@ function woodmart_child_enqueue_styles() {
         woodmart_get_theme_info( 'Version' )
     );
 
-    // Google Fonts — Inter
+    // Google Fonts — Poppins
     wp_enqueue_style(
         'gamtech-google-fonts',
-        'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap',
+        'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap',
         array(),
         null
     );
@@ -123,8 +123,8 @@ add_action( 'customize_register', 'gamtech_customizer' );
 // 4. DYNAMIC CSS FROM CUSTOMIZER
 // =====================================================
 function gamtech_dynamic_css() {
-    $primary = get_theme_mod( 'gamtech_primary_color', '#1a237e' );
-    $accent  = get_theme_mod( 'gamtech_accent_color', '#ff6f00' );
+    $primary = get_theme_mod( 'gamtech_primary_color', '#e74c3c' );
+    $accent  = get_theme_mod( 'gamtech_accent_color', '#e74c3c' );
 
     $css = '
     :root {
