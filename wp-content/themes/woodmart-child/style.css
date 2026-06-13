@@ -1,9 +1,1026 @@
 /*
  Theme Name:   Woodmart Child
- Description:  Woodmart Child Theme
- Author:       XTemos
- Author URI:   http://xtemos.com
+ Description:  Woodmart Child Theme - Ogo Style Redesign
+ Author:       Gamtech Electronic
  Template:     woodmart
- Version:      1.0.0
+ Version:      2.0.0
  Text Domain:  woodmart
 */
+
+/* ==========================================================================
+   4.1 — CSS Reset, Custom Properties, Base Typography
+   ========================================================================== */
+
+:root {
+  --gt-red:        #e74c3c;
+  --gt-red-dark:   #c0392b;
+  --gt-text:       #333333;
+  --gt-muted:      #666666;
+  --gt-border:     #e0e0e0;
+  --gt-bg-light:   #f5f5f5;
+  --gt-white:      #ffffff;
+  --gt-font:       'Poppins', sans-serif;
+  --gt-radius:     4px;
+  --gt-shadow:     0 2px 8px rgba(0,0,0,0.08);
+  --gt-transition: 0.25s ease;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--gt-font);
+  color: var(--gt-text);
+  background: var(--gt-white);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--gt-font);
+}
+
+.gt-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+button,
+input,
+select {
+  font-family: var(--gt-font);
+}
+
+/* ==========================================================================
+   4.2 — Header Styles
+   ========================================================================== */
+
+/* --- Topbar --- */
+
+.gt-topbar {
+  background: var(--gt-red);
+  color: var(--gt-white);
+  padding: 8px 0;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.gt-topbar-text {
+  text-align: center;
+}
+
+.gt-topbar-close {
+  position: absolute;
+  right: 20px;
+  background: transparent;
+  color: var(--gt-white);
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* --- Main Header --- */
+
+.gt-main-header {
+  background: var(--gt-white);
+  padding: 15px 0;
+  border-bottom: 1px solid var(--gt-border);
+}
+
+.gt-main-header__inner {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.gt-logo {
+  flex-shrink: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--gt-red);
+}
+
+.gt-search-form {
+  flex: 1;
+  max-width: 500px;
+  display: flex;
+}
+
+.gt-search-form input {
+  flex: 1;
+  padding: 10px 15px;
+  border: 1px solid var(--gt-border);
+  border-right: none;
+  border-radius: var(--gt-radius) 0 0 var(--gt-radius);
+  font-size: 14px;
+  outline: none;
+}
+
+.gt-search-form input:focus {
+  border-color: var(--gt-red);
+}
+
+.gt-search-btn {
+  background: var(--gt-red);
+  color: var(--gt-white);
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 0 var(--gt-radius) var(--gt-radius) 0;
+  font-size: 14px;
+  font-weight: 600;
+  transition: var(--gt-transition);
+}
+
+.gt-search-btn:hover {
+  background: var(--gt-red-dark);
+}
+
+.gt-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-left: auto;
+}
+
+.gt-header-icon {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font-size: 12px;
+  color: var(--gt-muted);
+  cursor: pointer;
+}
+
+.gt-header-icon:hover {
+  color: var(--gt-red);
+}
+
+.gt-cart-badge {
+  position: absolute;
+  top: -5px;
+  right: -8px;
+  background: var(--gt-red);
+  color: var(--gt-white);
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gt-header-phone {
+  font-size: 13px;
+  color: var(--gt-muted);
+}
+
+.gt-header-phone strong {
+  font-weight: 600;
+  color: var(--gt-text);
+}
+
+/* --- Navbar --- */
+
+.gt-navbar {
+  background: var(--gt-bg-light);
+  border-bottom: 1px solid var(--gt-border);
+}
+
+.gt-navbar__inner {
+  display: flex;
+  align-items: center;
+  height: 48px;
+}
+
+.gt-browse-btn {
+  background: var(--gt-red);
+  color: var(--gt-white);
+  padding: 0 20px;
+  height: 100%;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  transition: var(--gt-transition);
+}
+
+.gt-browse-btn:hover {
+  background: var(--gt-red-dark);
+}
+
+.gt-browse-icon {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.gt-browse-icon span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: var(--gt-white);
+}
+
+.gt-nav-menu ul {
+  display: flex;
+  list-style: none;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.gt-nav-menu ul li a {
+  padding: 0 15px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: var(--gt-text);
+  transition: var(--gt-transition);
+}
+
+.gt-nav-menu ul li a:hover {
+  color: var(--gt-red);
+}
+
+.gt-nav-auth {
+  margin-left: auto;
+  display: flex;
+  gap: 15px;
+  font-size: 13px;
+}
+
+.gt-nav-auth a {
+  color: var(--gt-text);
+}
+
+.gt-nav-auth a:hover {
+  color: var(--gt-red);
+}
+
+/* WordPress nav menu compatibility */
+.gt-nav-menu .menu,
+.gt-nav-menu ul.menu {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Dropdown menus — hidden by default, shown on hover/focus */
+.gt-nav-menu li {
+  position: relative;
+}
+
+.gt-nav-menu li ul {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 180px;
+  background: var(--gt-white);
+  border: 1px solid var(--gt-border);
+  border-top: 2px solid var(--gt-red);
+  box-shadow: var(--gt-shadow);
+  z-index: 100;
+  flex-direction: column;
+}
+
+.gt-nav-menu li:hover > ul,
+.gt-nav-menu li:focus-within > ul {
+  display: flex;
+}
+
+.gt-nav-menu li ul li a {
+  height: auto;
+  padding: 10px 15px;
+  font-size: 13px;
+  border-bottom: 1px solid var(--gt-border);
+  white-space: nowrap;
+}
+
+.gt-nav-menu li ul li:last-child a {
+  border-bottom: none;
+}
+
+/* ==========================================================================
+   4.3 — Hero Slider Styles
+   ========================================================================== */
+
+.gt-hero-slider {
+  position: relative;
+  overflow: hidden;
+  height: 500px;
+  background: #f0f4f8;
+}
+
+.gt-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  display: flex;
+  align-items: center;
+  padding: 0 80px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.gt-slide.active {
+  opacity: 1;
+  position: relative;
+}
+
+.gt-slide__content {
+  max-width: 400px;
+  z-index: 2;
+}
+
+.gt-slide__headline {
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 10px;
+  color: var(--gt-text);
+}
+
+.gt-slide__sub {
+  font-size: 16px;
+  color: var(--gt-muted);
+  margin-bottom: 25px;
+}
+
+.gt-slide__cta {
+  display: inline-block;
+  background: var(--gt-red);
+  color: var(--gt-white);
+  padding: 12px 28px;
+  border-radius: var(--gt-radius);
+  font-weight: 600;
+  font-size: 14px;
+  transition: var(--gt-transition);
+}
+
+.gt-slide__cta:hover {
+  background: var(--gt-red-dark);
+  color: var(--gt-white);
+}
+
+.gt-slide__image {
+  position: absolute;
+  right: 60px;
+  top: 50%;
+  transform: translateY(-50%);
+  max-height: 90%;
+  width: auto;
+}
+
+/* Save badge */
+.gt-save-badge {
+  position: absolute;
+  right: 80px;
+  top: 50%;
+  transform: translateY(-50%) translateX(120px);
+  background: var(--gt-red);
+  color: var(--gt-white);
+  border-radius: 50%;
+  width: 90px;
+  height: 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  z-index: 3;
+}
+
+.gt-save-badge__label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.gt-save-badge__price {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* Slider arrows */
+.gt-slider-prev,
+.gt-slider-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.9);
+  color: var(--gt-text);
+  border: none;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  cursor: pointer;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  box-shadow: var(--gt-shadow);
+  transition: var(--gt-transition);
+}
+
+.gt-slider-prev {
+  left: 20px;
+}
+
+.gt-slider-next {
+  right: 20px;
+}
+
+.gt-slider-prev:hover,
+.gt-slider-next:hover {
+  background: var(--gt-white);
+  color: var(--gt-red);
+}
+
+/* Slider dots */
+.gt-slider-dots {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+}
+
+.gt-slider-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.2);
+  cursor: pointer;
+  border: none;
+  transition: var(--gt-transition);
+}
+
+.gt-slider-dot.active {
+  background: var(--gt-red);
+}
+
+/* ==========================================================================
+   4.4 — Trust Badges, Category Strip, Promo Banners
+   ========================================================================== */
+
+/* --- Trust Badges --- */
+
+.gt-trust-badges {
+  background: var(--gt-white);
+  border-top: 1px solid var(--gt-border);
+  border-bottom: 1px solid var(--gt-border);
+  padding: 20px 0;
+}
+
+.gt-trust-badges__inner {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+}
+
+.gt-trust-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px;
+  text-align: center;
+}
+
+.gt-trust-badge:not(:last-child) {
+  border-right: 1px solid var(--gt-border);
+}
+
+.gt-trust-icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  color: var(--gt-red);
+}
+
+.gt-trust-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.gt-trust-text h4 {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+
+.gt-trust-text p {
+  font-size: 11px;
+  color: var(--gt-muted);
+  margin: 0;
+}
+
+/* --- Top Categories --- */
+
+.gt-top-categories {
+  padding: 40px 0;
+}
+
+.gt-section-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 25px;
+  color: var(--gt-text);
+}
+
+.gt-category-strip {
+  display: flex;
+  overflow-x: auto;
+  gap: 16px;
+  padding-bottom: 10px;
+  scrollbar-width: none;
+}
+
+.gt-category-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.gt-category-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 120px;
+  padding: 15px 10px;
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius);
+  cursor: pointer;
+  transition: var(--gt-transition);
+  flex-shrink: 0;
+  background: var(--gt-white);
+  text-decoration: none;
+  color: var(--gt-text);
+}
+
+.gt-category-tile:hover {
+  border-color: var(--gt-red);
+  box-shadow: 0 0 0 1px var(--gt-red);
+}
+
+.gt-category-tile.active,
+.gt-category-tile:first-child {
+  border-left: 3px solid var(--gt-red);
+  box-shadow: 0 2px 8px rgba(231,76,60,0.15);
+}
+
+.gt-category-tile img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+}
+
+.gt-category-tile span {
+  font-size: 11px;
+  text-align: center;
+  line-height: 1.3;
+}
+
+/* --- Promo Banners --- */
+
+.gt-promo-banners {
+  padding: 0 0 40px;
+}
+
+.gt-promo-banners__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.gt-promo-banner {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--gt-radius);
+  background: var(--gt-bg-light);
+  display: flex;
+  align-items: center;
+  padding: 25px 20px;
+  min-height: 160px;
+  transition: var(--gt-transition);
+}
+
+.gt-promo-banner:hover {
+  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+}
+
+.gt-promo-banner__content {
+  z-index: 2;
+  position: relative;
+}
+
+.gt-promo-banner__sub {
+  font-size: 11px;
+  color: var(--gt-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 5px;
+}
+
+.gt-promo-banner__title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.gt-promo-banner__price {
+  font-size: 13px;
+  color: var(--gt-muted);
+  margin-bottom: 15px;
+}
+
+.gt-promo-banner__btn {
+  display: inline-block;
+  background: var(--gt-red);
+  color: var(--gt-white);
+  padding: 8px 18px;
+  border-radius: var(--gt-radius);
+  font-size: 12px;
+  font-weight: 600;
+  transition: var(--gt-transition);
+}
+
+.gt-promo-banner__btn:hover {
+  background: var(--gt-red-dark);
+  color: var(--gt-white);
+}
+
+.gt-promo-banner__image {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  width: 45%;
+  object-fit: cover;
+}
+
+/* ==========================================================================
+   4.5 — Product Cards, Tabs, Best-Sellers
+   ========================================================================== */
+
+/* --- Product Tabs --- */
+
+.gt-product-tabs {
+  padding: 40px 0;
+}
+
+.gt-tabs-header {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border-bottom: 2px solid var(--gt-border);
+  margin-bottom: 25px;
+}
+
+.gt-tab-link {
+  padding: 12px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gt-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: var(--gt-transition);
+}
+
+.gt-tab-link.active {
+  color: var(--gt-red);
+  border-bottom-color: var(--gt-red);
+}
+
+.gt-tab-link:hover {
+  color: var(--gt-red);
+}
+
+.gt-tab-panel {
+  display: none;
+}
+
+.gt-tab-panel.active {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 15px;
+}
+
+.gt-tabs-sep {
+  padding: 12px 10px;
+  color: var(--gt-muted);
+  align-self: center;
+}
+
+/* --- Product Cards --- */
+
+.gt-product-card {
+  position: relative;
+  background: var(--gt-white);
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius);
+  overflow: hidden;
+  transition: var(--gt-transition);
+}
+
+.gt-product-card:hover {
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  border-color: transparent;
+  transform: translateY(-2px);
+}
+
+.gt-product-card__img-wrap {
+  position: relative;
+  overflow: hidden;
+  background: var(--gt-bg-light);
+  aspect-ratio: 1 / 1;
+}
+
+.gt-product-card__img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.gt-product-card:hover .gt-product-card__img-wrap img {
+  transform: scale(1.05);
+}
+
+.gt-product-card__body {
+  padding: 12px;
+}
+
+.gt-product-card__cat {
+  font-size: 10px;
+  color: #3498db;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+.gt-product-card__name {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  margin-bottom: 8px;
+  color: var(--gt-text);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.gt-product-card__rating {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 8px;
+}
+
+.gt-product-card__price {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gt-red);
+}
+
+.gt-product-card__price del {
+  color: var(--gt-muted);
+  font-weight: 400;
+  font-size: 12px;
+}
+
+.gt-product-card__price ins {
+  text-decoration: none;
+  color: var(--gt-red);
+}
+
+/* Star ratings */
+.gt-stars {
+  display: inline-flex;
+  gap: 1px;
+  font-size: 13px;
+}
+
+.gt-star--filled {
+  color: #f5a623;
+}
+
+.gt-star--empty {
+  color: #ddd;
+}
+
+.gt-review-count {
+  font-size: 11px;
+  color: var(--gt-muted);
+}
+
+/* Sale badge */
+.gt-sale-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: var(--gt-red);
+  color: var(--gt-white);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+/* Wishlist button */
+.gt-wishlist-btn {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: var(--gt-white);
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--gt-shadow);
+  transition: var(--gt-transition);
+  z-index: 2;
+}
+
+.gt-wishlist-btn:hover {
+  color: var(--gt-red);
+}
+
+/* No products message */
+.gt-no-products {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px;
+  color: var(--gt-muted);
+}
+
+/* --- Best Sellers --- */
+
+.gt-best-sellers {
+  padding: 40px 0;
+}
+
+.gt-best-sellers__header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+}
+
+.gt-bs-filter-tabs {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.gt-bs-tab {
+  padding: 6px 14px;
+  font-size: 12px;
+  border: 1px solid var(--gt-border);
+  border-radius: 20px;
+  background: none;
+  cursor: pointer;
+  color: var(--gt-muted);
+  transition: var(--gt-transition);
+}
+
+.gt-bs-tab.active,
+.gt-bs-tab:hover {
+  background: var(--gt-red);
+  color: var(--gt-white);
+  border-color: var(--gt-red);
+}
+
+.gt-best-sellers__layout {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 20px;
+}
+
+.gt-bs-featured {
+  border: 1px solid var(--gt-border);
+  border-radius: var(--gt-radius);
+  overflow: hidden;
+}
+
+.gt-bs-featured img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  background: var(--gt-bg-light);
+}
+
+.gt-bs-featured__body {
+  padding: 15px;
+}
+
+.gt-bs-featured__name {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.gt-bs-featured__price {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--gt-red);
+}
+
+.gt-bs-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+}
+
+/* ==========================================================================
+   4.6 — Responsive Breakpoints
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  /* Hero */
+  .gt-hero-slider { height: 300px; }
+  .gt-slide { padding: 0 40px; }
+  .gt-slide__headline { font-size: 24px; }
+  .gt-slide__image { display: none; }
+  .gt-save-badge { display: none; }
+
+  /* Trust badges */
+  .gt-trust-badges__inner { grid-template-columns: repeat(2, 1fr); }
+  .gt-trust-badge:nth-child(2n) { border-right: none; }
+  .gt-trust-badge:nth-child(n+3) { border-top: 1px solid var(--gt-border); }
+
+  /* Promo banners */
+  .gt-promo-banners__grid { grid-template-columns: 1fr; }
+
+  /* Product tabs */
+  .gt-tab-panel.active { grid-template-columns: repeat(2, 1fr); }
+
+  /* Best sellers */
+  .gt-best-sellers__layout { grid-template-columns: 1fr; }
+  .gt-bs-grid { grid-template-columns: repeat(2, 1fr); }
+
+  /* Header */
+  .gt-main-header__inner { flex-wrap: wrap; gap: 15px; }
+  .gt-search-form { order: 3; width: 100%; max-width: 100%; }
+  .gt-navbar__inner { flex-wrap: wrap; height: auto; padding: 5px 0; }
+  .gt-nav-menu ul { flex-wrap: wrap; }
+  .gt-nav-menu ul li a { padding: 8px 10px; height: auto; }
+}
