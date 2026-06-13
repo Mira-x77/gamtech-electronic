@@ -96,23 +96,23 @@ function gamtech_customizer( $wp_customize ) {
 
     // Primary color
     $wp_customize->add_setting( 'gamtech_primary_color', array(
-        'default'           => '#1a237e',
+        'default'           => '#e74c3c',
         'sanitize_callback' => 'sanitize_hex_color',
         'transport'         => 'postMessage',
     ) );
     $wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'gamtech_primary_color', array(
-        'label'   => __( 'Primary Color (Navy)', 'woodmart' ),
+        'label'   => __( 'Primary Color (Red)', 'woodmart' ),
         'section' => 'gamtech_general',
     ) ) );
 
     // Accent color
     $wp_customize->add_setting( 'gamtech_accent_color', array(
-        'default'           => '#ff6f00',
+        'default'           => '#e74c3c',
         'sanitize_callback' => 'sanitize_hex_color',
         'transport'         => 'postMessage',
     ) );
     $wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'gamtech_accent_color', array(
-        'label'   => __( 'Accent Color (Orange)', 'woodmart' ),
+        'label'   => __( 'Accent Color (Red)', 'woodmart' ),
         'section' => 'gamtech_general',
     ) ) );
 }
@@ -274,3 +274,19 @@ function gamtech_front_page_template( $template ) {
     return $template;
 }
 add_filter( 'template_include', 'gamtech_front_page_template', 99 );
+
+/**
+ * Helper: render star rating HTML from average rating (0-5)
+ */
+function gamtech_star_rating( $avg ) {
+$avg = floatval( $avg );
+$full = floor( $avg );
+$half = ( $avg - $full ) >= 0.5 ? 1 : 0;
+$out = '<span class="gt-stars" aria-hidden="true">';
+for ( $i = 0; $i < $full; $i++ ) { $out .= '★'; }
+if ( $half ) { $out .= '☆'; }
+for ( $j = $full + $half; $j < 5; $j++ ) { $out .= '☆'; }
+$out .= '</span>';
+return $out;
+}
+
