@@ -413,116 +413,61 @@ function gamtech_render_product_card( array $p ): void {
  * Hooked into wp_enqueue_scripts at priority 10020 (after parent scripts).
  */
 function gamtech_enqueue_inline_js(): void {
-	// Register a dummy script handle so we can attach inline JS to it.
-	wp_register_script( 'gamtech-ui', false, array(), null, true );
+	// Register a dummy script handle to attach inline JS in the footer.
+	wp_register_script( 'gamtech-ui', '', array(), false, true );
 	wp_enqueue_script( 'gamtech-ui' );
 
-	$js = <<<'JS'
-(function () {
-  'use strict';
+	$js  = '(function(){';
+	$js .= '"use strict";';
 
-  /* ── Hero Slider ─────────────────────────────────────────── */
-  function initHeroSlider() {
-    var slider = document.querySelector('.gt-hero-slider');
-    if (!slider) return;
+	// Hero Slider
+	$js .= 'function initHeroSlider(){';
+	$js .= 'var slider=document.querySelector(".gt-hero-slider");';
+	$js .= 'if(!slider)return;';
+	$js .= 'var slides=slider.querySelectorAll(".gt-slide");';
+	$js .= 'var dots=slider.querySelectorAll(".gt-slider-dot");';
+	$js .= 'var prev=slider.querySelector(".gt-slider-prev");';
+	$js .= 'var next=slider.querySelector(".gt-slider-next");';
+	$js .= 'if(slides.length<2)return;';
+	$js .= 'var cur=0,tot=slides.length;';
+	$js .= 'function show(i){';
+	$js .= 'slides.forEach(function(s){s.classList.remove("active");});';
+	$js .= 'dots.forEach(function(d){d.classList.remove("active");});';
+	$js .= 'slides[i].classList.add("active");';
+	$js .= 'if(dots[i])dots[i].classList.add("active");';
+	$js .= '}';
+	$js .= 'if(prev)prev.addEventListener("click",function(){cur=(cur-1+tot)%tot;show(cur);});';
+	$js .= 'if(next)next.addEventListener("click",function(){cur=(cur+1)%tot;show(cur);});';
+	$js .= 'dots.forEach(function(d,i){d.addEventListener("click",function(){cur=i;show(cur);});});';
+	$js .= 'setInterval(function(){cur=(cur+1)%tot;show(cur);},5000);';
+	$js .= 'show(0);';
+	$js .= '}';
 
-    var slides = slider.querySelectorAll('.gt-slide');
-    var dots   = slider.querySelectorAll('.gt-slider-dot');
-    var prev   = slider.querySelector('.gt-slider-prev');
-    var next   = slider.querySelector('.gt-slider-next');
+	// Product Tabs
+	$js .= 'function initProductTabs(){';
+	$js .= 'var tabs=document.querySelectorAll(".gt-tab-link");';
+	$js .= 'var panels=document.querySelectorAll(".gt-tab-panel");';
+	$js .= 'if(!tabs.length)return;';
+	$js .= 'function activate(id){';
+	$js .= 'tabs.forEach(function(t){t.classList.toggle("active",t.dataset.target===id);});';
+	$js .= 'panels.forEach(function(p){p.classList.toggle("active",p.id===id);});';
+	$js .= '}';
+	$js .= 'tabs.forEach(function(t){t.addEventListener("click",function(){activate(t.dataset.target);});});';
+	$js .= 'if(tabs[0])activate(tabs[0].dataset.target);';
+	$js .= '}';
 
-    if (slides.length < 2) return;
+	// Topbar Dismiss
+	$js .= 'function initTopbarDismiss(){';
+	$js .= 'var bar=document.querySelector(".gt-topbar");';
+	$js .= 'var btn=document.querySelector(".gt-topbar-close");';
+	$js .= 'if(!bar)return;';
+	$js .= 'if(localStorage.getItem("gt_topbar_dismissed")==="true"){bar.style.display="none";return;}';
+	$js .= 'if(btn)btn.addEventListener("click",function(){bar.style.display="none";localStorage.setItem("gt_topbar_dismissed","true");});';
+	$js .= '}';
 
-    var currentIdx = 0;
-    var total      = slides.length;
-
-    function showSlide(idx) {
-      slides.forEach(function (s) { s.classList.remove('active'); });
-      dots.forEach(function (d)   { d.classList.remove('active'); });
-      slides[idx].classList.add('active');
-      if (dots[idx]) dots[idx].classList.add('active');
-    }
-
-    prev && prev.addEventListener('click', function () {
-      currentIdx = (currentIdx - 1 + total) % total;
-      showSlide(currentIdx);
-    });
-
-    next && next.addEventListener('click', function () {
-      currentIdx = (currentIdx + 1) % total;
-      showSlide(currentIdx);
-    });
-
-    dots.forEach(function (dot, i) {
-      dot.addEventListener('click', function () {
-        currentIdx = i;
-        showSlide(currentIdx);
-      });
-    });
-
-    setInterval(function () {
-      currentIdx = (currentIdx + 1) % total;
-      showSlide(currentIdx);
-    }, 5000);
-
-    showSlide(0);
-  }
-
-  /* ── Product Tabs ────────────────────────────────────────── */
-  function initProductTabs() {
-    var tabLinks = document.querySelectorAll('.gt-tab-link');
-    var panels   = document.querySelectorAll('.gt-tab-panel');
-
-    if (!tabLinks.length) return;
-
-    function activateTab(targetId) {
-      tabLinks.forEach(function (t) {
-        t.classList.toggle('active', t.dataset.target === targetId);
-      });
-      panels.forEach(function (p) {
-        p.classList.toggle('active', p.id === targetId);
-      });
-    }
-
-    tabLinks.forEach(function (tab) {
-      tab.addEventListener('click', function () {
-        activateTab(tab.dataset.target);
-      });
-    });
-
-    // Activate first tab on load
-    if (tabLinks[0]) activateTab(tabLinks[0].dataset.target);
-  }
-
-  /* ── Topbar Dismiss ──────────────────────────────────────── */
-  function initTopbarDismiss() {
-    var topbar   = document.querySelector('.gt-topbar');
-    var closeBtn = document.querySelector('.gt-topbar-close');
-
-    if (!topbar) return;
-
-    if (localStorage.getItem('gt_topbar_dismissed') === 'true') {
-      topbar.style.display = 'none';
-      return;
-    }
-
-    if (closeBtn) {
-      closeBtn.addEventListener('click', function () {
-        topbar.style.display = 'none';
-        localStorage.setItem('gt_topbar_dismissed', 'true');
-      });
-    }
-  }
-
-  /* ── Boot ────────────────────────────────────────────────── */
-  document.addEventListener('DOMContentLoaded', function () {
-    initHeroSlider();
-    initProductTabs();
-    initTopbarDismiss();
-  });
-
-}());
-JS;
+	// Boot
+	$js .= 'document.addEventListener("DOMContentLoaded",function(){initHeroSlider();initProductTabs();initTopbarDismiss();});';
+	$js .= '}());';
 
 	wp_add_inline_script( 'gamtech-ui', $js );
 }

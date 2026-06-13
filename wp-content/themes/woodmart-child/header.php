@@ -108,7 +108,7 @@
         <div class="gt-nav-auth">
           <a href="<?php echo esc_url( gamtech_woo_active() ? wc_get_page_permalink( 'myaccount' ) : wp_login_url() ); ?>">Login</a>
           <span>/</span>
-          <a href="<?php echo esc_url( gamtech_woo_active() ? wc_get_page_permalink( 'myaccount' ) : wp_registration_url() ); ?>">Register</a>
+          <a href="<?php echo esc_url( gamtech_woo_active() ? wc_get_page_permalink( 'myaccount' ) : ( function_exists( 'wp_registration_url' ) ? wp_registration_url() : wp_login_url() ) ); ?>">Register</a>
         </div>
 
       </div><!-- /.gt-navbar__inner -->
