@@ -39,7 +39,7 @@ function woodmart_child_enqueue_styles() {
         'cello-main-style',
         get_stylesheet_directory_uri() . '/cello-main.css',
         array( 'child-style' ),
-        '4.0'
+        '5.0.' . time()
     );
 }
 add_action( 'wp_enqueue_scripts', 'woodmart_child_enqueue_styles', 10010 );
@@ -342,15 +342,38 @@ function cello_disable_woodmart_features() {
 }
 add_action( 'wp', 'cello_disable_woodmart_features' );
 
-// Remove WoodMart promo popup action
+// Remove WoodMart promo popup action — run late to ensure hooks exist
 function cello_remove_woodmart_hooks() {
     remove_action( 'wp_footer', 'woodmart_promo_popup' );
     remove_action( 'wp_footer', 'woodmart_newsletter_popup' );
     remove_action( 'wp_footer', 'woodmart_scroll_top' );
     remove_action( 'woodmart_before_wp_footer', 'woodmart_promo_popup' );
     remove_action( 'woodmart_before_wp_footer', 'woodmart_newsletter_popup' );
+    // Also try removing at higher priorities
+    remove_action( 'wp_footer', 'woodmart_promo_popup', 99 );
+    remove_action( 'wp_footer', 'woodmart_newsletter_popup', 99 );
 }
-add_action( 'init', 'cello_remove_woodmart_hooks', 999 );
+add_action( 'wp_loaded', 'cello_remove_woodmart_hooks', 999 );
+add_action( 'template_redirect', 'cello_remove_woodmart_hooks', 999 );
+
+// Critical inline CSS to hide WoodMart elements — bypasses Varnish cache entirely
+function cello_critical_hide_css() {
+    echo '<style id="cello-critical-hide">
+    .woodmart-promo-popup,.wd-promo-popup,.woodmart-newsletter-popup,.wd-newsletter-popup,
+    .wd-popup,.xts-popup,.wd-signup-modal,.woodmart-signup-popup,.xts-signup-popup,
+    .whb-mobile-bar,.wd-mobile-nav,.woodmart-mobile-bar,.wd-bottom-toolbar,
+    .woodmart-scroll-top,.wd-scroll-top,.scroll-to-top,#back-to-top,
+    .woodmart-preloader,.wd-preloader,.page-preloader,
+    .woodmart-cart-sidebar,.wd-cart-sidebar,.woodmart-side-cart,
+    .woodmart-close-side,.wd-buttons,.woodmart-buttons,.wd-overlay,
+    .wd-notification,.woodmart-notification {
+        display:none!important;visibility:hidden!important;opacity:0!important;
+        pointer-events:none!important;height:0!important;overflow:hidden!important;
+    }
+    </style>';
+    echo '<script>document.addEventListener("DOMContentLoaded",function(){document.querySelectorAll(".woodmart-promo-popup,.wd-promo-popup,.woodmart-newsletter-popup,.wd-popup,.xts-popup,.wd-signup-modal,.xts-signup-popup,.whb-mobile-bar,.wd-scroll-top,.woodmart-scroll-top").forEach(function(e){e.remove()})});</script>';
+}
+add_action( 'wp_head', 'cello_critical_hide_css', 1 );
 
 // Disable WoodMart's header builder on our pages
 function cello_disable_woodmart_header_builder() {
