@@ -15,7 +15,7 @@ function woodmart_child_enqueue_styles() {
         'woodmart-style',
         get_template_directory_uri() . '/style.css',
         array(),
-        woodmart_get_theme_info( 'Version' )
+        wp_get_theme( 'woodmart' )->get( 'Version' )
     );
 
     // Google Fonts — Poppins
@@ -163,10 +163,14 @@ function gamtech_quick_look_button() {
         . esc_html__( 'Quick Look', 'woodmart' )
         . '</div>';
 }
-// Only add if Woodmart's own quick view is not active
-if ( ! woodmart_get_opt( 'quick_view' ) ) {
-    add_action( 'woocommerce_before_shop_loop_item_title', 'gamtech_quick_look_button', 15 );
+
+// Hook the quick look button only if Woodmart's own quick view is not active
+function gamtech_add_quick_look_hook() {
+    if ( function_exists( 'woodmart_get_opt' ) && ! woodmart_get_opt( 'quick_view' ) ) {
+        add_action( 'woocommerce_before_shop_loop_item_title', 'gamtech_quick_look_button', 15 );
+    }
 }
+add_action( 'wp_loaded', 'gamtech_add_quick_look_hook' );
 
 
 // =====================================================
