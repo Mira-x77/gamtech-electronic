@@ -66,23 +66,16 @@
                 <div class="gt-logo">
                     <a href="<?php echo esc_url( home_url( '/' ) ); ?>">
                         <?php
-                        $logo_id = get_theme_mod( 'custom_logo' );
-                        if ( $logo_id ) {
-                            echo wp_get_attachment_image( $logo_id, 'full', false, array( 'alt' => get_bloginfo( 'name' ) ) );
-                        } else {
-                            // Fallback: try to use the uploaded logo file
-                            $logo_url = get_stylesheet_directory_uri() . '/assets/images/logo-dark.png';
-                            ?>
-                            <img src="<?php echo esc_url( $logo_url ); ?>"
-                                 alt="<?php bloginfo( 'name' ); ?>"
-                                 style="max-height:54px;width:auto;"
-                                 onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
-                            <span style="display:none;font-size:22px;font-weight:900;color:var(--gt-primary);">
-                                Cello
-                            </span>
-                            <?php
-                        }
+                        // Always use the new Cello logo file
+                        $logo_url = get_stylesheet_directory_uri() . '/assets/images/logo-dark.png';
                         ?>
+                        <img src="<?php echo esc_url( $logo_url ); ?>"
+                             alt="Cello"
+                             style="max-height:54px;width:auto;"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+                        <span style="display:none;font-size:22px;font-weight:900;color:var(--gt-primary);">
+                            Cello
+                        </span>
                     </a>
                 </div>
 

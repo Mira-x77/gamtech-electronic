@@ -64,7 +64,37 @@ a:hover {
 
 img { max-width: 100%; height: auto; }
 
-.container { max-width: 1320px; }
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+.container {
+  max-width: 1320px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 15px;
+  padding-right: 15px;
+  width: 100%;
+}
+
+/* Prevent WoodMart wrapper from adding unwanted side padding */
+.main-page-wrapper,
+.content-layout-wrapper,
+.website-wrapper {
+  margin: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Ensure rows inside wrapper don't add negative margin overflow */
+.content-layout-wrapper > .row {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
 
 /* =====================================================
    3. ANNOUNCEMENT / TOP BAR

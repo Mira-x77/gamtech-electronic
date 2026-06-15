@@ -15,17 +15,10 @@
                 <!-- Col 1: Brand -->
                 <div class="gt-footer-col gt-footer-brand">
                     <?php
-                    $logo_id = get_theme_mod( 'custom_logo' );
-                    if ( $logo_id ) {
-                        echo wp_get_attachment_image( $logo_id, 'full', false, array(
-                            'alt'   => 'Cello',
-                            'style' => 'max-height:48px;width:auto;filter:brightness(0) invert(1);margin-bottom:16px;',
-                        ) );
-                    } else {
-                        $footer_logo = get_stylesheet_directory_uri() . '/assets/images/logo-light.png';
-                        echo '<img src="' . esc_url( $footer_logo ) . '" alt="Cello" style="max-height:48px;width:auto;margin-bottom:16px;" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\'">';
-                        echo '<span style="display:none;font-size:22px;font-weight:900;color:#fff;">Cello</span>';
-                    }
+                    // Always use the new Cello logo file
+                    $footer_logo = get_stylesheet_directory_uri() . '/assets/images/logo-light.png';
+                    echo '<img src="' . esc_url( $footer_logo ) . '" alt="Cello" style="max-height:48px;width:auto;margin-bottom:16px;" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\'">';
+                    echo '<span style="display:none;font-size:22px;font-weight:900;color:#fff;">Cello</span>';
                     ?>
                     <p><?php echo esc_html( get_bloginfo( 'description' ) ?: __( 'Your trusted electronics store. Quality products, fast delivery.', 'woodmart' ) ); ?></p>
                     <div class="gt-social-links">
