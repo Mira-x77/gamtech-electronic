@@ -1,6 +1,6 @@
 <?php
 /**
- * Footer template — Gamtech Electronic (Cello-style)
+ * Footer template — Cello Electronics
  */
 ?>
     </div><!-- .main-page-wrapper -->
@@ -18,11 +18,13 @@
                     $logo_id = get_theme_mod( 'custom_logo' );
                     if ( $logo_id ) {
                         echo wp_get_attachment_image( $logo_id, 'full', false, array(
-                            'alt'   => get_bloginfo( 'name' ),
+                            'alt'   => 'Cello',
                             'style' => 'max-height:48px;width:auto;filter:brightness(0) invert(1);margin-bottom:16px;',
                         ) );
                     } else {
-                        echo '<span style="font-size:22px;font-weight:900;color:#fff;">' . esc_html( get_bloginfo( 'name' ) ) . '</span>';
+                        $footer_logo = get_stylesheet_directory_uri() . '/assets/images/logo-light.png';
+                        echo '<img src="' . esc_url( $footer_logo ) . '" alt="Cello" style="max-height:48px;width:auto;margin-bottom:16px;" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\'">';
+                        echo '<span style="display:none;font-size:22px;font-weight:900;color:#fff;">Cello</span>';
                     }
                     ?>
                     <p><?php echo esc_html( get_bloginfo( 'description' ) ?: __( 'Your trusted electronics store. Quality products, fast delivery.', 'woodmart' ) ); ?></p>
@@ -79,7 +81,7 @@
                         </li>
                         <li>
                             <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                            <a href="mailto:contact@gamtech-electronic.com">contact@gamtech-electronic.com</a>
+                            <a href="mailto:contact@cello-electronics.com">contact@cello-electronics.com</a>
                         </li>
                         <li>
                             <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>

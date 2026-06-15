@@ -1,6 +1,6 @@
 <?php
 /**
- * Template Name: Gamtech Custom Homepage
+ * Template Name: Cello Custom Homepage
  */
 
 get_header();
@@ -9,7 +9,7 @@ get_header();
 <div class="hero-banner" style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center; background: #111113; border: 1px solid var(--border); overflow: visible;">
     <div class="hero-text" style="flex: 1; padding: 40px; z-index: 10;">
         <span>New Collection</span>
-        <h1 style="font-size: 42px; font-weight: 800; margin: 20px 0; line-height: 1.1;">Experience The Future<br>Of <span style="color: var(--accent);">Gamtech</span> ✨</h1>
+        <h1 style="font-size: 42px; font-weight: 800; margin: 20px 0; line-height: 1.1;">Experience The Future<br>Of <span style="color: var(--accent);">Cello</span> ✨</h1>
         <p style="font-size: 16px; color: var(--text-muted); margin-bottom: 30px;">Discover the ultimate high-performance electronics, components, and premium gaming gear.</p>
         <a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>" class="hero-btn">Explore Now →</a>
     </div>

@@ -25,9 +25,9 @@
                 <div class="gt-topbar-left">
                     <?php
                     $announcements = array(
-                        __( '🚚 Free Shipping When Order Above $100', 'woodmart' ),
-                        __( '⚡ Free Shipping When Order Above $200', 'woodmart' ),
-                        __( '🎁 Free Shipping When Order Above $500', 'woodmart' ),
+                        __( '🚚 Free Shipping Worldwide When Order Above $500', 'woodmart' ),
+                        __( '⚡ Free Shipping Worldwide When Order Above $500', 'woodmart' ),
+                        __( '🎁 Free Shipping Worldwide When Order Above $500', 'woodmart' ),
                     );
                     echo '<span class="gt-topbar-text">' . esc_html( $announcements[ array_rand( $announcements ) ] ) . '</span>';
                     ?>
@@ -107,8 +107,9 @@
                 <!-- Header Icons -->
                 <div class="gt-header-icons">
                     <!-- Language / Currency mock (visual only to match design) -->
-                    <div class="gt-icon-btn" style="cursor:default;" title="Language &amp; Currency">
+                    <div class="gt-icon-btn" style="cursor:default;flex-direction:row;gap:4px;" title="Language &amp; Currency">
                         <span style="font-size:12px;font-weight:700;color:var(--gt-text);">EN</span>
+                        <span style="opacity:0.4;">|</span>
                         <span style="font-size:12px;font-weight:700;color:var(--gt-text);">INR</span>
                     </div>
 

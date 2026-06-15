@@ -2,6 +2,7 @@
 /**
  * One-time logo setter — runs via CLI only.
  * Usage: php wp-content/themes/woodmart-child/set-logo.php
+ * NOTE: Update paths below before running for Cello branding.
  */
 
 // Only allow CLI execution
@@ -16,8 +17,8 @@ $_SERVER['REQUEST_URI'] = '/';
 $wp_root = dirname( dirname( dirname( dirname( __FILE__ ) ) ) );
 require_once $wp_root . '/wp-load.php';
 
-$logo_file     = WP_CONTENT_DIR . '/uploads/2024/09/gamtech_logo_transparent.png';
-$logo_rel_path = '2024/09/gamtech_logo_transparent.png';
+$logo_file     = get_stylesheet_directory() . '/assets/images/logo-dark.png';
+$logo_rel_path = 'themes/woodmart-child/assets/images/logo-dark.png';
 
 if ( ! file_exists( $logo_file ) ) {
     die( "ERROR: Logo file not found at {$logo_file}\n" );
@@ -45,9 +46,9 @@ if ( $existing ) {
     $upload_dir = wp_upload_dir();
 
     $attachment = array(
-        'guid'           => $upload_dir['baseurl'] . '/2024/09/gamtech_logo_transparent.png',
+        'guid'           => $upload_dir['baseurl'] . '/themes/woodmart-child/assets/images/logo-dark.png',
         'post_mime_type' => $filetype['type'],
-        'post_title'     => 'Gamtech Logo',
+        'post_title'     => 'Cello Logo',
         'post_content'   => '',
         'post_status'    => 'inherit',
     );
@@ -66,7 +67,7 @@ if ( ! $header_data || ! isset( $header_data['structure'] ) ) {
     die( "ERROR: whb_default_header option not found. The Header Builder may not have been saved yet.\n" );
 }
 
-function gamtech_inject_logo( &$elements, $attachment_id, $logo_url ) {
+function cello_inject_logo( &$elements, $attachment_id, $logo_url ) {
     foreach ( $elements as &$element ) {
         if ( isset( $element['type'] ) && $element['type'] === 'logo' ) {
             $element['params']['image'] = array(
@@ -82,12 +83,12 @@ function gamtech_inject_logo( &$elements, $attachment_id, $logo_url ) {
             echo "Injected logo into element: {$element['id']}\n";
         }
         if ( isset( $element['content'] ) && is_array( $element['content'] ) ) {
-            gamtech_inject_logo( $element['content'], $attachment_id, $logo_url );
+            cello_inject_logo( $element['content'], $attachment_id, $logo_url );
         }
     }
 }
 
-gamtech_inject_logo( $header_data['structure']['content'], $attachment_id, $logo_url );
+cello_inject_logo( $header_data['structure']['content'], $attachment_id, $logo_url );
 update_option( 'whb_default_header', $header_data );
 
 delete_transient( 'woodmart_style_storage' );

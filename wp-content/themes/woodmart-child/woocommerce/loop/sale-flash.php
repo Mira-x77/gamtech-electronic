@@ -1,6 +1,6 @@
 <?php
 /**
- * Product Sale Flash — Gamtech Child Override
+ * Product Sale Flash — Cello Child Override
  * Shows "Save Rs. X" style badge matching reference design
  */
 

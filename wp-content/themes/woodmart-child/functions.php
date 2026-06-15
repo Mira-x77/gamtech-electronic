@@ -283,21 +283,24 @@ add_filter( 'template_include', 'cello_front_page_template', 99 );
  * Helper: render star rating HTML from average rating (0-5)
  */
 function cello_star_rating( $avg ) {
-$avg = floatval( $avg );
-$full = floor( $avg );
-$half = ( $avg - $full ) >= 0.5 ? 1 : 0;
-$out = '<span class="gt-stars" aria-hidden="true">';
-for ( $i = 0; $i < $full; $i++ ) { $out .= '★'; }
-if ( $half ) { $out .= '☆'; }
-for ( $j = $full + $half; $j < 5; $j++ ) { $out .= '☆'; }
-$out .= '</span>';
-return $out;
+    $avg  = floatval( $avg );
+    $full = floor( $avg );
+    $half = ( $avg - $full ) >= 0.5 ? 1 : 0;
+    $out  = '<span class="gt-stars" aria-hidden="true">';
+    for ( $i = 0; $i < $full; $i++ ) { $out .= '★'; }
+    if ( $half ) { $out .= '☆'; }
+    for ( $j = $full + $half; $j < 5; $j++ ) { $out .= '☆'; }
+    $out .= '</span>';
+    return $out;
 }
 
 // =====================================================
-// 13. SITE NAME FILTER — DISPLAY AS CELLO
+// 13. SITE NAME FILTER — DISPLAY AS CELLO (frontend only)
 // =====================================================
 add_filter( 'bloginfo', function( $output, $show ) {
+    if ( is_admin() ) {
+        return $output;
+    }
     if ( $show === 'name' ) {
         return 'Cello';
     }
