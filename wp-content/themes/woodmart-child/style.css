@@ -81,19 +81,10 @@ html, body {
   width: 100%;
 }
 
-/* Prevent WoodMart wrapper from adding unwanted side padding */
-.main-page-wrapper,
-.content-layout-wrapper,
-.website-wrapper {
-  margin: 0 !important;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-}
-
-/* Ensure rows inside wrapper don't add negative margin overflow */
-.content-layout-wrapper > .row {
-  margin-left: 0 !important;
-  margin-right: 0 !important;
+/* WoodMart layout wrappers - keep Bootstrap defaults intact */
+.main-page-wrapper {
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 /* =====================================================
@@ -897,36 +888,48 @@ select:focus {
   }
 }
 
-/* Product grids */
+/* Product grids — use flexbox for better parent-theme compatibility */
 .gt-product-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  display: flex !important;
+  flex-wrap: wrap;
   gap: 16px;
+}
+
+.gt-product-grid > * {
+  flex: 1 1 calc(20% - 13px);
+  min-width: 0;
+  max-width: 100%;
 }
 
 .gt-deal-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex !important;
+  flex-wrap: wrap;
   gap: 16px;
 }
 
+.gt-deal-grid > * {
+  flex: 1 1 calc(25% - 12px);
+  min-width: 0;
+  max-width: 100%;
+}
+
 @media (max-width: 1199px) {
-  .gt-product-grid { grid-template-columns: repeat(4, 1fr); }
-  .gt-deal-grid    { grid-template-columns: repeat(3, 1fr); }
+  .gt-product-grid > * { flex: 1 1 calc(25% - 12px); }
+  .gt-deal-grid > *    { flex: 1 1 calc(33.333% - 11px); }
 }
 
 @media (max-width: 991px) {
-  .gt-product-grid { grid-template-columns: repeat(3, 1fr); }
-  .gt-deal-grid    { grid-template-columns: repeat(2, 1fr); }
+  .gt-product-grid > * { flex: 1 1 calc(33.333% - 11px); }
+  .gt-deal-grid > *    { flex: 1 1 calc(50% - 8px); }
 }
 
 @media (max-width: 767px) {
-  .gt-product-grid { grid-template-columns: repeat(2, 1fr); }
-  .gt-deal-grid    { grid-template-columns: 1fr; }
+  .gt-product-grid > * { flex: 1 1 calc(50% - 8px); }
+  .gt-deal-grid > *    { flex: 1 1 100%; }
 }
 
 @media (max-width: 479px) {
-  .gt-product-grid { grid-template-columns: 1fr; }
+  .gt-product-grid > * { flex: 1 1 100%; }
 }
 
 /* =====================================================
