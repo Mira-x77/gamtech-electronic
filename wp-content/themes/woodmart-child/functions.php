@@ -366,7 +366,9 @@ function cello_critical_hide_css() {
     .woodmart-preloader,.wd-preloader,.page-preloader,
     .woodmart-cart-sidebar,.wd-cart-sidebar,.woodmart-side-cart,
     .woodmart-close-side,.wd-buttons,.woodmart-buttons,.wd-overlay,
-    .wd-notification,.woodmart-notification {
+    .wd-notification,.woodmart-notification,
+    .woodmart-toolbar,.woodmart-toolbar-label-show,.scrollToTop,
+    a.scrollToTop,.woodmart-toolbar-shop,.woodmart-toolbar-item {
         display:none!important;visibility:hidden!important;opacity:0!important;
         pointer-events:none!important;height:0!important;overflow:hidden!important;
     }
