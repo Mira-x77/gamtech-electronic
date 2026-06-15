@@ -849,10 +849,14 @@ select:focus {
   padding: 9px 0;
   overflow: hidden;
   white-space: nowrap;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  position: relative;
 }
 
 .gt-ticker-inner {
-  display: inline-block;
+  display: inline-flex;
   animation: gt-marquee 30s linear infinite;
   font-size: 13px;
   font-weight: 600;
@@ -861,6 +865,8 @@ select:focus {
 
 .gt-ticker-inner span {
   margin: 0 40px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .gt-ticker-inner span::before {
@@ -872,6 +878,55 @@ select:focus {
 @keyframes gt-marquee {
   0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); }
+}
+
+/* Hero grid */
+.gt-hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 40px;
+  min-height: 320px;
+}
+
+@media (max-width: 767px) {
+  .gt-hero-grid {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    gap: 24px;
+  }
+}
+
+/* Product grids */
+.gt-product-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+}
+
+.gt-deal-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 1199px) {
+  .gt-product-grid { grid-template-columns: repeat(4, 1fr); }
+  .gt-deal-grid    { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 991px) {
+  .gt-product-grid { grid-template-columns: repeat(3, 1fr); }
+  .gt-deal-grid    { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 767px) {
+  .gt-product-grid { grid-template-columns: repeat(2, 1fr); }
+  .gt-deal-grid    { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 479px) {
+  .gt-product-grid { grid-template-columns: 1fr; }
 }
 
 /* =====================================================

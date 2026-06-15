@@ -27,7 +27,7 @@ get_header();
      ===================================================== -->
 <section class="gt-hero-section" style="background: linear-gradient(135deg, #0d1457 0%, #1a237e 50%, #283593 100%); padding: 60px 0 40px; position: relative; overflow: hidden;">
   <div class="container">
-    <div style="display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 40px; min-height: 320px;">
+    <div class="gt-hero-grid">
       <!-- Hero Text -->
       <div style="color: #fff; z-index: 2;">
         <h1 style="font-size: clamp(28px,4vw,46px); font-weight: 900; color: #fff; line-height: 1.15; margin-bottom: 16px;">
@@ -203,7 +203,7 @@ get_header();
 
     if ( $featured_query->have_posts() ) :
     ?>
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px;">
+    <div class="gt-product-grid">
       <?php while ( $featured_query->have_posts() ) : $featured_query->the_post();
         global $product; ?>
         <div class="product-grid-item" style="padding:12px;position:relative;">
@@ -239,7 +239,7 @@ get_header();
       <?php endwhile; wp_reset_postdata(); ?>
     </div>
     <?php else : ?>
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px;">
+    <div class="gt-product-grid">
       <?php
       $recent_args = array( 'post_type' => 'product', 'posts_per_page' => 5, 'orderby' => 'date', 'order' => 'DESC' );
       $recent_q    = new WP_Query( $recent_args );
@@ -305,7 +305,7 @@ get_header();
     </div>
 
     <!-- Deal products -->
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
+    <div class="gt-deal-grid">
       <?php
       $deal_args = array(
         'post_type'      => 'product',
