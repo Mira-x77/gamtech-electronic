@@ -233,7 +233,7 @@ get_header();
               <?php the_title(); ?>
             </a>
             <?php woocommerce_template_loop_price(); ?>
-            <?php echo wc_get_product_variation_attributes_swatches( $product ); ?>
+            <?php if ( function_exists( 'wc_get_product_variation_attributes_swatches' ) ) echo wc_get_product_variation_attributes_swatches( $product ); ?>
           </div>
         </div>
       <?php endwhile; wp_reset_postdata(); ?>
