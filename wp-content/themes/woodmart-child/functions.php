@@ -26,12 +26,20 @@ function woodmart_child_enqueue_styles() {
         null
     );
 
-    // Child theme stylesheet
+    // Child theme base stylesheet (keep for WordPress theme detection)
     wp_enqueue_style(
         'child-style',
         get_stylesheet_directory_uri() . '/style.css',
         array( 'woodmart-style' ),
-        '3.0'
+        '4.0'
+    );
+
+    // NEW: Main Cello design stylesheet — fresh filename bypasses all edge caches
+    wp_enqueue_style(
+        'cello-main-style',
+        get_stylesheet_directory_uri() . '/cello-main.css',
+        array( 'child-style' ),
+        '4.0'
     );
 }
 add_action( 'wp_enqueue_scripts', 'woodmart_child_enqueue_styles', 10010 );
@@ -135,7 +143,7 @@ function cello_dynamic_css() {
     }
     ';
 
-    wp_add_inline_style( 'child-style', $css );
+    wp_add_inline_style( 'cello-main-style', $css );
 }
 add_action( 'wp_enqueue_scripts', 'cello_dynamic_css', 20 );
 

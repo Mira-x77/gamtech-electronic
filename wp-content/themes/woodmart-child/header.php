@@ -1,7 +1,7 @@
 <?php
 /**
  * Header template — Cello Electronics
- * White/navy/gold standard e-commerce header
+ * Full-width, clean Amazon-style header
  */
 ?><!DOCTYPE html>
 <html <?php language_attributes(); ?>>
@@ -26,8 +26,8 @@
                     <?php
                     $announcements = array(
                         __( '🚚 Free Shipping Worldwide When Order Above $500', 'woodmart' ),
-                        __( '⚡ Free Shipping Worldwide When Order Above $500', 'woodmart' ),
-                        __( '🎁 Free Shipping Worldwide When Order Above $500', 'woodmart' ),
+                        __( '⚡ New Arrivals — Check out the latest gadgets', 'woodmart' ),
+                        __( '🎁 Flat 50% Off On Selected Electronics', 'woodmart' ),
                     );
                     echo '<span class="gt-topbar-text">' . esc_html( $announcements[ array_rand( $announcements ) ] ) . '</span>';
                     ?>
@@ -46,10 +46,6 @@
                             <?php esc_html_e( 'Register', 'woodmart' ); ?>
                         </a>
                     <?php endif; ?>
-                    <?php if ( function_exists( 'icl_get_languages' ) ) : ?>
-                        <span style="margin: 0 8px; opacity: 0.5;">|</span>
-                        <span><?php esc_html_e( 'EN', 'woodmart' ); ?></span>
-                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -66,14 +62,13 @@
                 <div class="gt-logo">
                     <a href="<?php echo esc_url( home_url( '/' ) ); ?>">
                         <?php
-                        // Always use the new Cello logo file
-                        $logo_url = get_stylesheet_directory_uri() . '/assets/images/logo-dark.png?v=2';
+                        $logo_url = get_stylesheet_directory_uri() . '/assets/images/logo-dark.png?v=3';
                         ?>
                         <img src="<?php echo esc_url( $logo_url ); ?>"
                              alt="Cello"
-                             style="max-height:54px;width:auto;"
+                             style="max-height:48px;width:auto;"
                              onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
-                        <span style="display:none;font-size:22px;font-weight:900;color:var(--gt-primary);">
+                        <span style="display:none;font-size:24px;font-weight:900;color:#1a237e;">
                             Cello
                         </span>
                     </a>
@@ -99,20 +94,13 @@
 
                 <!-- Header Icons -->
                 <div class="gt-header-icons">
-                    <!-- Language / Currency mock (visual only to match design) -->
-                    <div class="gt-icon-btn" style="cursor:default;flex-direction:row;gap:4px;" title="Language &amp; Currency">
-                        <span style="font-size:12px;font-weight:700;color:var(--gt-text);">EN</span>
-                        <span style="opacity:0.4;">|</span>
-                        <span style="font-size:12px;font-weight:700;color:var(--gt-text);">INR</span>
-                    </div>
-
                     <!-- Account -->
                     <a href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' ) ); ?>" class="gt-icon-btn" title="<?php esc_attr_e( 'My Account', 'woodmart' ); ?>">
                         <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                             <circle cx="12" cy="7" r="4"/>
                         </svg>
-                        <span class="gt-icon-label"><?php esc_html_e( 'Account & List', 'woodmart' ); ?></span>
+                        <span class="gt-icon-label"><?php esc_html_e( 'Account', 'woodmart' ); ?></span>
                     </a>
 
                     <!-- Wishlist -->
@@ -128,9 +116,8 @@
                     <a href="<?php echo esc_url( wc_get_cart_url() ); ?>" class="gt-icon-btn gt-cart-btn" title="<?php esc_attr_e( 'Cart', 'woodmart' ); ?>">
                         <div style="position:relative;display:inline-block;">
                             <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-                                <line x1="3" y1="6" x2="21" y2="6"/>
-                                <path d="M16 10a4 4 0 0 1-8 0"/>
+                                <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
                             </svg>
                             <?php if ( function_exists( 'WC' ) && WC()->cart && WC()->cart->get_cart_contents_count() > 0 ) : ?>
                                 <span class="gt-cart-count"><?php echo esc_html( WC()->cart->get_cart_contents_count() ); ?></span>
@@ -154,9 +141,9 @@
                     </svg>
                 </button>
 
-            </div><!-- .gt-header-inner -->
-        </div><!-- .container -->
-    </header><!-- .gt-header -->
+            </div>
+        </div>
+    </header>
 
     <!-- ======================================
          NAVIGATION BAR
@@ -165,7 +152,12 @@
         <div class="container">
             <div class="gt-nav-inner">
                 <ul class="gt-nav-menu" id="gt-nav-menu">
-                    <li class="gt-nav-item gt-has-children">
+                    <li class="gt-nav-item">
+                        <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="gt-nav-link">
+                            <?php esc_html_e( 'Home', 'woodmart' ); ?>
+                        </a>
+                    </li>
+                    <li class="gt-nav-item">
                         <a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>" class="gt-nav-link">
                             <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-right:6px;">
                                 <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
@@ -174,7 +166,6 @@
                         </a>
                     </li>
                     <?php
-                    // Dynamic category nav items
                     $nav_cats = get_terms( array(
                         'taxonomy'   => 'product_cat',
                         'hide_empty' => true,
@@ -195,11 +186,9 @@
                     <?php
                         endforeach;
                     else :
-                        // Fallback nav items matching reference image
                         $fallback_nav = array(
                             'Electronics' => wc_get_page_permalink( 'shop' ),
                             'Offers'      => wc_get_page_permalink( 'shop' ) . '?on_sale=1',
-                            'Blogs'       => get_permalink( get_option( 'page_for_posts' ) ),
                             'Contact'     => get_permalink( get_page_by_path( 'contact' ) ),
                         );
                         foreach ( $fallback_nav as $label => $url ) :
@@ -214,16 +203,15 @@
                     endif;
                     ?>
                     <li class="gt-nav-item">
-                        <a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) . '?on_sale=1' ); ?>" class="gt-nav-link" style="color:var(--gt-sale) !important;font-weight:700 !important;">
-                            <?php esc_html_e( '🔥 Deals', 'woodmart' ); ?>
+                        <a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) . '?on_sale=1' ); ?>" class="gt-nav-link" style="color: #cc0c39 !important; font-weight: 700 !important;">
+                            🔥 <?php esc_html_e( 'Deals', 'woodmart' ); ?>
                         </a>
                     </li>
                 </ul>
 
                 <ul class="gt-nav-secondary">
-                    <li><a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>" class="gt-nav-link"><?php esc_html_e( 'All Collections', 'woodmart' ); ?></a></li>
-                    <li><a href="<?php echo esc_url( get_permalink( get_page_by_path( 'faq' ) ) ); ?>" class="gt-nav-link"><?php esc_html_e( 'FAQs', 'woodmart' ); ?></a></li>
                     <li><a href="<?php echo esc_url( get_permalink( get_page_by_path( 'about' ) ) ); ?>" class="gt-nav-link"><?php esc_html_e( 'About Us', 'woodmart' ); ?></a></li>
+                    <li><a href="<?php echo esc_url( get_permalink( get_page_by_path( 'contact' ) ) ); ?>" class="gt-nav-link"><?php esc_html_e( 'Contact', 'woodmart' ); ?></a></li>
                 </ul>
             </div>
         </div>
@@ -242,7 +230,7 @@
         </div>
     </nav>
 
-    <?php woodmart_page_top_part(); ?>
+    <?php if ( function_exists( 'woodmart_page_top_part' ) ) woodmart_page_top_part(); ?>
 
     <!-- Page content begins -->
     <div class="main-page-wrapper">

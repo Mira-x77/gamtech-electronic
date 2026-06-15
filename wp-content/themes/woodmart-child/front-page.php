@@ -1,115 +1,242 @@
 <?php
 /**
  * Homepage template — Cello Electronics
- * Replicates the Cello-style electronics store layout
+ * Full-width, Amazon-style electronics store layout
  */
 get_header();
+
+/**
+ * Helper: render a product card (Amazon-style)
+ */
+function cello_render_product_card( $product ) {
+    if ( ! $product ) return;
+    $permalink  = get_permalink( $product->get_id() );
+    $image_url  = wp_get_attachment_url( $product->get_image_id() );
+    if ( ! $image_url ) $image_url = wc_placeholder_img_src( 'woocommerce_thumbnail' );
+    $title      = $product->get_name();
+    $price_html = $product->get_price_html();
+    $avg_rating = $product->get_average_rating();
+    $review_cnt = $product->get_review_count();
+    $is_on_sale = $product->is_on_sale();
+    $brand      = '';
+    // Try to get brand from pa_brand attribute
+    $brand_attr = $product->get_attribute( 'pa_brand' );
+    if ( $brand_attr ) $brand = $brand_attr;
+
+    echo '<div class="cello-product-card">';
+
+    // Sale tag
+    if ( $is_on_sale ) {
+        $reg   = (float) $product->get_regular_price();
+        $sale  = (float) $product->get_sale_price();
+        $saved = $reg > 0 ? $reg - $sale : 0;
+        if ( $saved > 0 ) {
+            echo '<span class="cello-sale-tag">Save ' . esc_html( get_woocommerce_currency_symbol() . number_format( $saved, 0 ) ) . '</span>';
+        } else {
+            echo '<span class="cello-sale-tag">Sale</span>';
+        }
+    }
+
+    // Add to cart button
+    if ( $product->is_purchasable() && $product->is_in_stock() ) {
+        echo '<a href="' . esc_url( $product->add_to_cart_url() ) . '" class="cello-add-cart-btn" title="' . esc_attr__( 'Add to Cart', 'woodmart' ) . '">+</a>';
+    }
+
+    // Product image
+    echo '<a href="' . esc_url( $permalink ) . '">';
+    echo '<img src="' . esc_url( $image_url ) . '" alt="' . esc_attr( $title ) . '" class="cello-product-image" loading="lazy">';
+    echo '</a>';
+
+    // Product info
+    echo '<div class="cello-product-info">';
+    if ( $brand ) {
+        echo '<span class="cello-product-brand">' . esc_html( $brand ) . '</span>';
+    }
+    echo '<h3 class="cello-product-title"><a href="' . esc_url( $permalink ) . '">' . esc_html( $title ) . '</a></h3>';
+
+    // Stars
+    if ( $avg_rating > 0 ) {
+        echo '<div>';
+        echo '<span class="cello-stars">';
+        $full = floor( $avg_rating );
+        $half = ( $avg_rating - $full ) >= 0.5 ? 1 : 0;
+        for ( $i = 0; $i < $full; $i++ ) echo '&#9733;';
+        if ( $half ) echo '&#9733;';
+        for ( $j = $full + $half; $j < 5; $j++ ) echo '&#9734;';
+        echo '</span>';
+        echo '<span class="cello-stars-count">(' . esc_html( $review_cnt ) . ')</span>';
+        echo '</div>';
+    }
+
+    // Price
+    echo '<div class="cello-price">' . $price_html . '</div>';
+    echo '</div>';
+
+    echo '</div>';
+}
 ?>
 
 <!-- =====================================================
-     ANNOUNCEMENT / TOP MARQUEE BAR
+     ANNOUNCEMENT TICKER
      ===================================================== -->
 <div class="gt-ticker-strip">
-  <div class="container">
-    <div class="gt-ticker-inner">
-      <span><?php esc_html_e( 'Free Shipping Worldwide When Order Above $500', 'woodmart' ); ?></span>
-      <span><?php esc_html_e( 'Jackpot Deals | Tap to get Flat 50% Off', 'woodmart' ); ?></span>
-      <span><?php esc_html_e( 'Free Shipping Worldwide When Order Above $500', 'woodmart' ); ?></span>
-      <span><?php esc_html_e( 'Jackpot Deals | Tap to get Flat 50% Off', 'woodmart' ); ?></span>
-      <span><?php esc_html_e( 'Free Shipping Worldwide When Order Above $500', 'woodmart' ); ?></span>
-      <span><?php esc_html_e( 'Jackpot Deals | Tap to get Flat 50% Off', 'woodmart' ); ?></span>
-    </div>
+  <div class="gt-ticker-inner">
+    <span><?php esc_html_e( 'Free Shipping Worldwide On Orders Above $500', 'woodmart' ); ?></span>
+    <span><?php esc_html_e( 'Flat 50% Off On Selected Electronics', 'woodmart' ); ?></span>
+    <span><?php esc_html_e( 'Free Shipping Worldwide On Orders Above $500', 'woodmart' ); ?></span>
+    <span><?php esc_html_e( 'Flat 50% Off On Selected Electronics', 'woodmart' ); ?></span>
+    <span><?php esc_html_e( 'Free Shipping Worldwide On Orders Above $500', 'woodmart' ); ?></span>
+    <span><?php esc_html_e( 'Flat 50% Off On Selected Electronics', 'woodmart' ); ?></span>
+    <span><?php esc_html_e( 'Free Shipping Worldwide On Orders Above $500', 'woodmart' ); ?></span>
+    <span><?php esc_html_e( 'Flat 50% Off On Selected Electronics', 'woodmart' ); ?></span>
   </div>
 </div>
 
 <!-- =====================================================
-     HERO SLIDER
+     HERO SECTION — FULL WIDTH
      ===================================================== -->
-<section class="gt-hero-section" style="background: linear-gradient(135deg, #0d1457 0%, #1a237e 50%, #283593 100%); padding: 60px 0 40px; position: relative; overflow: hidden;">
+<section class="gt-hero-section" style="background: linear-gradient(135deg, #0d1457 0%, #1a237e 40%, #283593 100%); padding: 0;">
   <div class="container">
     <div class="gt-hero-grid">
-      <!-- Hero Text -->
-      <div style="color: #fff; z-index: 2;">
-        <h1 style="font-size: clamp(28px,4vw,46px); font-weight: 900; color: #fff; line-height: 1.15; margin-bottom: 16px;">
+      <!-- Left: Text content -->
+      <div style="color: #fff; z-index: 2; padding: 40px 0;">
+        <p style="font-size: 13px; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.7); margin-bottom: 12px; font-weight: 600;">
+          <?php esc_html_e( 'New Collection 2026', 'woodmart' ); ?>
+        </p>
+        <h1 style="font-size: clamp(32px, 4.5vw, 52px); font-weight: 900; color: #fff; line-height: 1.1; margin: 0 0 16px;">
           <?php esc_html_e( 'Stay Ahead With Latest Gadgets', 'woodmart' ); ?>
         </h1>
-        <p style="font-size: 15px; color: rgba(255,255,255,0.75); margin-bottom: 28px; max-width: 420px;">
-          <?php esc_html_e( 'Discover the newest gadgets and electronic games that keep you ahead.', 'woodmart' ); ?>
+        <p style="font-size: 16px; color: rgba(255,255,255,0.75); margin-bottom: 32px; max-width: 440px; line-height: 1.7;">
+          <?php esc_html_e( 'Discover the newest electronics, smartphones, and tech gadgets that keep you connected and ahead of the curve.', 'woodmart' ); ?>
         </p>
-        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <div style="display: flex; gap: 14px; flex-wrap: wrap;">
           <a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>"
-             style="background:#fff;color:#1a237e;padding:12px 28px;border-radius:6px;font-weight:700;font-size:14px;text-decoration:none;transition:all 0.25s;display:inline-block;"
-             onmouseover="this.style.background='#f4c430';this.style.color='#fff'"
-             onmouseout="this.style.background='#fff';this.style.color='#1a237e'">
-            <?php esc_html_e( 'Buy Now', 'woodmart' ); ?> →
+             style="background: #f4c430; color: #1a237e; padding: 14px 32px; border-radius: 8px; font-weight: 800; font-size: 15px; text-decoration: none; transition: all 0.25s; display: inline-flex; align-items: center; gap: 8px;">
+            <?php esc_html_e( 'Shop Now', 'woodmart' ); ?>
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </a>
-          <a href="<?php echo esc_url( get_permalink( wc_get_page_id( 'shop' ) ) ); ?>"
-             style="background:transparent;color:#fff;padding:12px 28px;border-radius:6px;font-weight:700;font-size:14px;text-decoration:none;border:2px solid rgba(255,255,255,0.5);transition:all 0.25s;display:inline-block;"
-             onmouseover="this.style.borderColor='#fff'"
-             onmouseout="this.style.borderColor='rgba(255,255,255,0.5)'">
-            <?php esc_html_e( 'See More', 'woodmart' ); ?> →
+          <a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>?on_sale=1"
+             style="background: transparent; color: #fff; padding: 14px 32px; border-radius: 8px; font-weight: 700; font-size: 15px; text-decoration: none; border: 2px solid rgba(255,255,255,0.4); transition: all 0.25s; display: inline-flex; align-items: center; gap: 8px;">
+            <?php esc_html_e( 'View Deals', 'woodmart' ); ?>
           </a>
         </div>
       </div>
-      <!-- Hero Image -->
-      <div style="text-align: center; z-index: 2;">
+      <!-- Right: Hero Image -->
+      <div style="text-align: center; z-index: 2; padding: 40px 0;">
         <?php
         $hero_img = get_theme_mod( 'gamtech_hero_image', '' );
         if ( $hero_img ) :
         ?>
           <img src="<?php echo esc_url( $hero_img ); ?>" alt="<?php esc_attr_e( 'Latest Gadgets', 'woodmart' ); ?>"
-               style="max-height: 320px; filter: drop-shadow(0 20px 40px rgba(0,0,0,0.4)); animation: gt-float 3s ease-in-out infinite;">
+               style="max-height: 360px; max-width: 100%; filter: drop-shadow(0 20px 60px rgba(0,0,0,0.5)); animation: gt-float 3s ease-in-out infinite;">
         <?php else : ?>
-          <!-- Decorative SVG placeholder headphones shape -->
-          <div style="width:280px;height:280px;margin:0 auto;background:rgba(255,255,255,0.08);border-radius:50%;display:flex;align-items:center;justify-content:center;">
-            <svg width="140" height="140" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:0.6;">
-              <circle cx="70" cy="70" r="68" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
-              <path d="M35 75C35 55.1 51.1 39 71 39s36 16.1 36 36" stroke="#ff6f00" stroke-width="5" fill="none" stroke-linecap="round"/>
-              <rect x="24" y="72" width="18" height="28" rx="9" fill="#ff6f00"/>
-              <rect x="98" y="72" width="18" height="28" rx="9" fill="#ff6f00"/>
+          <div style="width: 320px; height: 320px; margin: 0 auto; background: rgba(255,255,255,0.06); border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative;">
+            <div style="position: absolute; inset: -20px; border: 2px dashed rgba(255,255,255,0.1); border-radius: 50%; animation: spin 20s linear infinite;"></div>
+            <svg width="160" height="160" viewBox="0 0 160 160" fill="none" style="opacity: 0.7;">
+              <circle cx="80" cy="80" r="78" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
+              <path d="M40 85C40 62 60 42 83 42s43 20 43 43" stroke="#ff6f00" stroke-width="6" fill="none" stroke-linecap="round"/>
+              <rect x="28" y="82" width="22" height="32" rx="11" fill="#ff6f00"/>
+              <rect x="110" y="82" width="22" height="32" rx="11" fill="#ff6f00"/>
+              <circle cx="80" cy="110" r="6" fill="rgba(255,255,255,0.3)"/>
             </svg>
           </div>
         <?php endif; ?>
       </div>
     </div>
   </div>
-  <!-- Decorative background circles -->
-  <div style="position:absolute;top:-60px;right:-60px;width:300px;height:300px;background:rgba(255,255,255,0.04);border-radius:50%;pointer-events:none;"></div>
-  <div style="position:absolute;bottom:-80px;left:10%;width:200px;height:200px;background:rgba(255,111,0,0.08);border-radius:50%;pointer-events:none;"></div>
+  <!-- Decorative elements -->
+  <div style="position:absolute;top:-80px;right:-80px;width:400px;height:400px;background:rgba(255,255,255,0.03);border-radius:50%;pointer-events:none;"></div>
+  <div style="position:absolute;bottom:-60px;left:5%;width:250px;height:250px;background:rgba(255,111,0,0.06);border-radius:50%;pointer-events:none;"></div>
 </section>
 
 <style>
 @keyframes gt-float {
-  0%,100% { transform: translateY(0px); }
-  50%      { transform: translateY(-12px); }
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-14px); }
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 </style>
 
 <!-- =====================================================
-     COLLECTION CATEGORIES
+     TRUST BADGES ROW
      ===================================================== -->
-<section style="padding: 48px 0 32px;">
+<section style="padding: 0;">
   <div class="container">
-    <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
-      <div>
-        <h2 class="gt-section-title"><?php esc_html_e( 'Collection', 'woodmart' ); ?></h2>
-        <p class="gt-section-sub"><?php esc_html_e( 'Top 10 Most Sold This Week. Next Day Delivery', 'woodmart' ); ?></p>
+    <div class="gt-trust-badges" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;padding:24px 0;border-bottom:1px solid #e8eaed;">
+      <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:160px;">
+        <div style="width:44px;height:44px;background:#f0f2f5;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="22" height="22" fill="none" stroke="#1a237e" stroke-width="2" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        </div>
+        <div>
+          <h4 style="font-size:13px;font-weight:700;margin:0 0 2px;color:#1a1a2e;">Free Shipping</h4>
+          <p style="font-size:11px;color:#80868b;margin:0;">On orders above $500</p>
+        </div>
       </div>
-      <div style="display:flex;align-items:center;gap:10px;">
-        <a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>"
-           style="font-size:13px;font-weight:600;color:var(--gt-primary);text-decoration:none;border-bottom:1px solid var(--gt-primary);">
-          <?php esc_html_e( 'View all collections', 'woodmart' ); ?>
-        </a>
+      <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:160px;">
+        <div style="width:44px;height:44px;background:#f0f2f5;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="22" height="22" fill="none" stroke="#1a237e" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.21h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.09 6.09l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </div>
+        <div>
+          <h4 style="font-size:13px;font-weight:700;margin:0 0 2px;color:#1a1a2e;">Support 24/7</h4>
+          <p style="font-size:11px;color:#80868b;margin:0;">Always available</p>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:160px;">
+        <div style="width:44px;height:44px;background:#f0f2f5;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="22" height="22" fill="none" stroke="#1a237e" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        </div>
+        <div>
+          <h4 style="font-size:13px;font-weight:700;margin:0 0 2px;color:#1a1a2e;">100% Money Back</h4>
+          <p style="font-size:11px;color:#80868b;margin:0;">Guaranteed refund</p>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:160px;">
+        <div style="width:44px;height:44px;background:#f0f2f5;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="22" height="22" fill="none" stroke="#1a237e" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div>
+          <h4 style="font-size:13px;font-weight:700;margin:0 0 2px;color:#1a1a2e;">90 Days Return</h4>
+          <p style="font-size:11px;color:#80868b;margin:0;">Easy returns policy</p>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:160px;">
+        <div style="width:44px;height:44px;background:#f0f2f5;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="22" height="22" fill="none" stroke="#1a237e" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div>
+          <h4 style="font-size:13px;font-weight:700;margin:0 0 2px;color:#1a1a2e;">Secure Payment</h4>
+          <p style="font-size:11px;color:#80868b;margin:0;">100% secure checkout</p>
+        </div>
       </div>
     </div>
+  </div>
+</section>
 
-    <!-- Category Grid -->
+<!-- =====================================================
+     TOP CATEGORIES OF THE MONTH
+     ===================================================== -->
+<section style="padding: 40px 0 16px;">
+  <div class="container">
+    <div class="cello-section-header">
+      <div>
+        <h2 class="cello-section-title"><?php esc_html_e( 'Top Categories Of The Month', 'woodmart' ); ?></h2>
+        <p class="cello-section-sub"><?php esc_html_e( 'Browse our most popular product categories', 'woodmart' ); ?></p>
+      </div>
+      <a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>" class="cello-view-all">
+        <?php esc_html_e( 'View All Categories', 'woodmart' ); ?>
+      </a>
+    </div>
+
     <div class="gt-category-grid">
       <?php
       $categories = get_terms( array(
         'taxonomy'   => 'product_cat',
         'hide_empty' => true,
-        'number'     => 12,
+        'number'     => 8,
+        'parent'     => 0,
         'exclude'    => array( get_option( 'default_product_cat' ) ),
         'orderby'    => 'count',
         'order'      => 'DESC',
@@ -131,181 +258,162 @@ get_header();
       <?php
         endforeach;
       else :
-      ?>
-        <?php
-        // Fallback static categories matching the reference image
+        // Fallback static categories
         $static_cats = array(
-          array( 'name' => 'Earbuds',      'count' => 4 ),
-          array( 'name' => 'Hard Devices', 'count' => 8 ),
-          array( 'name' => 'Keyboard',     'count' => 2 ),
-          array( 'name' => 'Mobile',       'count' => 6 ),
-          array( 'name' => 'Printer',      'count' => 3 ),
-          array( 'name' => 'Earphone',     'count' => 4 ),
-          array( 'name' => 'Headphones',   'count' => 5 ),
-          array( 'name' => 'Laptop',       'count' => 5 ),
-          array( 'name' => 'Pen Drive',    'count' => 4 ),
-          array( 'name' => 'Tablet',       'count' => 4 ),
+          array( 'name' => 'Smartphones',   'icon' => '&#128241;' ),
+          array( 'name' => 'Laptops',       'icon' => '&#128187;' ),
+          array( 'name' => 'Headphones',    'icon' => '&#127911;' ),
+          array( 'name' => 'Tablets',       'icon' => '&#128195;' ),
+          array( 'name' => 'Smart Watches', 'icon' => '&#8986;' ),
+          array( 'name' => 'Cameras',       'icon' => '&#128247;' ),
+          array( 'name' => 'Gaming',        'icon' => '&#127918;' ),
+          array( 'name' => 'Audio',         'icon' => '&#127925;' ),
         );
         foreach ( $static_cats as $cat ) :
-        ?>
-          <a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>" class="gt-category-item">
-            <div style="width:52px;height:52px;background:var(--gt-bg-light);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:10px;">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--gt-primary)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
-            </div>
-            <span class="gt-cat-name"><?php echo esc_html( $cat['name'] ); ?></span>
-            <span class="gt-cat-count"><?php echo esc_html( $cat['count'] ); ?> <?php esc_html_e( 'items', 'woodmart' ); ?></span>
-          </a>
-        <?php endforeach; ?>
-      <?php endif; ?>
+      ?>
+        <a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>" class="gt-category-item">
+          <div style="width:56px;height:56px;background:#f0f2f5;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;font-size:24px;">
+            <?php echo $cat['icon']; ?>
+          </div>
+          <span class="gt-cat-name"><?php echo esc_html( $cat['name'] ); ?></span>
+        </a>
+      <?php endforeach; endif; ?>
     </div>
   </div>
 </section>
 
 <!-- =====================================================
-     MARQUEE / TICKER STRIP
+     3-COLUMN PROMO BANNERS
      ===================================================== -->
-<div class="gt-ticker-strip">
-  <div class="gt-ticker-inner">
-    <span><?php esc_html_e( 'Jackpot Deals | Tap to get Flat 50% Off', 'woodmart' ); ?></span>
-    <span><?php esc_html_e( 'Jackpot Deals | Tap to get Flat 50% Off', 'woodmart' ); ?></span>
-    <span><?php esc_html_e( 'Jackpot Deals | Tap to get Flat 50% Off', 'woodmart' ); ?></span>
-    <span><?php esc_html_e( 'Jackpot Deals | Tap to get Flat 50% Off', 'woodmart' ); ?></span>
-    <span><?php esc_html_e( 'Jackpot Deals | Tap to get Flat 50% Off', 'woodmart' ); ?></span>
-    <span><?php esc_html_e( 'Jackpot Deals | Tap to get Flat 50% Off', 'woodmart' ); ?></span>
+<section style="padding: 24px 0 40px;">
+  <div class="container">
+    <div class="cello-banner-grid">
+      <!-- Banner 1: Smartphones -->
+      <a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>?product_cat=smartphones"
+         class="cello-banner-card"
+         style="background-image: linear-gradient(135deg, #1a237e, #283593);">
+        <div class="cello-banner-content">
+          <p class="banner-cat"><?php esc_html_e( 'Smartphones', 'woodmart' ); ?></p>
+          <h3><?php esc_html_e( 'Super UHD Display', 'woodmart' ); ?></h3>
+          <p class="banner-sub"><?php esc_html_e( 'Nano Cell Technology', 'woodmart' ); ?></p>
+          <div class="banner-price">$94.99 <del>$129</del></div>
+          <span class="shop-now-link"><?php esc_html_e( 'Shop Now', 'woodmart' ); ?> &rarr;</span>
+        </div>
+      </a>
+
+      <!-- Banner 2: Laptops -->
+      <a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>?product_cat=laptops"
+         class="cello-banner-card"
+         style="background-image: linear-gradient(135deg, #0d1457, #1565c0);">
+        <div class="cello-banner-content">
+          <p class="banner-cat"><?php esc_html_e( 'Laptops', 'woodmart' ); ?></p>
+          <h3><?php esc_html_e( 'Macbook Pro — Genius Touch', 'woodmart' ); ?></h3>
+          <p class="banner-sub"><?php esc_html_e( 'Performance Redefined', 'woodmart' ); ?></p>
+          <div class="banner-price">$94.99 <del>$129</del></div>
+          <span class="shop-now-link"><?php esc_html_e( 'Shop Now', 'woodmart' ); ?> &rarr;</span>
+        </div>
+      </a>
+
+      <!-- Banner 3: Cameras -->
+      <a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>?product_cat=cameras"
+         class="cello-banner-card"
+         style="background-image: linear-gradient(135deg, #1a237e, #0d47a1);">
+        <div class="cello-banner-content">
+          <p class="banner-cat"><?php esc_html_e( 'Cameras', 'woodmart' ); ?></p>
+          <h3><?php esc_html_e( '720P WIFI Camera', 'woodmart' ); ?></h3>
+          <p class="banner-sub"><?php esc_html_e( 'Smart Home Security', 'woodmart' ); ?></p>
+          <div class="banner-price"><?php esc_html_e( 'Starting at $295', 'woodmart' ); ?></div>
+          <span class="shop-now-link"><?php esc_html_e( 'Shop Now', 'woodmart' ); ?> &rarr;</span>
+        </div>
+      </a>
+    </div>
   </div>
-</div>
+</section>
 
 <!-- =====================================================
-     FEATURED COLLECTION
+     NEW ARRIVALS
      ===================================================== -->
-<section style="padding: 48px 0;">
+<section style="padding: 32px 0 40px;">
   <div class="container">
-    <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+    <div class="cello-section-header">
       <div>
-        <h2 class="gt-section-title"><?php esc_html_e( 'Featured Collection', 'woodmart' ); ?></h2>
-        <p class="gt-section-sub"><?php esc_html_e( 'Top 10 Most Sold This Week. Next Day Delivery', 'woodmart' ); ?></p>
+        <h2 class="cello-section-title"><?php esc_html_e( 'New Arrivals', 'woodmart' ); ?></h2>
+        <p class="cello-section-sub"><?php esc_html_e( 'Latest products added to our store', 'woodmart' ); ?></p>
       </div>
+      <a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>?orderby=date" class="cello-view-all">
+        <?php esc_html_e( 'View All', 'woodmart' ); ?>
+      </a>
     </div>
 
-    <?php
-    $featured_args = array(
-      'post_type'      => 'product',
-      'posts_per_page' => 5,
-      'tax_query'      => array( array(
-        'taxonomy' => 'product_visibility',
-        'field'    => 'name',
-        'terms'    => 'featured',
-      ) ),
-      'orderby' => 'date',
-      'order'   => 'DESC',
-    );
-    $featured_query = new WP_Query( $featured_args );
-
-    if ( $featured_query->have_posts() ) :
-    ?>
-    <div class="gt-product-grid">
-      <?php while ( $featured_query->have_posts() ) : $featured_query->the_post();
-        global $product; ?>
-        <div class="product-grid-item" style="padding:12px;position:relative;">
-          <?php if ( $product->is_on_sale() ) : ?>
-            <div style="position:absolute;top:10px;left:10px;z-index:3;background:#e53935;color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;text-transform:uppercase;">
-              <?php
-              $reg   = (float) $product->get_regular_price();
-              $sale  = (float) $product->get_sale_price();
-              $saved = $reg > 0 ? round( ( $reg - $sale ) / $reg * 100 ) : 0;
-              echo 'Save ' . esc_html( get_woocommerce_currency_symbol() ) . esc_html( number_format( $reg - $sale, 0 ) );
-              ?>
-            </div>
-          <?php endif; ?>
-
-          <div style="position:absolute;top:10px;right:10px;z-index:3;background:var(--gt-primary);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;cursor:pointer;"
-               onclick="location.href='<?php echo esc_url( get_permalink() ); ?>'">
-            <?php esc_html_e( 'Quick Look', 'woodmart' ); ?>
-          </div>
-
-          <a href="<?php the_permalink(); ?>" style="display:block;text-align:center;margin-bottom:10px;overflow:hidden;border-radius:6px;">
-            <?php the_post_thumbnail( 'woocommerce_thumbnail', array( 'style' => 'width:100%;height:180px;object-fit:contain;transition:transform 0.3s;' ) ); ?>
-          </a>
-
-          <div style="padding:0 4px;">
-            <p style="font-size:11px;color:var(--gt-text-light);margin-bottom:4px;"><?php bloginfo('name'); ?></p>
-            <a href="<?php the_permalink(); ?>" style="font-size:13px;font-weight:600;color:var(--gt-text);text-decoration:none;display:block;margin-bottom:8px;line-height:1.4;">
-              <?php the_title(); ?>
-            </a>
-            <?php woocommerce_template_loop_price(); ?>
-            <?php if ( function_exists( 'wc_get_product_variation_attributes_swatches' ) ) echo wc_get_product_variation_attributes_swatches( $product ); ?>
-          </div>
-        </div>
-      <?php endwhile; wp_reset_postdata(); ?>
-    </div>
-    <?php else : ?>
-    <div class="gt-product-grid">
+    <div class="cello-product-grid">
       <?php
-      $recent_args = array( 'post_type' => 'product', 'posts_per_page' => 5, 'orderby' => 'date', 'order' => 'DESC' );
-      $recent_q    = new WP_Query( $recent_args );
-      if ( $recent_q->have_posts() ) :
-        while ( $recent_q->have_posts() ) : $recent_q->the_post();
+      $new_args = array(
+        'post_type'      => 'product',
+        'posts_per_page' => 10,
+        'orderby'        => 'date',
+        'order'          => 'DESC',
+      );
+      $new_query = new WP_Query( $new_args );
+
+      if ( $new_query->have_posts() ) :
+        while ( $new_query->have_posts() ) : $new_query->the_post();
           global $product;
+          cello_render_product_card( $product );
+        endwhile;
+        wp_reset_postdata();
+      else :
+        // Show placeholder cards when no products
+        for ( $i = 1; $i <= 5; $i++ ) :
       ?>
-        <div class="product-grid-item" style="padding:12px;position:relative;">
-          <?php if ( $product->is_on_sale() ) : ?>
-            <div style="position:absolute;top:10px;left:10px;z-index:3;background:#e53935;color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;">
-              <?php $reg = (float)$product->get_regular_price(); $sale = (float)$product->get_sale_price();
-              echo 'Save ' . esc_html( get_woocommerce_currency_symbol() ) . esc_html( number_format( $reg - $sale, 0 ) ); ?>
-            </div>
-          <?php endif; ?>
-          <a href="<?php the_permalink(); ?>" style="display:block;text-align:center;margin-bottom:10px;overflow:hidden;border-radius:6px;">
-            <?php the_post_thumbnail( 'woocommerce_thumbnail', array( 'style' => 'width:100%;height:180px;object-fit:contain;' ) ); ?>
-          </a>
-          <div style="padding:0 4px;">
-            <a href="<?php the_permalink(); ?>" style="font-size:13px;font-weight:600;color:var(--gt-text);text-decoration:none;display:block;margin-bottom:8px;line-height:1.4;">
-              <?php the_title(); ?>
-            </a>
-            <?php woocommerce_template_loop_price(); ?>
+        <div class="cello-product-card">
+          <div style="width:100%;height:200px;background:#f0f2f5;display:flex;align-items:center;justify-content:center;">
+            <svg width="48" height="48" fill="none" stroke="#dadce0" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a4 4 0 0 0-8 0v2"/></svg>
+          </div>
+          <div class="cello-product-info">
+            <span class="cello-product-brand">Cello</span>
+            <h3 class="cello-product-title"><?php echo esc_html( 'Sample Product ' . $i ); ?></h3>
+            <div class="cello-price">$0.00</div>
           </div>
         </div>
-      <?php endwhile; wp_reset_postdata(); endif; ?>
+      <?php endfor; endif; ?>
     </div>
-    <?php endif; ?>
   </div>
 </section>
 
 <!-- =====================================================
      DEAL OF THE DAY
      ===================================================== -->
-<section class="gt-deal-section">
+<section class="cello-deal-section">
   <div class="container">
-    <div class="gt-deal-header">
+    <div class="cello-deal-header">
       <div>
-        <h2><?php esc_html_e( 'Deal Of The Days', 'woodmart' ); ?></h2>
-        <p><?php esc_html_e( "Deal Of The Day: Unbelievable Savings Await!", 'woodmart' ); ?></p>
+        <h2><?php esc_html_e( 'Deal Of The Day', 'woodmart' ); ?></h2>
+        <p><?php esc_html_e( 'Unbelievable savings — limited time only!', 'woodmart' ); ?></p>
       </div>
-      <!-- Countdown timer -->
-      <div class="gt-countdown" id="gt-deal-countdown" data-end="<?php echo esc_attr( date( 'Y-m-d', strtotime( '+3 days' ) ) ); ?>">
-        <div class="gt-countdown-block">
-          <span class="number" id="gt-days">00</span>
+      <div class="cello-countdown" id="cello-countdown">
+        <div class="cello-countdown-block">
+          <span class="number" id="cd-days">00</span>
           <span class="label"><?php esc_html_e( 'Days', 'woodmart' ); ?></span>
         </div>
-        <span style="color:var(--gt-primary);font-weight:800;font-size:22px;align-self:flex-start;margin-top:10px;">:</span>
-        <div class="gt-countdown-block">
-          <span class="number" id="gt-hours">00</span>
+        <span class="cello-countdown-sep">:</span>
+        <div class="cello-countdown-block">
+          <span class="number" id="cd-hours">00</span>
           <span class="label"><?php esc_html_e( 'Hours', 'woodmart' ); ?></span>
         </div>
-        <span style="color:var(--gt-primary);font-weight:800;font-size:22px;align-self:flex-start;margin-top:10px;">:</span>
-        <div class="gt-countdown-block">
-          <span class="number" id="gt-mins">00</span>
+        <span class="cello-countdown-sep">:</span>
+        <div class="cello-countdown-block">
+          <span class="number" id="cd-mins">00</span>
           <span class="label"><?php esc_html_e( 'Mins', 'woodmart' ); ?></span>
         </div>
-        <span style="color:var(--gt-primary);font-weight:800;font-size:22px;align-self:flex-start;margin-top:10px;">:</span>
-        <div class="gt-countdown-block">
-          <span class="number" id="gt-secs">00</span>
+        <span class="cello-countdown-sep">:</span>
+        <div class="cello-countdown-block">
+          <span class="number" id="cd-secs">00</span>
           <span class="label"><?php esc_html_e( 'Sec', 'woodmart' ); ?></span>
         </div>
       </div>
     </div>
 
-    <!-- Deal products -->
-    <div class="gt-deal-grid">
+    <div class="cello-product-grid" style="grid-template-columns: repeat(4, 1fr) !important;">
       <?php
       $deal_args = array(
         'post_type'      => 'product',
@@ -319,73 +427,82 @@ get_header();
       );
       $deal_query = new WP_Query( $deal_args );
       if ( ! $deal_query->have_posts() ) {
-        // Fallback: just show latest products
         $deal_query = new WP_Query( array( 'post_type' => 'product', 'posts_per_page' => 4, 'orderby' => 'date', 'order' => 'DESC' ) );
       }
       if ( $deal_query->have_posts() ) :
         while ( $deal_query->have_posts() ) : $deal_query->the_post();
           global $product;
+          cello_render_product_card( $product );
+        endwhile;
+        wp_reset_postdata();
+      else :
+        for ( $i = 1; $i <= 4; $i++ ) :
       ?>
-        <div style="background:#fff;border-radius:8px;padding:14px;display:flex;gap:14px;align-items:center;border:1px solid var(--gt-border);">
-          <a href="<?php the_permalink(); ?>" style="flex-shrink:0;width:80px;height:80px;display:block;overflow:hidden;border-radius:6px;">
-            <?php the_post_thumbnail( 'thumbnail', array( 'style' => 'width:80px;height:80px;object-fit:contain;' ) ); ?>
-          </a>
-          <div>
-            <p style="font-size:11px;color:var(--gt-text-light);margin-bottom:3px;"><?php bloginfo('name'); ?></p>
-            <a href="<?php the_permalink(); ?>" style="font-size:13px;font-weight:600;color:var(--gt-text);text-decoration:none;display:block;margin-bottom:6px;line-height:1.3;">
-              <?php the_title(); ?>
-            </a>
-            <?php woocommerce_template_loop_price(); ?>
+        <div class="cello-product-card">
+          <span class="cello-sale-tag">Sale</span>
+          <div style="width:100%;height:200px;background:#f0f2f5;display:flex;align-items:center;justify-content:center;">
+            <svg width="48" height="48" fill="none" stroke="#dadce0" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a4 4 0 0 0-8 0v2"/></svg>
+          </div>
+          <div class="cello-product-info">
+            <h3 class="cello-product-title"><?php echo esc_html( 'Deal Product ' . $i ); ?></h3>
+            <div class="cello-price cello-price-sale">$0.00</div>
           </div>
         </div>
-      <?php endwhile; wp_reset_postdata(); endif; ?>
+      <?php endfor; endif; ?>
     </div>
   </div>
 </section>
 
 <!-- =====================================================
-     3-COLUMN BANNER CARDS
+     BEST SELLERS
      ===================================================== -->
-<section style="padding: 40px 0;">
+<section style="padding: 40px 0 48px;">
   <div class="container">
-    <div class="gt-banner-grid">
-
-      <!-- Banner 1: Smartphones -->
-      <a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) . '?product_cat=smartphones' ); ?>"
-         class="gt-banner-card"
-         style="background-image: linear-gradient(135deg, #1a237e, #283593);">
-        <div class="gt-banner-card-content">
-          <p class="gt-cat-label"><?php esc_html_e( 'Smartphones', 'woodmart' ); ?></p>
-          <h3><?php esc_html_e( 'Smartphones Innovation', 'woodmart' ); ?></h3>
-          <p class="gt-banner-sub"><?php esc_html_e( 'Next Gen Tech Now', 'woodmart' ); ?></p>
-          <span class="gt-shop-link"><?php esc_html_e( 'Shop Now', 'woodmart' ); ?> →</span>
-        </div>
+    <div class="cello-section-header">
+      <div>
+        <h2 class="cello-section-title"><?php esc_html_e( 'Best Sellers', 'woodmart' ); ?></h2>
+        <p class="cello-section-sub"><?php esc_html_e( 'Most popular products this month', 'woodmart' ); ?></p>
+      </div>
+      <a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>?orderby=popularity" class="cello-view-all">
+        <?php esc_html_e( 'View All', 'woodmart' ); ?>
       </a>
+    </div>
 
-      <!-- Banner 2: Audio / Earbuds -->
-      <a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) . '?product_cat=earbuds' ); ?>"
-         class="gt-banner-card"
-         style="background-image: linear-gradient(135deg, #0d1457, #1565c0);">
-        <div class="gt-banner-card-content">
-          <p class="gt-cat-label"><?php esc_html_e( 'Earbuds', 'woodmart' ); ?></p>
-          <h3><?php esc_html_e( 'Audio Freedom', 'woodmart' ); ?></h3>
-          <p class="gt-banner-sub"><?php esc_html_e( 'Sound Meets Innovation', 'woodmart' ); ?></p>
-          <span class="gt-shop-link"><?php esc_html_e( 'Shop Now', 'woodmart' ); ?> →</span>
+    <div class="cello-product-grid">
+      <?php
+      $best_args = array(
+        'post_type'      => 'product',
+        'posts_per_page' => 10,
+        'meta_key'       => 'total_sales',
+        'orderby'        => 'meta_value_num',
+        'order'          => 'DESC',
+      );
+      $best_query = new WP_Query( $best_args );
+
+      if ( $best_query->have_posts() ) :
+        while ( $best_query->have_posts() ) : $best_query->the_post();
+          global $product;
+          cello_render_product_card( $product );
+        endwhile;
+        wp_reset_postdata();
+      else :
+        for ( $i = 1; $i <= 5; $i++ ) :
+      ?>
+        <div class="cello-product-card">
+          <div style="width:100%;height:200px;background:#f0f2f5;display:flex;align-items:center;justify-content:center;">
+            <svg width="48" height="48" fill="none" stroke="#dadce0" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a4 4 0 0 0-8 0v2"/></svg>
+          </div>
+          <div class="cello-product-info">
+            <span class="cello-product-brand">Cello</span>
+            <h3 class="cello-product-title"><?php echo esc_html( 'Best Seller ' . $i ); ?></h3>
+            <div>
+              <span class="cello-stars">&#9733;&#9733;&#9733;&#9733;&#9734;</span>
+              <span class="cello-stars-count">(0)</span>
+            </div>
+            <div class="cello-price">$0.00</div>
+          </div>
         </div>
-      </a>
-
-      <!-- Banner 3: Tablets -->
-      <a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) . '?product_cat=tablets' ); ?>"
-         class="gt-banner-card"
-         style="background-image: linear-gradient(135deg, #1a237e, #0d47a1);">
-        <div class="gt-banner-card-content">
-          <p class="gt-cat-label"><?php esc_html_e( 'Tablets', 'woodmart' ); ?></p>
-          <h3><?php esc_html_e( 'Power Of Portable Tablets', 'woodmart' ); ?></h3>
-          <p class="gt-banner-sub"><?php esc_html_e( 'Performance On The Go', 'woodmart' ); ?></p>
-          <span class="gt-shop-link"><?php esc_html_e( 'Shop Now', 'woodmart' ); ?> →</span>
-        </div>
-      </a>
-
+      <?php endfor; endif; ?>
     </div>
   </div>
 </section>
@@ -403,25 +520,17 @@ get_header();
     var now  = new Date();
     var diff = endDate - now;
     if ( diff <= 0 ) return;
-
-    var days  = Math.floor( diff / 86400000 );
-    var hours = Math.floor( ( diff % 86400000 ) / 3600000 );
-    var mins  = Math.floor( ( diff % 3600000 )  / 60000 );
-    var secs  = Math.floor( ( diff % 60000 )    / 1000 );
-
+    var d = Math.floor( diff / 86400000 );
+    var h = Math.floor( ( diff % 86400000 ) / 3600000 );
+    var m = Math.floor( ( diff % 3600000 )  / 60000 );
+    var s = Math.floor( ( diff % 60000 )    / 1000 );
     function pad(n) { return n < 10 ? '0' + n : n; }
-
-    var d = document.getElementById('gt-days');
-    var h = document.getElementById('gt-hours');
-    var m = document.getElementById('gt-mins');
-    var s = document.getElementById('gt-secs');
-
-    if (d) d.textContent = pad(days);
-    if (h) h.textContent = pad(hours);
-    if (m) m.textContent = pad(mins);
-    if (s) s.textContent = pad(secs);
+    var el = { d: 'cd-days', h: 'cd-hours', m: 'cd-mins', s: 'cd-secs' };
+    if ( document.getElementById( el.d ) ) document.getElementById( el.d ).textContent = pad(d);
+    if ( document.getElementById( el.h ) ) document.getElementById( el.h ).textContent = pad(h);
+    if ( document.getElementById( el.m ) ) document.getElementById( el.m ).textContent = pad(m);
+    if ( document.getElementById( el.s ) ) document.getElementById( el.s ).textContent = pad(s);
   }
-
   updateCountdown();
   setInterval( updateCountdown, 1000 );
 })();

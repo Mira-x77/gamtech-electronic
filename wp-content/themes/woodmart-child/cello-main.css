@@ -1,0 +1,1557 @@
+/**
+ * Cello Electronics — Main Design System v4.0
+ * Full-width, Amazon-style e-commerce layout
+ * This file intentionally uses a NEW filename to bypass all edge caches
+ */
+
+/* =====================================================
+   1. GLOBAL RESETS & OVERRIDES
+   ===================================================== */
+*, *::before, *::after { box-sizing: border-box !important; }
+
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+body {
+  font-family: 'Poppins', 'Segoe UI', Arial, sans-serif !important;
+  color: #212121 !important;
+  background: #ffffff !important;
+  line-height: 1.6 !important;
+}
+
+/* Force full-width on all WoodMart wrappers */
+.website-wrapper,
+.main-page-wrapper,
+.page-wrapper,
+.wpb-js-composer,
+.vc_row,
+.wd-section,
+.content-page {
+  max-width: 100% !important;
+  width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+/* Full-width container */
+.container {
+  max-width: 1400px !important;
+  width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+}
+
+/* Hide WoodMart default header/footer/sidebar elements we don't use */
+.whb-top-bar,
+.woodmart-top-bar,
+.header-top,
+.top-bar-wrap,
+.whb-header,
+.woodmart-header,
+header.header-main,
+.site-header,
+.site-navigation,
+.woodmart-nav,
+.footer-container,
+.copyrights-wrapper,
+.whb-row,
+.header-wrapper,
+.main-nav,
+.wd-header {
+  display: none !important;
+}
+
+/* Show our custom header/footer elements */
+.gt-topbar-wrap,
+.gt-header,
+.gt-nav-bar,
+.gt-footer,
+.gt-footer-bottom {
+  display: block !important;
+}
+
+/* Hide default page titles on front page */
+.cello-homepage .page-title,
+.cello-homepage .woodmart-page-title,
+.cello-homepage .shop-page-title,
+.cello-homepage .title-wrapper {
+  display: none !important;
+}
+
+/* =====================================================
+   2. DESIGN TOKENS (CSS Custom Properties)
+   ===================================================== */
+:root {
+  --cello-primary: #1a237e;
+  --cello-primary-dark: #0d1457;
+  --cello-primary-light: #283593;
+  --cello-accent: #f4c430;
+  --cello-accent-dark: #d4a017;
+  --cello-topbar: #1565c0;
+  --cello-white: #ffffff;
+  --cello-bg: #f8f9fa;
+  --cello-bg-alt: #f0f2f5;
+  --cello-text: #1a1a2e;
+  --cello-text-secondary: #5f6368;
+  --cello-text-light: #80868b;
+  --cello-border: #dadce0;
+  --cello-border-light: #e8eaed;
+  --cello-sale: #cc0c39;
+  --cello-success: #0d652d;
+  --cello-orange: #ff6f00;
+  --cello-radius: 8px;
+  --cello-radius-lg: 12px;
+  --cello-shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --cello-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  --cello-shadow-lg: 0 4px 20px rgba(0,0,0,0.12);
+  --cello-shadow-hover: 0 8px 30px rgba(0,0,0,0.15);
+  --cello-transition: all 0.2s ease;
+  --cello-font: 'Poppins', 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* =====================================================
+   3. TOP ANNOUNCEMENT BAR
+   ===================================================== */
+.gt-topbar-wrap {
+  background: var(--cello-topbar) !important;
+  color: var(--cello-white) !important;
+  font-size: 12px !important;
+  padding: 8px 0 !important;
+  width: 100% !important;
+}
+
+.gt-topbar-inner {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+}
+
+.gt-topbar-left { flex: 1 !important; }
+.gt-topbar-text { font-weight: 500 !important; }
+
+.gt-topbar-right {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  white-space: nowrap !important;
+}
+
+.gt-topbar-right a {
+  color: rgba(255,255,255,0.9) !important;
+  text-decoration: none !important;
+  font-size: 12px !important;
+  transition: var(--cello-transition) !important;
+}
+
+.gt-topbar-right a:hover { color: var(--cello-white) !important; }
+
+/* =====================================================
+   4. MAIN HEADER
+   ===================================================== */
+.gt-header {
+  background: var(--cello-white) !important;
+  border-bottom: 1px solid var(--cello-border) !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 9999 !important;
+  box-shadow: var(--cello-shadow-sm) !important;
+  width: 100% !important;
+}
+
+.gt-header-inner {
+  display: flex !important;
+  align-items: center !important;
+  gap: 24px !important;
+  padding: 12px 0 !important;
+}
+
+.gt-logo { flex-shrink: 0 !important; }
+.gt-logo a { display: flex !important; align-items: center !important; text-decoration: none !important; }
+.gt-logo img { max-height: 48px !important; width: auto !important; }
+
+/* Search */
+.gt-search-wrap { flex: 1 !important; max-width: 640px !important; }
+
+.gt-search-form {
+  display: flex !important;
+  width: 100% !important;
+  border: 2px solid var(--cello-border) !important;
+  border-radius: var(--cello-radius) !important;
+  overflow: hidden !important;
+  background: var(--cello-bg) !important;
+  transition: var(--cello-transition) !important;
+}
+
+.gt-search-form:focus-within {
+  border-color: var(--cello-primary) !important;
+  background: var(--cello-white) !important;
+  box-shadow: 0 0 0 3px rgba(26,35,126,0.1) !important;
+}
+
+.gt-search-input {
+  flex: 1 !important;
+  border: none !important;
+  background: transparent !important;
+  padding: 11px 16px !important;
+  font-size: 14px !important;
+  color: var(--cello-text) !important;
+  outline: none !important;
+}
+
+.gt-search-input::placeholder { color: var(--cello-text-light) !important; }
+
+.gt-search-btn {
+  background: var(--cello-primary) !important;
+  color: var(--cello-white) !important;
+  border: none !important;
+  padding: 0 22px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  white-space: nowrap !important;
+  transition: var(--cello-transition) !important;
+}
+
+.gt-search-btn:hover { background: var(--cello-primary-light) !important; }
+
+/* Header Icons */
+.gt-header-icons {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  margin-left: auto !important;
+  flex-shrink: 0 !important;
+}
+
+.gt-icon-btn {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-decoration: none !important;
+  color: var(--cello-text) !important;
+  gap: 2px !important;
+  padding: 6px 10px !important;
+  border-radius: var(--cello-radius) !important;
+  transition: var(--cello-transition) !important;
+}
+
+.gt-icon-btn:hover {
+  color: var(--cello-primary) !important;
+  background: var(--cello-bg) !important;
+}
+
+.gt-icon-label { font-size: 11px !important; font-weight: 600 !important; white-space: nowrap !important; }
+
+.gt-cart-count {
+  position: absolute !important;
+  top: -6px !important;
+  right: -6px !important;
+  background: var(--cello-sale) !important;
+  color: #fff !important;
+  border-radius: 50% !important;
+  width: 18px !important;
+  height: 18px !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.gt-mobile-menu-toggle {
+  display: none !important;
+  background: none !important;
+  border: none !important;
+  cursor: pointer !important;
+  color: var(--cello-text) !important;
+  padding: 8px !important;
+}
+
+/* =====================================================
+   5. NAVIGATION BAR
+   ===================================================== */
+.gt-nav-bar {
+  background: var(--cello-white) !important;
+  border-bottom: 1px solid var(--cello-border) !important;
+  width: 100% !important;
+}
+
+.gt-nav-inner {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+.gt-nav-menu,
+.gt-nav-secondary {
+  list-style: none !important;
+  display: flex !important;
+  align-items: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 0 !important;
+}
+
+.gt-nav-link {
+  display: flex !important;
+  align-items: center !important;
+  color: var(--cello-text) !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  padding: 12px 16px !important;
+  text-decoration: none !important;
+  transition: var(--cello-transition) !important;
+  white-space: nowrap !important;
+}
+
+.gt-nav-link:hover,
+.gt-nav-item.current > .gt-nav-link {
+  color: var(--cello-primary) !important;
+}
+
+.gt-nav-secondary .gt-nav-link {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: var(--cello-text-secondary) !important;
+  padding: 12px 12px !important;
+}
+
+.gt-mobile-nav {
+  display: none !important;
+  background: var(--cello-white) !important;
+  border-top: 1px solid var(--cello-border) !important;
+  padding: 12px 0 !important;
+}
+
+.gt-mobile-nav ul { list-style: none !important; margin: 0 !important; padding: 0 !important; }
+
+.gt-mobile-nav ul li a {
+  display: block !important;
+  padding: 10px 20px !important;
+  color: var(--cello-text) !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+}
+
+/* =====================================================
+   6. TICKER / MARQUEE
+   ===================================================== */
+.gt-ticker-strip {
+  background: var(--cello-accent) !important;
+  color: var(--cello-white) !important;
+  padding: 9px 0 !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  width: 100% !important;
+}
+
+.gt-ticker-inner {
+  display: inline-flex !important;
+  animation: gt-marquee 30s linear infinite !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.3px !important;
+}
+
+.gt-ticker-inner span {
+  margin: 0 40px !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+
+.gt-ticker-inner span::before {
+  content: "\2605" !important;
+  margin-right: 8px !important;
+  opacity: 0.7 !important;
+}
+
+@keyframes gt-marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* =====================================================
+   7. HERO SECTION — FULL WIDTH
+   ===================================================== */
+.gt-hero-section {
+  width: 100% !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.gt-hero-grid {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  align-items: center !important;
+  gap: 48px !important;
+  min-height: 380px !important;
+  padding: 20px 0 !important;
+}
+
+@keyframes gt-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
+/* =====================================================
+   8. TRUST BADGES ROW
+   ===================================================== */
+.gt-trust-badges {
+  display: flex !important;
+  justify-content: space-between !important;
+  flex-wrap: wrap !important;
+  gap: 16px !important;
+  padding: 24px 0 !important;
+  border-bottom: 1px solid var(--cello-border-light) !important;
+}
+
+.gt-trust-badge {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  flex: 1 !important;
+  min-width: 180px !important;
+  padding: 8px 0 !important;
+}
+
+.gt-trust-badge-icon {
+  width: 44px !important;
+  height: 44px !important;
+  background: var(--cello-bg) !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  color: var(--cello-primary) !important;
+}
+
+.gt-trust-badge-text h4 {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: var(--cello-text) !important;
+  margin: 0 0 2px !important;
+}
+
+.gt-trust-badge-text p {
+  font-size: 11px !important;
+  color: var(--cello-text-light) !important;
+  margin: 0 !important;
+}
+
+/* =====================================================
+   9. SECTION HEADINGS
+   ===================================================== */
+.cello-section-header {
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: space-between !important;
+  margin-bottom: 20px !important;
+  flex-wrap: wrap !important;
+  gap: 12px !important;
+  padding-top: 8px !important;
+}
+
+.cello-section-title {
+  font-size: 22px !important;
+  font-weight: 800 !important;
+  color: var(--cello-text) !important;
+  margin: 0 0 4px !important;
+  line-height: 1.2 !important;
+}
+
+.cello-section-sub {
+  font-size: 13px !important;
+  color: var(--cello-text-secondary) !important;
+  margin: 0 !important;
+}
+
+.cello-view-all {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--cello-primary) !important;
+  text-decoration: none !important;
+  border-bottom: 1px solid var(--cello-primary) !important;
+  padding-bottom: 2px !important;
+  transition: var(--cello-transition) !important;
+}
+
+.cello-view-all:hover {
+  color: var(--cello-accent) !important;
+  border-color: var(--cello-accent) !important;
+}
+
+/* =====================================================
+   10. CATEGORY GRID — 8 TILES
+   ===================================================== */
+.gt-category-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)) !important;
+  gap: 16px !important;
+  padding: 8px 0 24px !important;
+}
+
+.gt-category-item {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+  padding: 20px 12px !important;
+  border: 1px solid var(--cello-border-light) !important;
+  border-radius: var(--cello-radius-lg) !important;
+  background: var(--cello-white) !important;
+  transition: var(--cello-transition) !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  color: var(--cello-text) !important;
+}
+
+.gt-category-item:hover {
+  border-color: var(--cello-primary) !important;
+  box-shadow: var(--cello-shadow) !important;
+  transform: translateY(-3px) !important;
+  color: var(--cello-primary) !important;
+}
+
+.gt-category-item img {
+  width: 56px !important;
+  height: 56px !important;
+  object-fit: contain !important;
+  margin-bottom: 10px !important;
+  border-radius: 8px !important;
+}
+
+.gt-category-item .gt-cat-name {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--cello-text) !important;
+  line-height: 1.3 !important;
+}
+
+.gt-category-item .gt-cat-count {
+  font-size: 11px !important;
+  color: var(--cello-text-light) !important;
+  margin-top: 2px !important;
+}
+
+/* =====================================================
+   11. PRODUCT GRID — 5 COLUMNS
+   ===================================================== */
+.cello-product-grid {
+  display: grid !important;
+  grid-template-columns: repeat(5, 1fr) !important;
+  gap: 20px !important;
+}
+
+.cello-product-card {
+  background: var(--cello-white) !important;
+  border: 1px solid var(--cello-border-light) !important;
+  border-radius: var(--cello-radius-lg) !important;
+  overflow: hidden !important;
+  transition: var(--cello-transition) !important;
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.cello-product-card:hover {
+  box-shadow: var(--cello-shadow-hover) !important;
+  border-color: var(--cello-primary) !important;
+  transform: translateY(-4px) !important;
+}
+
+/* Sale badge on card */
+.cello-sale-tag {
+  position: absolute !important;
+  top: 12px !important;
+  left: 12px !important;
+  z-index: 3 !important;
+  background: var(--cello-sale) !important;
+  color: var(--cello-white) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  padding: 4px 10px !important;
+  border-radius: 4px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+}
+
+/* Add to cart circle button */
+.cello-add-cart-btn {
+  position: absolute !important;
+  top: 12px !important;
+  right: 12px !important;
+  z-index: 3 !important;
+  width: 36px !important;
+  height: 36px !important;
+  background: var(--cello-primary) !important;
+  color: var(--cello-white) !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: var(--cello-transition) !important;
+  text-decoration: none !important;
+  border: none !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  opacity: 0 !important;
+  transform: scale(0.8) !important;
+}
+
+.cello-product-card:hover .cello-add-cart-btn {
+  opacity: 1 !important;
+  transform: scale(1) !important;
+}
+
+.cello-add-cart-btn:hover {
+  background: var(--cello-accent) !important;
+  color: var(--cello-white) !important;
+}
+
+/* Product image */
+.cello-product-image {
+  width: 100% !important;
+  height: 200px !important;
+  object-fit: contain !important;
+  padding: 16px !important;
+  transition: var(--cello-transition) !important;
+}
+
+.cello-product-card:hover .cello-product-image {
+  transform: scale(1.05) !important;
+}
+
+/* Product info */
+.cello-product-info {
+  padding: 12px 16px 16px !important;
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.cello-product-brand {
+  font-size: 11px !important;
+  color: var(--cello-text-light) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  margin-bottom: 4px !important;
+}
+
+.cello-product-title {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: var(--cello-text) !important;
+  line-height: 1.4 !important;
+  margin-bottom: 8px !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+}
+
+.cello-product-title a {
+  color: inherit !important;
+  text-decoration: none !important;
+}
+
+.cello-product-title a:hover {
+  color: var(--cello-primary) !important;
+}
+
+/* Star rating */
+.cello-stars {
+  color: var(--cello-accent) !important;
+  font-size: 13px !important;
+  margin-bottom: 6px !important;
+  letter-spacing: 1px !important;
+}
+
+.cello-stars-count {
+  font-size: 11px !important;
+  color: var(--cello-text-light) !important;
+  margin-left: 4px !important;
+}
+
+/* Price */
+.cello-price {
+  font-size: 18px !important;
+  font-weight: 800 !important;
+  color: var(--cello-primary) !important;
+  margin-top: auto !important;
+}
+
+.cello-price-original {
+  font-size: 13px !important;
+  color: var(--cello-text-light) !important;
+  text-decoration: line-through !important;
+  margin-left: 8px !important;
+  font-weight: 400 !important;
+}
+
+.cello-price-sale {
+  color: var(--cello-sale) !important;
+}
+
+/* =====================================================
+   12. PROMO BANNERS — 3 COLUMNS
+   ===================================================== */
+.cello-banner-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 20px !important;
+}
+
+.cello-banner-card {
+  position: relative !important;
+  border-radius: var(--cello-radius-lg) !important;
+  overflow: hidden !important;
+  min-height: 220px !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  padding: 28px 24px !important;
+  background-size: cover !important;
+  background-position: center !important;
+  transition: var(--cello-transition) !important;
+  text-decoration: none !important;
+}
+
+.cello-banner-card::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 60%, transparent 100%) !important;
+  z-index: 1 !important;
+}
+
+.cello-banner-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: var(--cello-shadow-hover) !important;
+}
+
+.cello-banner-content {
+  position: relative !important;
+  z-index: 2 !important;
+  color: var(--cello-white) !important;
+}
+
+.cello-banner-content .banner-cat {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1.5px !important;
+  opacity: 0.8 !important;
+  margin-bottom: 6px !important;
+}
+
+.cello-banner-content h3 {
+  font-size: 20px !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+  margin: 0 0 4px !important;
+  color: var(--cello-white) !important;
+}
+
+.cello-banner-content .banner-sub {
+  font-size: 12px !important;
+  opacity: 0.75 !important;
+  margin-bottom: 14px !important;
+}
+
+.cello-banner-content .banner-price {
+  font-size: 22px !important;
+  font-weight: 800 !important;
+  color: var(--cello-accent) !important;
+  margin-bottom: 12px !important;
+}
+
+.cello-banner-content .banner-price del {
+  font-size: 14px !important;
+  opacity: 0.6 !important;
+  color: var(--cello-white) !important;
+  margin-left: 8px !important;
+}
+
+.cello-banner-content .shop-now-link {
+  display: inline-block !important;
+  color: var(--cello-white) !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  border-bottom: 2px solid rgba(255,255,255,0.6) !important;
+  padding-bottom: 2px !important;
+  transition: var(--cello-transition) !important;
+  text-decoration: none !important;
+}
+
+.cello-banner-content .shop-now-link:hover {
+  border-color: var(--cello-accent) !important;
+  color: var(--cello-accent) !important;
+}
+
+/* =====================================================
+   13. DEAL OF THE DAY SECTION
+   ===================================================== */
+.cello-deal-section {
+  background: var(--cello-bg) !important;
+  border-radius: var(--cello-radius-lg) !important;
+  padding: 32px 28px !important;
+  margin: 32px 0 !important;
+}
+
+.cello-deal-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: wrap !important;
+  gap: 16px !important;
+  margin-bottom: 24px !important;
+}
+
+.cello-deal-header h2 {
+  font-size: 22px !important;
+  font-weight: 800 !important;
+  color: var(--cello-text) !important;
+  margin: 0 !important;
+}
+
+.cello-deal-header p {
+  font-size: 13px !important;
+  color: var(--cello-text-secondary) !important;
+  margin: 4px 0 0 !important;
+}
+
+/* Countdown */
+.cello-countdown {
+  display: inline-flex !important;
+  gap: 8px !important;
+  align-items: center !important;
+}
+
+.cello-countdown-block {
+  background: var(--cello-primary) !important;
+  color: var(--cello-white) !important;
+  border-radius: var(--cello-radius) !important;
+  padding: 10px 14px !important;
+  min-width: 56px !important;
+  text-align: center !important;
+}
+
+.cello-countdown-block .number {
+  font-size: 22px !important;
+  font-weight: 800 !important;
+  line-height: 1.1 !important;
+  display: block !important;
+}
+
+.cello-countdown-block .label {
+  font-size: 10px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  opacity: 0.8 !important;
+}
+
+.cello-countdown-sep {
+  color: var(--cello-primary) !important;
+  font-weight: 800 !important;
+  font-size: 22px !important;
+}
+
+/* =====================================================
+   14. SINGLE PRODUCT PAGE — AMAZON STYLE
+   ===================================================== */
+.cello-single-product .product {
+  max-width: 1400px !important;
+  margin: 0 auto !important;
+}
+
+.cello-single-product .woocommerce-product-gallery {
+  max-width: 520px !important;
+}
+
+.cello-single-product .woocommerce-product-gallery img {
+  border-radius: var(--cello-radius-lg) !important;
+}
+
+.cello-single-product .summary {
+  padding-left: 40px !important;
+}
+
+.cello-single-product .product_title {
+  font-size: 28px !important;
+  font-weight: 800 !important;
+  color: var(--cello-text) !important;
+  line-height: 1.3 !important;
+  margin-bottom: 12px !important;
+}
+
+.cello-single-product .price {
+  font-size: 28px !important;
+  font-weight: 800 !important;
+  color: var(--cello-primary) !important;
+  margin-bottom: 16px !important;
+}
+
+.cello-single-product .price del {
+  font-size: 18px !important;
+  color: var(--cello-text-light) !important;
+}
+
+.cello-single-product .price ins {
+  text-decoration: none !important;
+  color: var(--cello-sale) !important;
+}
+
+.cello-single-product .woocommerce-product-details__short-description {
+  font-size: 15px !important;
+  color: var(--cello-text-secondary) !important;
+  line-height: 1.7 !important;
+  margin-bottom: 24px !important;
+}
+
+.cello-single-product .single_add_to_cart_button {
+  background: var(--cello-primary) !important;
+  color: var(--cello-white) !important;
+  border: none !important;
+  border-radius: var(--cello-radius) !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  padding: 14px 40px !important;
+  cursor: pointer !important;
+  transition: var(--cello-transition) !important;
+}
+
+.cello-single-product .single_add_to_cart_button:hover {
+  background: var(--cello-accent) !important;
+}
+
+.cello-single-product .quantity input.qty {
+  border: 2px solid var(--cello-border) !important;
+  border-radius: var(--cello-radius) !important;
+  padding: 10px !important;
+  font-size: 16px !important;
+  text-align: center !important;
+  width: 70px !important;
+}
+
+/* Tabs */
+.cello-single-product .woocommerce-tabs .tabs {
+  border-bottom: 2px solid var(--cello-border) !important;
+}
+
+.cello-single-product .woocommerce-tabs .tabs li a {
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  color: var(--cello-text-secondary) !important;
+  padding: 12px 20px !important;
+}
+
+.cello-single-product .woocommerce-tabs .tabs li.active a {
+  color: var(--cello-primary) !important;
+  border-bottom: 2px solid var(--cello-primary) !important;
+}
+
+/* Related products */
+.cello-single-product .related.products {
+  margin-top: 48px !important;
+}
+
+.cello-single-product .related.products h2 {
+  font-size: 20px !important;
+  font-weight: 800 !important;
+  color: var(--cello-text) !important;
+  margin-bottom: 20px !important;
+}
+
+/* =====================================================
+   15. SHOP / ARCHIVE PAGE
+   ===================================================== */
+.cello-shop .products {
+  display: grid !important;
+  grid-template-columns: repeat(5, 1fr) !important;
+  gap: 20px !important;
+}
+
+.cello-shop .products li.product {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  float: none !important;
+}
+
+.cello-shop .woocommerce-result-count {
+  font-size: 14px !important;
+  color: var(--cello-text-secondary) !important;
+}
+
+.cello-shop .woocommerce-ordering select {
+  border: 1px solid var(--cello-border) !important;
+  border-radius: var(--cello-radius) !important;
+  padding: 8px 14px !important;
+  font-size: 14px !important;
+}
+
+/* Sidebar widgets */
+.cello-shop .widget_layered_nav ul li a {
+  font-size: 14px !important;
+  color: var(--cello-text) !important;
+  padding: 6px 0 !important;
+  display: block !important;
+}
+
+.cello-shop .widget_layered_nav ul li a:hover {
+  color: var(--cello-primary) !important;
+}
+
+.cello-shop .widget_price_filter .ui-slider .ui-slider-range {
+  background: var(--cello-primary) !important;
+}
+
+/* =====================================================
+   16. CART PAGE
+   ===================================================== */
+.woocommerce-cart table.shop_table {
+  border-radius: var(--cello-radius-lg) !important;
+  border: 1px solid var(--cello-border) !important;
+  overflow: hidden !important;
+}
+
+.woocommerce-cart table.shop_table thead th {
+  background: var(--cello-primary) !important;
+  color: var(--cello-white) !important;
+  font-weight: 700 !important;
+  font-size: 14px !important;
+  padding: 14px 16px !important;
+}
+
+.woocommerce-cart table.shop_table td {
+  padding: 16px !important;
+  vertical-align: middle !important;
+}
+
+.woocommerce-cart .cart-collaterals .cart_totals {
+  border: 1px solid var(--cello-border) !important;
+  border-radius: var(--cello-radius-lg) !important;
+  padding: 24px !important;
+}
+
+.woocommerce-cart .checkout-button {
+  background: var(--cello-accent) !important;
+  color: var(--cello-white) !important;
+  border: none !important;
+  border-radius: var(--cello-radius) !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  padding: 14px 32px !important;
+  width: 100% !important;
+}
+
+.woocommerce-cart .checkout-button:hover {
+  background: var(--cello-accent-dark) !important;
+}
+
+/* =====================================================
+   17. BUTTONS — GLOBAL
+   ===================================================== */
+.btn,
+.woocommerce a.button,
+.woocommerce button.button,
+.wd-btn {
+  background: var(--cello-primary) !important;
+  color: var(--cello-white) !important;
+  border: 2px solid var(--cello-primary) !important;
+  border-radius: var(--cello-radius) !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  padding: 10px 24px !important;
+  transition: var(--cello-transition) !important;
+  cursor: pointer !important;
+  text-transform: none !important;
+  letter-spacing: 0.3px !important;
+}
+
+.btn:hover,
+.woocommerce a.button:hover,
+.woocommerce button.button:hover,
+.wd-btn:hover {
+  background: var(--cello-accent) !important;
+  border-color: var(--cello-accent) !important;
+  color: var(--cello-white) !important;
+}
+
+/* =====================================================
+   18. FOOTER
+   ===================================================== */
+.gt-footer {
+  background: var(--cello-primary) !important;
+  color: rgba(255,255,255,0.8) !important;
+  padding-top: 56px !important;
+  width: 100% !important;
+}
+
+.gt-footer-grid {
+  display: grid !important;
+  grid-template-columns: 2fr 1fr 1fr 1.5fr !important;
+  gap: 40px !important;
+  padding-bottom: 48px !important;
+}
+
+.gt-footer-col h4 {
+  color: var(--cello-white) !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  margin-bottom: 16px !important;
+  padding-bottom: 8px !important;
+  border-bottom: 2px solid var(--cello-accent) !important;
+  display: inline-block !important;
+}
+
+.gt-footer-col ul { list-style: none !important; margin: 0 !important; padding: 0 !important; }
+.gt-footer-col ul li { margin-bottom: 10px !important; }
+
+.gt-footer-col ul li a {
+  color: rgba(255,255,255,0.7) !important;
+  font-size: 14px !important;
+  text-decoration: none !important;
+  transition: var(--cello-transition) !important;
+}
+
+.gt-footer-col ul li a:hover {
+  color: var(--cello-accent) !important;
+  padding-left: 4px !important;
+}
+
+.gt-footer-brand p {
+  font-size: 14px !important;
+  line-height: 1.7 !important;
+  margin-bottom: 20px !important;
+  opacity: 0.7 !important;
+}
+
+.gt-social-links { display: flex !important; gap: 10px !important; }
+
+.gt-social-links a {
+  width: 36px !important;
+  height: 36px !important;
+  background: rgba(255,255,255,0.1) !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: rgba(255,255,255,0.8) !important;
+  transition: var(--cello-transition) !important;
+  text-decoration: none !important;
+}
+
+.gt-social-links a:hover {
+  background: var(--cello-accent) !important;
+  color: var(--cello-white) !important;
+  transform: translateY(-2px) !important;
+}
+
+.gt-contact-list { list-style: none !important; margin: 0 !important; padding: 0 !important; }
+
+.gt-contact-list li {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  margin-bottom: 12px !important;
+  font-size: 14px !important;
+  color: rgba(255,255,255,0.7) !important;
+}
+
+.gt-contact-list li svg { flex-shrink: 0 !important; margin-top: 2px !important; color: var(--cello-accent) !important; }
+
+.gt-contact-list li a {
+  color: rgba(255,255,255,0.7) !important;
+  text-decoration: none !important;
+}
+
+.gt-contact-list li a:hover { color: var(--cello-accent) !important; }
+
+.gt-footer-bottom {
+  background: var(--cello-primary-dark) !important;
+  padding: 16px 0 !important;
+  border-top: 1px solid rgba(255,255,255,0.08) !important;
+  width: 100% !important;
+}
+
+.gt-footer-bottom-inner {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+
+.gt-footer-bottom p { margin: 0 !important; font-size: 13px !important; color: rgba(255,255,255,0.5) !important; }
+.gt-footer-bottom a { color: rgba(255,255,255,0.7) !important; text-decoration: none !important; }
+.gt-footer-bottom a:hover { color: var(--cello-accent) !important; }
+
+/* =====================================================
+   19. BREADCRUMBS
+   ===================================================== */
+.woocommerce-breadcrumb {
+  font-size: 13px !important;
+  color: var(--cello-text-light) !important;
+  padding: 16px 0 !important;
+}
+
+.woocommerce-breadcrumb a {
+  color: var(--cello-text-secondary) !important;
+  text-decoration: none !important;
+}
+
+.woocommerce-breadcrumb a:hover { color: var(--cello-primary) !important; }
+
+/* =====================================================
+   20. FORMS
+   ===================================================== */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="search"],
+textarea,
+select {
+  border: 1px solid var(--cello-border) !important;
+  border-radius: var(--cello-radius) !important;
+  font-size: 14px !important;
+  color: var(--cello-text) !important;
+  background: var(--cello-white) !important;
+  transition: var(--cello-transition) !important;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--cello-primary) !important;
+  box-shadow: 0 0 0 3px rgba(26,35,126,0.1) !important;
+  outline: none !important;
+}
+
+/* =====================================================
+   21. PAGINATION
+   ===================================================== */
+.woocommerce nav.woocommerce-pagination ul li a,
+.woocommerce nav.woocommerce-pagination ul li span {
+  border: 1px solid var(--cello-border) !important;
+  border-radius: var(--cello-radius) !important;
+  color: var(--cello-text) !important;
+  font-size: 14px !important;
+  padding: 8px 14px !important;
+  transition: var(--cello-transition) !important;
+}
+
+.woocommerce nav.woocommerce-pagination ul li a:hover,
+.woocommerce nav.woocommerce-pagination ul li span.current {
+  background: var(--cello-primary) !important;
+  color: var(--cello-white) !important;
+  border-color: var(--cello-primary) !important;
+}
+
+/* =====================================================
+   22. WOOCOMMERCE NOTICES
+   ===================================================== */
+.woocommerce-message, .woocommerce-info { border-top-color: var(--cello-primary) !important; }
+.woocommerce-message::before, .woocommerce-info::before { color: var(--cello-primary) !important; }
+.woocommerce-error { border-top-color: var(--cello-sale) !important; }
+
+/* =====================================================
+   23. SALE BADGE
+   ===================================================== */
+.onsale,
+.woocommerce span.onsale {
+  background: var(--cello-sale) !important;
+  color: var(--cello-white) !important;
+  border-radius: 4px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  padding: 4px 10px !important;
+  text-transform: uppercase !important;
+}
+
+/* =====================================================
+   24. OLD GRID OVERRIDES (override style.css grids)
+   ===================================================== */
+.gt-product-grid {
+  display: grid !important;
+  grid-template-columns: repeat(5, 1fr) !important;
+  gap: 20px !important;
+}
+
+.gt-deal-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 16px !important;
+}
+
+.gt-banner-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 20px !important;
+}
+
+/* Old banner cards override */
+.gt-banner-card {
+  position: relative !important;
+  border-radius: var(--cello-radius-lg) !important;
+  overflow: hidden !important;
+  min-height: 220px !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  padding: 28px 24px !important;
+  background-size: cover !important;
+  background-position: center !important;
+  transition: var(--cello-transition) !important;
+  text-decoration: none !important;
+}
+
+.gt-banner-card::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 60%, transparent 100%) !important;
+  z-index: 1 !important;
+}
+
+.gt-banner-card-content {
+  position: relative !important;
+  z-index: 2 !important;
+  color: var(--cello-white) !important;
+}
+
+/* Old product grid item override */
+.product-grid-item {
+  background: var(--cello-white) !important;
+  border: 1px solid var(--cello-border-light) !important;
+  border-radius: var(--cello-radius-lg) !important;
+  overflow: hidden !important;
+  transition: var(--cello-transition) !important;
+  position: relative !important;
+}
+
+.product-grid-item:hover {
+  box-shadow: var(--cello-shadow-hover) !important;
+  border-color: var(--cello-primary) !important;
+  transform: translateY(-3px) !important;
+}
+
+/* Old section heading override */
+.gt-section-title {
+  font-size: 22px !important;
+  font-weight: 800 !important;
+  color: var(--cello-text) !important;
+  margin-bottom: 4px !important;
+}
+
+.gt-section-sub {
+  font-size: 13px !important;
+  color: var(--cello-text-secondary) !important;
+  margin-bottom: 0 !important;
+}
+
+/* Old deal section override */
+.gt-deal-section {
+  background: var(--cello-bg) !important;
+  border-radius: var(--cello-radius-lg) !important;
+  padding: 32px 28px !important;
+  margin: 32px 0 !important;
+}
+
+.gt-deal-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: wrap !important;
+  gap: 16px !important;
+  margin-bottom: 24px !important;
+}
+
+.gt-deal-header h2 {
+  font-size: 22px !important;
+  font-weight: 800 !important;
+  color: var(--cello-text) !important;
+  margin: 0 !important;
+}
+
+/* =====================================================
+   25. RESPONSIVE DESIGN
+   ===================================================== */
+@media (max-width: 1200px) {
+  .cello-product-grid { grid-template-columns: repeat(4, 1fr) !important; }
+  .gt-product-grid { grid-template-columns: repeat(4, 1fr) !important; }
+  .cello-shop .products { grid-template-columns: repeat(4, 1fr) !important; }
+}
+
+@media (max-width: 992px) {
+  .cello-product-grid { grid-template-columns: repeat(3, 1fr) !important; }
+  .gt-product-grid { grid-template-columns: repeat(3, 1fr) !important; }
+  .cello-banner-grid { grid-template-columns: 1fr !important; }
+  .gt-banner-grid { grid-template-columns: 1fr !important; }
+  .cello-shop .products { grid-template-columns: repeat(3, 1fr) !important; }
+  .gt-deal-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .gt-footer-grid { grid-template-columns: 1fr 1fr !important; gap: 32px !important; }
+  .gt-nav-secondary { display: none !important; }
+  .container { padding-left: 16px !important; padding-right: 16px !important; }
+}
+
+@media (max-width: 768px) {
+  .gt-header-inner { flex-wrap: wrap !important; gap: 12px !important; }
+  .gt-search-wrap { order: 3 !important; flex: 0 0 100% !important; max-width: 100% !important; }
+  .gt-header-icons { gap: 4px !important; }
+  .gt-icon-label { display: none !important; }
+  .gt-mobile-menu-toggle { display: block !important; }
+  .gt-nav-menu, .gt-nav-secondary { display: none !important; }
+  .cello-product-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
+  .gt-product-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
+  .cello-shop .products { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
+  .gt-hero-grid { grid-template-columns: 1fr !important; min-height: auto !important; gap: 24px !important; text-align: center !important; }
+  .gt-category-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 10px !important; }
+  .gt-deal-grid { grid-template-columns: 1fr !important; }
+  .gt-footer-grid { grid-template-columns: 1fr 1fr !important; gap: 24px !important; }
+  .cello-trust-badges { justify-content: center !important; }
+  .gt-trust-badge { min-width: 140px !important; }
+}
+
+@media (max-width: 480px) {
+  .cello-product-grid { grid-template-columns: 1fr !important; }
+  .gt-product-grid { grid-template-columns: 1fr !important; }
+  .cello-shop .products { grid-template-columns: 1fr !important; }
+  .gt-category-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .gt-topbar-right { display: none !important; }
+  .gt-footer-grid { grid-template-columns: 1fr !important; }
+  .gt-footer-bottom-inner { flex-direction: column !important; text-align: center !important; }
+  .cello-deal-header { flex-direction: column !important; align-items: flex-start !important; }
+}
+
+/* =====================================================
+   26. SINGLE PRODUCT PAGE RESPONSIVE
+   ===================================================== */
+@media (max-width: 992px) {
+  .cello-single-product-wrap > .container > div[style*="grid-template-columns: 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+  .cello-single-product-wrap .cello-product-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .cello-single-product-wrap .cello-product-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* =====================================================
+   27. WOODMART OVERRIDES — HIDE UNWANTED ELEMENTS
+   ===================================================== */
+.woodmart-page-title .page-title-text-wrap,
+.woodmart-page-title .page-title-subtitle,
+.title-wrapper,
+.page-title-wrapper {
+  display: none !important;
+}
+
+/* Hide sidebar on shop pages for full-width */
+.cello-shop .sidebar-container,
+.cello-shop .col-lg-3,
+.cello-single-product .sidebar-container,
+.cello-single-product .col-lg-3 {
+  display: none !important;
+}
+
+/* Make shop content full-width */
+.cello-shop .col-lg-9,
+.cello-shop .shop-content,
+.cello-single-product .col-lg-9 {
+  width: 100% !important;
+  max-width: 100% !important;
+  flex: 0 0 100% !important;
+}
+
+/* Hide WoodMart shop filters/tools we don't need */
+.woodmart-active-filters,
+.woodmart-shop-loader,
+.shop-filter-area {
+  display: none !important;
+}
+
+/* Shop loop head styling */
+.shop-loop-head {
+  padding: 0 !important;
+  border: none !important;
+}
+
+/* Price styling in single product */
+.cello-single-product-wrap .price {
+  font-size: 32px !important;
+  font-weight: 800 !important;
+  color: #1a237e !important;
+}
+
+.cello-single-product-wrap .price del {
+  font-size: 20px !important;
+  color: #80868b !important;
+}
+
+.cello-single-product-wrap .price ins {
+  text-decoration: none !important;
+  color: #cc0c39 !important;
+}
+
+/* WooCommerce notices */
+.woocommerce-message,
+.woocommerce-info {
+  border-radius: 8px !important;
+  border-left: 4px solid #1a237e !important;
+  border-top: none !important;
+  padding: 16px 20px !important;
+  margin-bottom: 24px !important;
+}
+
+.woocommerce-error {
+  border-radius: 8px !important;
+  border-left: 4px solid #cc0c39 !important;
+  border-top: none !important;
+  padding: 16px 20px !important;
+}
+
+/* Cart quantity input */
+.woocommerce .quantity input.qty {
+  border: 2px solid #e8eaed !important;
+  border-radius: 6px !important;
+  padding: 8px 12px !important;
+  font-size: 16px !important;
+  text-align: center !important;
+  width: 60px !important;
+  height: 44px !important;
+}
+
+/* Checkout form styling */
+.woocommerce-checkout #customer_details {
+  background: #fff !important;
+  border-radius: 12px !important;
+  padding: 24px !important;
+  border: 1px solid #e8eaed !important;
+}
+
+#order_review {
+  background: #f8f9fa !important;
+  border-radius: 12px !important;
+  padding: 24px !important;
+  border: 1px solid #e8eaed !important;
+}
