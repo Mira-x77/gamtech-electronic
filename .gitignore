@@ -7,3 +7,8 @@ wp-config.php
 
 # Docker — local db dumps (may contain sensitive data)
 docker/db-init/*.sql
+
+# Screenshots and temp files
+screenshot-*.png
+site-check-*.png
+_trigger_deploy.*

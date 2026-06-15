@@ -1555,3 +1555,230 @@ input:focus, textarea:focus, select:focus {
   padding: 24px !important;
   border: 1px solid #e8eaed !important;
 }
+
+/* =====================================================
+   28. HIDE WOODMART DEFAULT ELEMENTS
+   ===================================================== */
+/* WoodMart bottom navigation bar */
+.whb-mobile-bar,
+.wd-mobile-nav,
+.woodmart-mobile-bar,
+.mobile-toolbar,
+.bottom-toolbar,
+.wd-bottom-toolbar,
+.wd-mobile-toolbar {
+  display: none !important;
+}
+
+/* WoodMart promo popup */
+.woodmart-promo-popup,
+.wd-promo-popup,
+.woodmart-newsletter-popup,
+.wd-newsletter-popup,
+.wd-popup,
+.xts-popup {
+  display: none !important;
+}
+
+/* WoodMart overlay on product cards — let our cards handle it */
+.product-grid-item .wd-buttons,
+.product-grid-item .woodmart-buttons,
+li.product .wd-buttons,
+li.product .woodmart-buttons,
+.wd-product-buttons,
+.product-grid-item .wd-overlay,
+.product-grid-item .hover-alt-img,
+.product-grid-item .wd-hover-swapper {
+  display: none !important;
+}
+
+/* WoodMart sticky sidebar */
+.wd-sticky-sidebar,
+.sticky-sidebar {
+  position: static !important;
+}
+
+/* WoodMart page preloader */
+.woodmart-preloader,
+.wd-preloader,
+.page-preloader {
+  display: none !important;
+}
+
+/* WoodMart back to top button */
+.woodmart-scroll-top,
+.wd-scroll-top,
+.scroll-to-top,
+#back-to-top {
+  display: none !important;
+}
+
+/* WoodMart "scroll to top" notification */
+.woodmart-notification,
+.wd-notification {
+  display: none !important;
+}
+
+/* WoodMart cart sidebar/overlay */
+.woodmart-cart-sidebar,
+.wd-cart-sidebar,
+.woodmart-side-cart,
+.cart-widget-side {
+  display: none !important;
+}
+
+/* WoodMart close side widget */
+.woodmart-close-side {
+  display: none !important;
+}
+
+/* Hide "Sign up" modal trigger */
+.wd-signup-modal,
+.woodmart-signup-popup,
+.xts-signup-popup {
+  display: none !important;
+}
+
+/* =====================================================
+   29. SHOP PAGE PRODUCT CARD — OVERRIDE WOODMART
+   ===================================================== */
+/* Override WoodMart's product loop styling */
+.cello-shop .products li.product,
+.cello-shop .elements-grid .product-grid-item {
+  border: 1px solid #e8eaed !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  overflow: hidden !important;
+  transition: all 0.2s ease !important;
+  position: relative !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  float: none !important;
+  width: auto !important;
+}
+
+.cello-shop .products li.product:hover,
+.cello-shop .elements-grid .product-grid-item:hover {
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important;
+  border-color: #1a237e !important;
+  transform: translateY(-3px) !important;
+}
+
+/* Product title in shop loop */
+.cello-shop .woocommerce-loop-product__title,
+.cello-shop h2.woocommerce-loop-product__title {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: #1a1a2e !important;
+  line-height: 1.4 !important;
+  margin: 8px 0 !important;
+  padding: 0 12px !important;
+}
+
+/* Product price in shop loop */
+.cello-shop .products .price,
+.cello-shop .products .woocommerce-Price-amount {
+  color: #1a237e !important;
+  font-weight: 800 !important;
+  font-size: 16px !important;
+  padding: 0 12px 12px !important;
+}
+
+.cello-shop .products .price del {
+  color: #80868b !important;
+  font-size: 13px !important;
+}
+
+.cello-shop .products .price ins {
+  color: #cc0c39 !important;
+  text-decoration: none !important;
+}
+
+/* Add to cart button in shop loop */
+.cello-shop .products .add_to_cart_button,
+.cello-shop .products a.button.add_to_cart_button {
+  background: #1a237e !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 0 0 12px 12px !important;
+  width: 100% !important;
+  padding: 10px !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  text-align: center !important;
+  transition: all 0.2s !important;
+}
+
+.cello-shop .products .add_to_cart_button:hover {
+  background: #f4c430 !important;
+}
+
+/* Star rating in shop loop */
+.cello-shop .star-rating {
+  margin: 0 12px 6px !important;
+  color: #f4c430 !important;
+}
+
+/* Sale badge in shop loop */
+.cello-shop .onsale {
+  background: #cc0c39 !important;
+  color: #fff !important;
+  border-radius: 4px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  padding: 3px 8px !important;
+  position: absolute !important;
+  top: 8px !important;
+  left: 8px !important;
+  z-index: 3 !important;
+}
+
+/* Product image in shop loop */
+.cello-shop .products img {
+  width: 100% !important;
+  height: 180px !important;
+  object-fit: contain !important;
+  padding: 12px !important;
+}
+
+/* =====================================================
+   30. SINGLE PRODUCT — WOODMART OVERRIDES
+   ===================================================== */
+.cello-single-product .product-image-summary-wrap {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 48px !important;
+  align-items: start !important;
+}
+
+.cello-single-product .product-images {
+  max-width: 100% !important;
+}
+
+.cello-single-product .summary {
+  max-width: 100% !important;
+  padding-left: 0 !important;
+}
+
+/* Related products grid */
+.cello-single-product .related.products ul.products {
+  display: grid !important;
+  grid-template-columns: repeat(5, 1fr) !important;
+  gap: 20px !important;
+}
+
+@media (max-width: 992px) {
+  .cello-single-product .product-image-summary-wrap {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+  .cello-single-product .related.products ul.products {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .cello-single-product .related.products ul.products {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}

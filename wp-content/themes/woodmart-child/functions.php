@@ -318,3 +318,45 @@ add_filter( 'bloginfo', function( $output, $show ) {
     return $output;
 }, 10, 2 );
 
+// =====================================================
+// 14. DISABLE WOODMART POPUPS & OVERLAYS
+// =====================================================
+function cello_disable_woodmart_features() {
+    // Disable newsletter popup
+    if ( function_exists( 'woodmart_get_opt' ) ) {
+        add_filter( 'woodmart_get_opt', function( $value, $key ) {
+            $disable_keys = array(
+                'promo_popup',
+                'newsletter_popup', 
+                'signup_popup',
+                'cookies_info',
+                'scroll_top',
+                'back_to_top',
+            );
+            if ( in_array( $key, $disable_keys ) ) {
+                return false;
+            }
+            return $value;
+        }, 99, 2 );
+    }
+}
+add_action( 'wp', 'cello_disable_woodmart_features' );
+
+// Remove WoodMart promo popup action
+function cello_remove_woodmart_hooks() {
+    remove_action( 'wp_footer', 'woodmart_promo_popup' );
+    remove_action( 'wp_footer', 'woodmart_newsletter_popup' );
+    remove_action( 'wp_footer', 'woodmart_scroll_top' );
+    remove_action( 'woodmart_before_wp_footer', 'woodmart_promo_popup' );
+    remove_action( 'woodmart_before_wp_footer', 'woodmart_newsletter_popup' );
+}
+add_action( 'init', 'cello_remove_woodmart_hooks', 999 );
+
+// Disable WoodMart's header builder on our pages
+function cello_disable_woodmart_header_builder() {
+    // Force our custom header
+    remove_action( 'woodmart_header', 'woodmart_header_builder' );
+    remove_action( 'woodmart_after_header', 'woodmart_header_bottom_part' );
+}
+add_action( 'wp', 'cello_disable_woodmart_header_builder', 5 );
+
