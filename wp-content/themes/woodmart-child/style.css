@@ -888,59 +888,68 @@ select:focus {
   }
 }
 
-/* Product grids — use flexbox for better parent-theme compatibility */
-.gt-product-grid {
+/* Product grids — ultra-specific selectors to beat parent theme */
+.gt-product-grid.gt-product-grid {
   display: flex !important;
-  flex-wrap: wrap;
-  gap: 16px;
+  flex-wrap: wrap !important;
+  gap: 16px !important;
 }
 
-.gt-product-grid > * {
-  flex: 1 1 calc(20% - 13px);
-  min-width: 0;
-  max-width: 100%;
+.gt-product-grid.gt-product-grid > * {
+  flex: 1 1 calc(20% - 13px) !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
 }
 
-.gt-deal-grid {
+.gt-deal-grid.gt-deal-grid {
   display: flex !important;
-  flex-wrap: wrap;
-  gap: 16px;
+  flex-wrap: wrap !important;
+  gap: 16px !important;
 }
 
-.gt-deal-grid > * {
-  flex: 1 1 calc(25% - 12px);
-  min-width: 0;
-  max-width: 100%;
+.gt-deal-grid.gt-deal-grid > * {
+  flex: 1 1 calc(25% - 12px) !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+.gt-banner-grid.gt-banner-grid {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 20px !important;
+}
+
+.gt-banner-grid.gt-banner-grid > * {
+  flex: 1 1 calc(33.333% - 14px) !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
 }
 
 @media (max-width: 1199px) {
-  .gt-product-grid > * { flex: 1 1 calc(25% - 12px); }
-  .gt-deal-grid > *    { flex: 1 1 calc(33.333% - 11px); }
+  .gt-product-grid.gt-product-grid > * { flex: 1 1 calc(25% - 12px) !important; }
+  .gt-deal-grid.gt-deal-grid > *       { flex: 1 1 calc(33.333% - 11px) !important; }
 }
 
 @media (max-width: 991px) {
-  .gt-product-grid > * { flex: 1 1 calc(33.333% - 11px); }
-  .gt-deal-grid > *    { flex: 1 1 calc(50% - 8px); }
+  .gt-product-grid.gt-product-grid > * { flex: 1 1 calc(33.333% - 11px) !important; }
+  .gt-deal-grid.gt-deal-grid > *       { flex: 1 1 calc(50% - 8px) !important; }
+  .gt-banner-grid.gt-banner-grid > *   { flex: 1 1 calc(50% - 10px) !important; }
 }
 
 @media (max-width: 767px) {
-  .gt-product-grid > * { flex: 1 1 calc(50% - 8px); }
-  .gt-deal-grid > *    { flex: 1 1 100%; }
+  .gt-product-grid.gt-product-grid > * { flex: 1 1 calc(50% - 8px) !important; }
+  .gt-deal-grid.gt-deal-grid > *       { flex: 1 1 100% !important; }
 }
 
 @media (max-width: 479px) {
-  .gt-product-grid > * { flex: 1 1 100%; }
+  .gt-product-grid.gt-product-grid > * { flex: 1 1 100% !important; }
+  .gt-banner-grid.gt-banner-grid > *   { flex: 1 1 100% !important; }
 }
 
 /* =====================================================
    20. HERO BANNER CARDS (3-column)
    ===================================================== */
-.gt-banner-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  margin: 40px 0;
-}
+
 
 .gt-banner-card {
   position: relative;
@@ -1054,18 +1063,12 @@ select:focus {
   .gt-category-grid {
     grid-template-columns: repeat(4, 1fr);
   }
-  .gt-banner-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
 }
 
 @media (max-width: 768px) {
   .gt-category-grid {
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
-  }
-  .gt-banner-grid {
-    grid-template-columns: 1fr;
   }
   .woodmart-nav > li > a,
   .navigation-style-default ul.menu > li > a {
