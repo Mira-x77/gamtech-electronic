@@ -67,7 +67,7 @@
                     <a href="<?php echo esc_url( home_url( '/' ) ); ?>">
                         <?php
                         // Always use the new Cello logo file
-                        $logo_url = get_stylesheet_directory_uri() . '/assets/images/logo-dark.png';
+                        $logo_url = get_stylesheet_directory_uri() . '/assets/images/logo-dark.png?v=2';
                         ?>
                         <img src="<?php echo esc_url( $logo_url ); ?>"
                              alt="Cello"

@@ -16,7 +16,7 @@
                 <div class="gt-footer-col gt-footer-brand">
                     <?php
                     // Always use the new Cello logo file
-                    $footer_logo = get_stylesheet_directory_uri() . '/assets/images/logo-light.png';
+                    $footer_logo = get_stylesheet_directory_uri() . '/assets/images/logo-light.png?v=2';
                     echo '<img src="' . esc_url( $footer_logo ) . '" alt="Cello" style="max-height:48px;width:auto;margin-bottom:16px;" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\'">';
                     echo '<span style="display:none;font-size:22px;font-weight:900;color:#fff;">Cello</span>';
                     ?>
