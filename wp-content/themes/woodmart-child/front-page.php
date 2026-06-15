@@ -1,6 +1,6 @@
 <?php
 /**
- * Homepage template — Gamtech Electronic
+ * Homepage template — Cello Electronics
  * Replicates the Cello-style electronics store layout
  */
 get_header();
@@ -12,11 +12,11 @@ get_header();
 <div class="gt-ticker-strip">
   <div class="container">
     <div class="gt-ticker-inner">
-      <span><?php esc_html_e( 'Free Shipping Worldwide When Order Above $100', 'woodmart' ); ?></span>
+      <span><?php esc_html_e( 'Free Shipping Worldwide When Order Above $500', 'woodmart' ); ?></span>
       <span><?php esc_html_e( 'Jackpot Deals | Tap to get Flat 50% Off', 'woodmart' ); ?></span>
-      <span><?php esc_html_e( 'Free Shipping Worldwide When Order Above $200', 'woodmart' ); ?></span>
+      <span><?php esc_html_e( 'Free Shipping Worldwide When Order Above $500', 'woodmart' ); ?></span>
       <span><?php esc_html_e( 'Jackpot Deals | Tap to get Flat 50% Off', 'woodmart' ); ?></span>
-      <span><?php esc_html_e( 'Free Shipping Worldwide When Order Above $100', 'woodmart' ); ?></span>
+      <span><?php esc_html_e( 'Free Shipping Worldwide When Order Above $500', 'woodmart' ); ?></span>
       <span><?php esc_html_e( 'Jackpot Deals | Tap to get Flat 50% Off', 'woodmart' ); ?></span>
     </div>
   </div>
@@ -38,16 +38,16 @@ get_header();
         </p>
         <div style="display: flex; gap: 12px; flex-wrap: wrap;">
           <a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>"
-             style="background:#ff6f00;color:#fff;padding:12px 28px;border-radius:6px;font-weight:700;font-size:14px;text-decoration:none;transition:all 0.25s;display:inline-block;"
-             onmouseover="this.style.background='#e65100'"
-             onmouseout="this.style.background='#ff6f00'">
-            <?php esc_html_e( 'Buy Now', 'woodmart' ); ?>
+             style="background:#fff;color:#1a237e;padding:12px 28px;border-radius:6px;font-weight:700;font-size:14px;text-decoration:none;transition:all 0.25s;display:inline-block;"
+             onmouseover="this.style.background='#f4c430';this.style.color='#fff'"
+             onmouseout="this.style.background='#fff';this.style.color='#1a237e'">
+            <?php esc_html_e( 'Buy Now', 'woodmart' ); ?> →
           </a>
           <a href="<?php echo esc_url( get_permalink( wc_get_page_id( 'shop' ) ) ); ?>"
              style="background:transparent;color:#fff;padding:12px 28px;border-radius:6px;font-weight:700;font-size:14px;text-decoration:none;border:2px solid rgba(255,255,255,0.5);transition:all 0.25s;display:inline-block;"
              onmouseover="this.style.borderColor='#fff'"
              onmouseout="this.style.borderColor='rgba(255,255,255,0.5)'">
-            <?php esc_html_e( 'See More', 'woodmart' ); ?>
+            <?php esc_html_e( 'See More', 'woodmart' ); ?> →
           </a>
         </div>
       </div>

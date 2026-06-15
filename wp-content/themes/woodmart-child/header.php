@@ -1,7 +1,7 @@
 <?php
 /**
- * Header template — Gamtech Electronic (Cello-style)
- * White/navy/orange standard e-commerce header
+ * Header template — Cello Electronics
+ * White/navy/gold standard e-commerce header
  */
 ?><!DOCTYPE html>
 <html <?php language_attributes(); ?>>
@@ -71,14 +71,14 @@
                             echo wp_get_attachment_image( $logo_id, 'full', false, array( 'alt' => get_bloginfo( 'name' ) ) );
                         } else {
                             // Fallback: try to use the uploaded logo file
-                            $logo_url = get_stylesheet_directory_uri() . '/assets/images/gamtech-logo.png';
+                            $logo_url = get_stylesheet_directory_uri() . '/assets/images/logo-dark.png';
                             ?>
                             <img src="<?php echo esc_url( $logo_url ); ?>"
                                  alt="<?php bloginfo( 'name' ); ?>"
                                  style="max-height:54px;width:auto;"
                                  onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
                             <span style="display:none;font-size:22px;font-weight:900;color:var(--gt-primary);">
-                                <?php bloginfo( 'name' ); ?>
+                                Cello
                             </span>
                             <?php
                         }
@@ -106,13 +106,19 @@
 
                 <!-- Header Icons -->
                 <div class="gt-header-icons">
+                    <!-- Language / Currency mock (visual only to match design) -->
+                    <div class="gt-icon-btn" style="cursor:default;" title="Language &amp; Currency">
+                        <span style="font-size:12px;font-weight:700;color:var(--gt-text);">EN</span>
+                        <span style="font-size:12px;font-weight:700;color:var(--gt-text);">INR</span>
+                    </div>
+
                     <!-- Account -->
                     <a href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' ) ); ?>" class="gt-icon-btn" title="<?php esc_attr_e( 'My Account', 'woodmart' ); ?>">
                         <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                             <circle cx="12" cy="7" r="4"/>
                         </svg>
-                        <span class="gt-icon-label"><?php esc_html_e( 'Account', 'woodmart' ); ?></span>
+                        <span class="gt-icon-label"><?php esc_html_e( 'Account & List', 'woodmart' ); ?></span>
                     </a>
 
                     <!-- Wishlist -->

@@ -1,6 +1,6 @@
 <?php
 /**
- * Gamtech Electronic — Child Theme Functions
+ * Cello Electronics — Child Theme Functions
  * Woodmart Child Theme
  */
 
@@ -20,7 +20,7 @@ function woodmart_child_enqueue_styles() {
 
     // Google Fonts — Poppins
     wp_enqueue_style(
-        'gamtech-google-fonts',
+        'cello-google-fonts',
         'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap',
         array(),
         null
@@ -40,7 +40,7 @@ add_action( 'wp_enqueue_scripts', 'woodmart_child_enqueue_styles', 10010 );
 // =====================================================
 // 2. THEME SUPPORT & IMAGE SIZES
 // =====================================================
-function gamtech_child_setup() {
+function cello_child_setup() {
     // Custom logo support
     add_theme_support( 'custom-logo', array(
         'height'      => 60,
@@ -59,16 +59,16 @@ function gamtech_child_setup() {
     add_image_size( 'gamtech-hero',         1400, 500, true );
     add_image_size( 'gamtech-banner',       600,  400, true );
 }
-add_action( 'after_setup_theme', 'gamtech_child_setup', 11 );
+add_action( 'after_setup_theme', 'cello_child_setup', 11 );
 
 
 // =====================================================
 // 3. ANNOUNCEMENT BAR CUSTOMISER OPTION
 // =====================================================
-function gamtech_customizer( $wp_customize ) {
+function cello_customizer( $wp_customize ) {
     // Section
     $wp_customize->add_section( 'gamtech_general', array(
-        'title'    => __( 'Gamtech Settings', 'woodmart' ),
+        'title'    => __( 'Cello Settings', 'woodmart' ),
         'priority' => 30,
     ) );
 
@@ -96,53 +96,53 @@ function gamtech_customizer( $wp_customize ) {
 
     // Primary color
     $wp_customize->add_setting( 'gamtech_primary_color', array(
-        'default'           => '#e74c3c',
+        'default'           => '#1a237e',
         'sanitize_callback' => 'sanitize_hex_color',
         'transport'         => 'postMessage',
     ) );
     $wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'gamtech_primary_color', array(
-        'label'   => __( 'Primary Color (Red)', 'woodmart' ),
+        'label'   => __( 'Primary Color (Navy)', 'woodmart' ),
         'section' => 'gamtech_general',
     ) ) );
 
     // Accent color
     $wp_customize->add_setting( 'gamtech_accent_color', array(
-        'default'           => '#e74c3c',
+        'default'           => '#f4c430',
         'sanitize_callback' => 'sanitize_hex_color',
         'transport'         => 'postMessage',
     ) );
     $wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'gamtech_accent_color', array(
-        'label'   => __( 'Accent Color (Red)', 'woodmart' ),
+        'label'   => __( 'Accent Color (Gold)', 'woodmart' ),
         'section' => 'gamtech_general',
     ) ) );
 }
-add_action( 'customize_register', 'gamtech_customizer' );
+add_action( 'customize_register', 'cello_customizer' );
 
 
 // =====================================================
 // 4. DYNAMIC CSS FROM CUSTOMIZER
 // =====================================================
-function gamtech_dynamic_css() {
-    $primary = get_theme_mod( 'gamtech_primary_color', '#e74c3c' );
-    $accent  = get_theme_mod( 'gamtech_accent_color', '#e74c3c' );
+function cello_dynamic_css() {
+    $primary = get_theme_mod( 'gamtech_primary_color', '#1a237e' );
+    $accent  = get_theme_mod( 'gamtech_accent_color', '#f4c430' );
 
     $css = '
     :root {
         --gt-primary:      ' . esc_attr( $primary ) . ';
         --gt-accent:       ' . esc_attr( $accent ) . ';
-        --gt-primary-dark: ' . gamtech_darken_color( $primary, 15 ) . ';
-        --gt-accent-dark:  ' . gamtech_darken_color( $accent, 15 ) . ';
+        --gt-primary-dark: ' . cello_darken_color( $primary, 15 ) . ';
+        --gt-accent-dark:  ' . cello_darken_color( $accent, 15 ) . ';
     }
     ';
 
     wp_add_inline_style( 'child-style', $css );
 }
-add_action( 'wp_enqueue_scripts', 'gamtech_dynamic_css', 20 );
+add_action( 'wp_enqueue_scripts', 'cello_dynamic_css', 20 );
 
 /**
  * Simple hex color darkener (no external lib needed)
  */
-function gamtech_darken_color( $hex, $percent ) {
+function cello_darken_color( $hex, $percent ) {
     $hex = ltrim( $hex, '#' );
     if ( strlen( $hex ) === 3 ) {
         $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2];
@@ -157,7 +157,7 @@ function gamtech_darken_color( $hex, $percent ) {
 // =====================================================
 // 5. PRODUCT CARD — ADD QUICK LOOK BUTTON
 // =====================================================
-function gamtech_quick_look_button() {
+function cello_quick_look_button() {
     global $product;
     echo '<div class="gt-quick-look-btn" data-id="' . esc_attr( $product->get_id() ) . '">'
         . esc_html__( 'Quick Look', 'woodmart' )
@@ -165,18 +165,18 @@ function gamtech_quick_look_button() {
 }
 
 // Hook the quick look button only if Woodmart's own quick view is not active
-function gamtech_add_quick_look_hook() {
+function cello_add_quick_look_hook() {
     if ( function_exists( 'woodmart_get_opt' ) && ! woodmart_get_opt( 'quick_view' ) ) {
-        add_action( 'woocommerce_before_shop_loop_item_title', 'gamtech_quick_look_button', 15 );
+        add_action( 'woocommerce_before_shop_loop_item_title', 'cello_quick_look_button', 15 );
     }
 }
-add_action( 'wp_loaded', 'gamtech_add_quick_look_hook' );
+add_action( 'wp_loaded', 'cello_add_quick_look_hook' );
 
 
 // =====================================================
 // 6. PRODUCT CARD — SAVE BADGE (with amount)
 // =====================================================
-function gamtech_sale_badge_with_amount( $html, $post, $product ) {
+function cello_sale_badge_with_amount( $html, $post, $product ) {
     if ( $product->is_on_sale() ) {
         $reg  = (float) $product->get_regular_price();
         $sale = (float) $product->get_sale_price();
@@ -188,43 +188,43 @@ function gamtech_sale_badge_with_amount( $html, $post, $product ) {
     }
     return $html;
 }
-add_filter( 'woocommerce_sale_flash', 'gamtech_sale_badge_with_amount', 10, 3 );
+add_filter( 'woocommerce_sale_flash', 'cello_sale_badge_with_amount', 10, 3 );
 
 
 // =====================================================
 // 7. REMOVE DEFAULT WOOCOMMERCE BREADCRUMBS ON HOMEPAGE
 // =====================================================
-function gamtech_remove_woo_breadcrumbs_homepage() {
+function cello_remove_woo_breadcrumbs_homepage() {
     if ( is_front_page() ) {
         remove_action( 'woocommerce_before_main_content', 'woocommerce_breadcrumb', 20 );
     }
 }
-add_action( 'template_redirect', 'gamtech_remove_woo_breadcrumbs_homepage' );
+add_action( 'template_redirect', 'cello_remove_woo_breadcrumbs_homepage' );
 
 
 // =====================================================
 // 8. CUSTOM BODY CLASSES
 // =====================================================
-function gamtech_body_classes( $classes ) {
-    $classes[] = 'gamtech-theme';
+function cello_body_classes( $classes ) {
+    $classes[] = 'cello-theme';
     if ( is_front_page() ) {
-        $classes[] = 'gamtech-homepage';
+        $classes[] = 'cello-homepage';
     }
     if ( is_shop() || is_product_category() || is_product_tag() ) {
-        $classes[] = 'gamtech-shop';
+        $classes[] = 'cello-shop';
     }
     if ( is_product() ) {
-        $classes[] = 'gamtech-single-product';
+        $classes[] = 'cello-single-product';
     }
     return $classes;
 }
-add_filter( 'body_class', 'gamtech_body_classes' );
+add_filter( 'body_class', 'cello_body_classes' );
 
 
 // =====================================================
 // 9. WISHLIST COUNT IN HEADER (if YITH or similar active)
 // =====================================================
-function gamtech_header_wishlist_count() {
+function cello_header_wishlist_count() {
     if ( function_exists( 'YITH_WCWL' ) ) {
         $count = YITH_WCWL()->count_products();
         if ( $count > 0 ) {
@@ -237,19 +237,19 @@ function gamtech_header_wishlist_count() {
 // =====================================================
 // 10. WOOCOMMERCE — PRODUCTS PER PAGE
 // =====================================================
-function gamtech_products_per_page( $count ) {
+function cello_products_per_page( $count ) {
     if ( is_product_category() || is_shop() ) {
         return 20;
     }
     return $count;
 }
-add_filter( 'loop_shop_per_page', 'gamtech_products_per_page', 20 );
+add_filter( 'loop_shop_per_page', 'cello_products_per_page', 20 );
 
 
 // =====================================================
 // 11. SCHEMA / SEO — BUSINESS INFO IN HEAD
 // =====================================================
-function gamtech_schema_org() {
+function cello_schema_org() {
     if ( is_front_page() ) {
         $schema = array(
             '@context'  => 'https://schema.org',
@@ -262,13 +262,13 @@ function gamtech_schema_org() {
         echo '<script type="application/ld+json">' . wp_json_encode( $schema ) . '</script>' . "\n";
     }
 }
-add_action( 'wp_head', 'gamtech_schema_org' );
+add_action( 'wp_head', 'cello_schema_org' );
 
 
 // =====================================================
 // 12. FORCE WOODMART CHILD TEMPLATE FOR FRONT PAGE
 // =====================================================
-function gamtech_front_page_template( $template ) {
+function cello_front_page_template( $template ) {
     if ( is_front_page() ) {
         $child_front = get_stylesheet_directory() . '/front-page.php';
         if ( file_exists( $child_front ) ) {
@@ -277,12 +277,12 @@ function gamtech_front_page_template( $template ) {
     }
     return $template;
 }
-add_filter( 'template_include', 'gamtech_front_page_template', 99 );
+add_filter( 'template_include', 'cello_front_page_template', 99 );
 
 /**
  * Helper: render star rating HTML from average rating (0-5)
  */
-function gamtech_star_rating( $avg ) {
+function cello_star_rating( $avg ) {
 $avg = floatval( $avg );
 $full = floor( $avg );
 $half = ( $avg - $full ) >= 0.5 ? 1 : 0;
@@ -293,4 +293,17 @@ for ( $j = $full + $half; $j < 5; $j++ ) { $out .= '☆'; }
 $out .= '</span>';
 return $out;
 }
+
+// =====================================================
+// 13. SITE NAME FILTER — DISPLAY AS CELLO
+// =====================================================
+add_filter( 'bloginfo', function( $output, $show ) {
+    if ( $show === 'name' ) {
+        return 'Cello';
+    }
+    if ( $show === 'description' ) {
+        return __( 'Your trusted electronics store. Quality products, fast delivery.', 'woodmart' );
+    }
+    return $output;
+}, 10, 2 );
 
