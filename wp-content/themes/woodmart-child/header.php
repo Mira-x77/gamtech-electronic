@@ -1,7 +1,7 @@
 <?php
 /**
- * Header template — Cello Electronics
- * Full-width, clean Amazon-style header
+ * Header template — Gamtech Electronics
+ * Full-width, clean electronics marketplace header
  */
 ?><!DOCTYPE html>
 <html <?php language_attributes(); ?>>
@@ -62,14 +62,14 @@
                 <div class="gt-logo">
                     <a href="<?php echo esc_url( home_url( '/' ) ); ?>">
                         <?php
-                        $logo_url = get_stylesheet_directory_uri() . '/assets/images/logo-dark.png?v=3';
+                        $logo_url = get_stylesheet_directory_uri() . '/assets/images/gamtech-logo.png';
                         ?>
                         <img src="<?php echo esc_url( $logo_url ); ?>"
-                             alt="Cello"
-                             style="max-height:48px;width:auto;"
+                             alt="Gamtech"
+                             style="max-height:80px;width:auto;"
                              onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
-                        <span style="display:none;font-size:24px;font-weight:900;color:#1a237e;">
-                            Cello
+                        <span style="display:none;font-size:28px;font-weight:900;color:#e74c3c;">
+                            GAMTECH
                         </span>
                     </a>
                 </div>

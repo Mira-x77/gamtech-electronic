@@ -1132,7 +1132,7 @@ select:focus {
 }
 .gt-logo { flex-shrink: 0; }
 .gt-logo a { display: flex; align-items: center; text-decoration: none !important; }
-.gt-logo img { max-height: 54px; width: auto; }
+.gt-logo img { max-height: 100px; width: auto; }
 
 /* Search */
 .gt-search-wrap { flex: 1; max-width: 600px; }
