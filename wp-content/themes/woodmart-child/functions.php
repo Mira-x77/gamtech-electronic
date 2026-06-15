@@ -31,7 +31,7 @@ function woodmart_child_enqueue_styles() {
         'child-style',
         get_stylesheet_directory_uri() . '/style.css',
         array( 'woodmart-style' ),
-        filemtime( get_stylesheet_directory() . '/style.css' )
+        '3.0'
     );
 }
 add_action( 'wp_enqueue_scripts', 'woodmart_child_enqueue_styles', 10010 );
