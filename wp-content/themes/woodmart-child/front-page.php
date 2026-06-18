@@ -125,25 +125,44 @@ $cats = get_terms(['taxonomy'=>'product_cat','hide_empty'=>true,'number'=>7,'par
   --font:'Poppins','Segoe UI',Arial,sans-serif;
   --sw:240px;--cw:294px;
 }
-body{font-family:var(--font);background:var(--bg);color:var(--text);overflow-x:hidden}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--font);background:var(--bg);color:var(--text)}
 a{color:inherit;text-decoration:none;transition:var(--tr)}
 img{max-width:100%;height:auto;display:block}
 button{font-family:var(--font);cursor:pointer;border:none;background:none;outline:none}
 
-/* ── LAYOUT GRID ── */
+/* ── LAYOUT: fixed left + right sidebars, only center scrolls ── */
 .gs-page{
-  display:grid;
-  grid-template-columns:var(--sw) 1fr var(--cw);
-  grid-template-rows:auto 1fr auto;
-  grid-template-areas:"sb hd ct""sb mn ct""sb ft ct";
-  min-height:100vh;
+  display:block;          /* sidebars are fixed, no grid needed for them */
+  height:100vh;
+  overflow:hidden;
+}
+
+/* Centre column sits between the two fixed sidebars */
+.gs-center{
+  position:fixed;
+  left:var(--sw);
+  right:var(--cw);
+  top:0;
+  bottom:0;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
 }
 </style>
 <style>
-/* ── SIDEBAR ── */
-.gs-sb{grid-area:sb;background:var(--bg2);border-right:1px solid var(--border);
-  display:flex;flex-direction:column;height:100vh;position:sticky;top:0;
-  overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:var(--border2) transparent;z-index:100}
+/* ── SIDEBAR — fixed left ── */
+.gs-sb{
+  position:fixed;
+  left:0;top:0;bottom:0;
+  width:var(--sw);
+  background:var(--bg2);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  overflow-y:auto;overflow-x:hidden;
+  scrollbar-width:thin;scrollbar-color:var(--border2) transparent;
+  z-index:100;
+}
 .gs-sb::-webkit-scrollbar{width:3px}.gs-sb::-webkit-scrollbar-thumb{background:var(--border2)}
 .gs-logo{display:flex;align-items:center;gap:10px;padding:22px 18px 18px;border-bottom:1px solid var(--border)}
 .gs-logo-icon{width:34px;height:34px;background:linear-gradient(135deg,#7c3aed,#5b21b6);border-radius:9px;
@@ -190,10 +209,15 @@ button{font-family:var(--font);cursor:pointer;border:none;background:none;outlin
 .gs-sb-support strong{display:block;font-size:12px;color:var(--text)}
 </style>
 <style>
-/* ── HEADER ── */
-.gs-hd{grid-area:hd;background:var(--bg2);border-bottom:1px solid var(--border);
-  display:flex;align-items:center;gap:14px;padding:12px 22px;
-  position:sticky;top:0;z-index:90}
+/* ── HEADER — fixed top of center column ── */
+.gs-hd{
+  flex-shrink:0;
+  background:var(--bg2);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:14px;
+  padding:12px 22px;
+  z-index:90;
+}
 .gs-search{flex:1;max-width:540px;position:relative}
 .gs-search input{width:100%;background:var(--bg3);border:1.5px solid var(--border2);border-radius:22px;
   color:var(--text);font-family:var(--font);font-size:13px;padding:10px 46px 10px 18px;transition:var(--tr)}
@@ -220,8 +244,26 @@ button{font-family:var(--font);cursor:pointer;border:none;background:none;outlin
   font-size:12px;font-weight:700;color:var(--white)}
 .gs-avatar .av-name{font-size:12.5px;font-weight:600;color:var(--text);white-space:nowrap}
 
-/* ── CONTENT ── */
-.gs-mn{grid-area:mn;background:var(--bg);padding:22px;overflow-y:auto;min-height:0}
+/* ── CONTENT — scrollable center ── */
+.gs-mn{
+  flex:1;
+  overflow-y:auto;
+  overflow-x:hidden;
+  background:var(--bg);
+  padding:22px;
+  scrollbar-width:thin;
+  scrollbar-color:var(--border2) transparent;
+}
+.gs-mn::-webkit-scrollbar{width:5px}
+.gs-mn::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* footer lives inside the scroll area */
+.gs-ft{
+  background:var(--bg2);
+  border-top:1px solid var(--border);
+  padding:18px 22px;
+  flex-shrink:0;
+}
 
 /* section headers */
 .gs-sec-hd{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:16px;gap:10px}
@@ -339,10 +381,18 @@ button{font-family:var(--font);cursor:pointer;border:none;background:none;outlin
 .gs-add-btn:hover{background:var(--purple);border-color:var(--purple);color:var(--white)}
 </style>
 <style>
-/* ── CART PANEL ── */
-.gs-ct{grid-area:ct;background:var(--bg2);border-left:1px solid var(--border);
-  display:flex;flex-direction:column;height:100vh;position:sticky;top:0;
-  overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+/* ── CART PANEL — fixed right ── */
+.gs-ct{
+  position:fixed;
+  right:0;top:0;bottom:0;
+  width:var(--cw);
+  background:var(--bg2);
+  border-left:1px solid var(--border);
+  display:flex;flex-direction:column;
+  overflow-y:auto;
+  scrollbar-width:thin;scrollbar-color:var(--border2) transparent;
+  z-index:100;
+}
 .gs-ct::-webkit-scrollbar{width:3px}.gs-ct::-webkit-scrollbar-thumb{background:var(--border2)}
 .gs-ct-hd{display:flex;align-items:center;justify-content:space-between;
   padding:18px 16px 14px;border-bottom:1px solid var(--border);
@@ -422,8 +472,7 @@ button{font-family:var(--font);cursor:pointer;border:none;background:none;outlin
   font-size:15px;line-height:1;cursor:pointer;transition:var(--tr);flex-shrink:0;border:none}
 .gs-sugg-add:hover{background:var(--purple-d);transform:scale(1.1)}
 
-/* ── FOOTER BAR ── */
-.gs-ft{grid-area:ft;background:var(--bg2);border-top:1px solid var(--border);padding:18px 22px}
+/* ── FOOTER FEATURES ── */
 .gs-ft-features{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
 .gs-ft-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);
   padding:16px 14px;display:flex;align-items:center;gap:11px;transition:var(--tr)}
@@ -434,47 +483,244 @@ button{font-family:var(--font);cursor:pointer;border:none;background:none;outlin
 .gs-ft-body h4{font-size:12.5px;font-weight:700;color:var(--white);margin-bottom:2px}
 .gs-ft-body p{font-size:10.5px;color:var(--muted)}
 
-/* ── MOBILE ── */
-.gs-mob-bar{display:none;align-items:center;justify-content:space-between;
-  padding:11px 14px;background:var(--bg2);border-bottom:1px solid var(--border);
-  position:sticky;top:0;z-index:200}
-.gs-mob-btn{background:var(--bg3);border:1px solid var(--border2);color:var(--text);
-  width:36px;height:36px;border-radius:7px;display:flex;align-items:center;
-  justify-content:center;cursor:pointer;transition:var(--tr)}
-.gs-mob-btn:hover{background:var(--purple);border-color:var(--purple)}
-.gs-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:150;backdrop-filter:blur(2px)}
+/* ── MOBILE TOP BAR ── */
+.gs-mob-bar{
+  display:none;
+  align-items:center;justify-content:space-between;
+  padding:0 16px;
+  height:58px;
+  background:var(--bg2);
+  border-bottom:1px solid var(--border);
+  position:fixed;top:0;left:0;right:0;
+  z-index:200;
+}
+.gs-mob-btn{
+  background:var(--bg3);border:1px solid var(--border2);color:var(--text);
+  width:44px;height:44px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:var(--tr);flex-shrink:0;
+  -webkit-tap-highlight-color:transparent;
+}
+.gs-mob-btn:active{background:var(--purple);border-color:var(--purple)}
+.gs-mob-btn svg{pointer-events:none}
+.gs-mob-logo{font-size:17px;font-weight:800;color:var(--white)}
+.gs-mob-logo span{color:var(--purple-l)}
+.gs-mob-cart-wrap{position:relative}
+.gs-mob-cart-bdg{
+  position:absolute;top:-5px;right:-5px;
+  min-width:18px;height:18px;
+  background:var(--purple);color:var(--white);
+  font-size:10px;font-weight:700;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  padding:0 4px;border:2px solid var(--bg2);
+}
+
+.gs-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.72);z-index:150;
+  backdrop-filter:blur(3px);
+  -webkit-backdrop-filter:blur(3px);
+}
 .gs-overlay.on{display:block}
 
-/* ── RESPONSIVE ── */
-@media(max-width:1400px){:root{--cw:272px}.gs-grid{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:1200px){:root{--sw:200px;--cw:252px}.gs-promos{grid-template-columns:repeat(2,1fr)}.gs-hero{padding:28px 28px}}
+/* ============================================================
+   RESPONSIVE — TABLET  (≤ 1280px)
+   ============================================================ */
+@media(max-width:1280px){
+  :root{--cw:272px}
+  .gs-grid{grid-template-columns:repeat(3,1fr)}
+  .gs-promos{grid-template-columns:repeat(2,1fr)}
+}
+
+/* ============================================================
+   RESPONSIVE — SMALL LAPTOP / LARGE TABLET  (≤ 1024px)
+   Cart panel becomes a slide-in overlay, sidebar stays fixed
+   ============================================================ */
 @media(max-width:1024px){
-  .gs-page{grid-template-columns:var(--sw) 1fr;grid-template-areas:"sb hd""sb mn""sb ft"}
-  .gs-ct{display:none;position:fixed;right:0;top:0;height:100vh;width:var(--cw);z-index:160;transform:translateX(100%);transition:transform .3s ease}
-  .gs-ct.open{display:flex;transform:translateX(0)}
+  :root{--sw:220px}
+  .gs-center{right:0}           /* reclaim cart width */
+  .gs-ct{
+    transform:translateX(100%);
+    transition:transform .28s cubic-bezier(.4,0,.2,1);
+    z-index:160;
+  }
+  .gs-ct.open{transform:translateX(0)}
+  .gs-grid{grid-template-columns:repeat(3,1fr)}
 }
+
+/* ============================================================
+   RESPONSIVE — TABLET PORTRAIT  (≤ 768px)
+   Both sidebars become drawers, mobile bar appears
+   ============================================================ */
 @media(max-width:768px){
-  .gs-page{grid-template-columns:1fr;grid-template-areas:"hd""mn""ft"}
-  .gs-sb{display:none;position:fixed;left:0;top:0;height:100vh;width:260px;z-index:160;transform:translateX(-100%);transition:transform .3s ease}
-  .gs-sb.open{display:flex;transform:translateX(0)}
+  html,body{overflow:hidden}
+
+  /* hide both fixed sidebars off-screen by default */
+  .gs-sb{
+    transform:translateX(-100%);
+    transition:transform .28s cubic-bezier(.4,0,.2,1);
+    z-index:160;
+    width:280px;
+  }
+  .gs-sb.open{transform:translateX(0)}
+
+  .gs-ct{
+    transform:translateX(100%);
+    transition:transform .28s cubic-bezier(.4,0,.2,1);
+    z-index:160;
+    width:300px;
+  }
+  .gs-ct.open{transform:translateX(0)}
+
+  /* center column spans full width, shifted down for mobile bar */
+  .gs-center{
+    left:0;right:0;
+    top:58px;          /* mobile bar height */
+  }
+
+  /* show mobile top bar */
   .gs-mob-bar{display:flex}
-  .gs-grid{grid-template-columns:repeat(2,1fr)}
-  .gs-promos{grid-template-columns:1fr}
-  .gs-hero{grid-template-columns:1fr;padding:24px 20px;min-height:auto}
+
+  /* header: simplified on tablet */
+  .gs-hd{padding:10px 16px;gap:10px}
+  .gs-search{max-width:none;flex:1}
+  .gs-avatar .av-name{display:none}
+  .gs-avatar{padding:5px}
+
+  /* hero: single column */
+  .gs-hero{
+    grid-template-columns:1fr;
+    padding:28px 24px;
+    min-height:auto;
+  }
   .gs-hero-img{display:none}
-  .gs-ft-features{grid-template-columns:repeat(2,1fr)}
+  .gs-hero h1{font-size:28px}
+  .gs-hero p{max-width:100%;font-size:14px}
+
+  /* categories: larger touch targets */
+  .gs-cat-icon{width:68px;height:68px}
+  .gs-cat-icon svg{width:28px;height:28px}
+  .gs-cat-lbl{font-size:12px}
+  .gs-cats{gap:14px}
+
+  /* promo cards: 2 cols */
+  .gs-promos{grid-template-columns:repeat(2,1fr);gap:10px}
+  .gs-promo{padding:14px}
+  .gs-promo-ico{width:44px;height:44px}
+  .gs-promo-body h4{font-size:13px}
+
+  /* product grid: 2 cols */
+  .gs-grid{grid-template-columns:repeat(2,1fr);gap:12px}
+
+  /* footer features: 2 cols */
+  .gs-ft-features{grid-template-columns:repeat(2,1fr);gap:10px}
+  .gs-ft{padding:16px}
 }
+
+/* ============================================================
+   RESPONSIVE — MOBILE  (≤ 480px)
+   True single-column mobile-first layout
+   ============================================================ */
 @media(max-width:480px){
+  :root{--r:10px;--rs:7px}
+
   .gs-mn{padding:14px}
-  .gs-grid{grid-template-columns:1fr}
-  .gs-ft-features{grid-template-columns:1fr}
+
+  /* hero — full mobile */
+  .gs-hero{
+    padding:24px 20px;
+    border-radius:14px;
+    margin-bottom:18px;
+  }
+  .gs-hero-tag{font-size:10px;padding:4px 10px}
+  .gs-hero h1{font-size:26px;margin-bottom:10px}
+  .gs-hero p{font-size:13px;margin-bottom:20px}
+  .gs-hero-cta{
+    font-size:15px;
+    padding:13px 28px;
+    border-radius:24px;
+    width:100%;
+    justify-content:center;
+  }
+
+  /* categories: big icons, scrollable row */
+  .gs-cats{gap:16px;padding-bottom:8px;margin-bottom:22px}
+  .gs-cat-icon{width:72px;height:72px}
+  .gs-cat-icon svg{width:30px;height:30px}
+  .gs-cat-lbl{font-size:12.5px;font-weight:600}
+
+  /* promo cards: full width stacked */
+  .gs-promos{grid-template-columns:1fr;gap:10px;margin-bottom:22px}
+  .gs-promo{padding:16px}
+  .gs-promo-ico{width:48px;height:48px;border-radius:12px}
+  .gs-promo-body h4{font-size:14px}
+  .gs-promo-body p{font-size:12px}
+
+  /* section headers */
+  .gs-sec-title{font-size:18px}
+  .gs-sec-sub{font-size:12px}
+  .gs-sec-hd{margin-bottom:14px}
+
+  /* product grid: 2 cols (comfortable on Android) */
+  .gs-grid{grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:22px}
+
+  /* product card: bigger tap targets */
+  .gs-card-body{padding:12px}
+  .gs-card-brand{font-size:10.5px}
+  .gs-card-name{font-size:13px}
+  .gs-stars{font-size:12px}
+  .gs-price-now{font-size:15px}
+  .gs-price-was{font-size:12px}
+  .gs-add-btn{
+    font-size:13px;
+    font-weight:700;
+    padding:12px;
+    letter-spacing:.2px;
+  }
+  .gs-add-btn svg{width:15px;height:15px}
+
+  /* always show wishlist/view buttons on mobile (no hover) */
+  .gs-card-actions{
+    opacity:1;
+    transform:translateX(0);
+  }
+  .gs-act-btn{width:34px;height:34px;border-radius:9px}
+
+  /* footer */
+  .gs-ft-features{grid-template-columns:1fr;gap:8px}
+  .gs-ft{padding:14px}
+  .gs-ft-card{padding:14px}
+  .gs-ft-body h4{font-size:13.5px}
+  .gs-ft-body p{font-size:11.5px}
+
+  /* cart panel: full width on small phones */
+  .gs-ct{width:100% !important}
+
+  /* mobile bar buttons: bigger */
+  .gs-mob-btn{width:46px;height:46px}
 }
-/* admin bar fix */
-body.admin-bar .gs-sb,body.admin-bar .gs-ct{top:32px;height:calc(100vh - 32px)}
-body.admin-bar .gs-hd{top:32px}
+
+/* ============================================================
+   RESPONSIVE — TINY PHONES  (≤ 360px)
+   ============================================================ */
+@media(max-width:360px){
+  .gs-hero h1{font-size:22px}
+  .gs-grid{grid-template-columns:1fr}   /* single column on very small phones */
+  .gs-cat-icon{width:64px;height:64px}
+}
+
+/* ============================================================
+   ADMIN BAR OFFSETS
+   ============================================================ */
+body.admin-bar .gs-sb,
+body.admin-bar .gs-ct{top:32px}
+body.admin-bar .gs-mob-bar{top:32px}
+body.admin-bar .gs-center{top:32px}
 @media screen and (max-width:782px){
-  body.admin-bar .gs-sb,body.admin-bar .gs-ct{top:46px;height:calc(100vh - 46px)}
-  body.admin-bar .gs-hd{top:46px}
+  body.admin-bar .gs-sb,
+  body.admin-bar .gs-ct{top:46px}
+  body.admin-bar .gs-mob-bar{top:46px}
+  body.admin-bar .gs-center{top:calc(58px + 46px)}
 }
 </style>
 </head>
@@ -484,12 +730,15 @@ body.admin-bar .gs-hd{top:32px}
 <!-- MOBILE BAR -->
 <div class="gs-mob-bar">
   <button class="gs-mob-btn" id="gs-sb-toggle" aria-label="Menu">
-    <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
   </button>
-  <a href="<?php echo esc_url(home_url('/')); ?>" style="font-size:15px;font-weight:800;color:var(--white)">Gam<span style="color:var(--purple-l)">Tech</span></a>
-  <button class="gs-mob-btn" id="gs-ct-toggle-mob" aria-label="Cart">
-    <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-  </button>
+  <a href="<?php echo esc_url(home_url('/')); ?>" class="gs-mob-logo">Gam<span>Tech</span></a>
+  <div class="gs-mob-cart-wrap">
+    <button class="gs-mob-btn" id="gs-ct-toggle-mob" aria-label="Cart">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+    </button>
+    <span class="gs-mob-cart-bdg" id="gs-cart-badge-mob"><?php echo esc_html($wc_count ?: 2); ?></span>
+  </div>
 </div>
 <div id="gs-overlay" class="gs-overlay"></div>
 
@@ -557,6 +806,7 @@ body.admin-bar .gs-hd{top:32px}
 <!-- ============================================================
      TOP HEADER
      ============================================================ -->
+<div class="gs-center">
 <header class="gs-hd">
   <div class="gs-search">
     <form method="get" action="<?php echo esc_url(home_url('/')); ?>">
@@ -723,6 +973,8 @@ body.admin-bar .gs-hd{top:32px}
   </div>
 </footer>
 
+</div><!-- /.gs-center -->
+
 <!-- ============================================================
      RIGHT CART PANEL
      ============================================================ -->
@@ -877,6 +1129,7 @@ body.admin-bar .gs-hd{top:32px}
     function updateBadge(){
       var n=$$('.gs-ct-item').length;
       var b=document.getElementById('gs-cart-badge'); if(b) b.textContent=n;
+      var b2=document.getElementById('gs-cart-badge-mob'); if(b2) b2.textContent=n;
       var c=document.getElementById('gs-ct-cnt');     if(c) c.textContent=n;
     }
 
