@@ -385,3 +385,65 @@ function cello_disable_woodmart_header_builder() {
 }
 add_action( 'wp', 'cello_disable_woodmart_header_builder', 5 );
 
+
+// =====================================================
+// 15. GAMTECH STORE PAGE — ENQUEUE ASSETS
+// =====================================================
+function gamtech_store_enqueue_assets() {
+    // Only load on pages using the GamTech Store template
+    if ( ! is_page_template( 'page-gamtech-store.php' ) ) {
+        return;
+    }
+
+    // Google Fonts — Poppins (already loaded by parent, but ensure it here)
+    wp_enqueue_style(
+        'gs-google-fonts',
+        'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap',
+        array(),
+        null
+    );
+
+    // GamTech Store CSS
+    wp_enqueue_style(
+        'gamtech-store-css',
+        get_stylesheet_directory_uri() . '/assets/gamtech-store.css',
+        array(),
+        '1.0.' . filemtime( get_stylesheet_directory() . '/assets/gamtech-store.css' )
+    );
+
+    // GamTech Store JS
+    wp_enqueue_script(
+        'gamtech-store-js',
+        get_stylesheet_directory_uri() . '/assets/gamtech-store.js',
+        array(),
+        '1.0.' . filemtime( get_stylesheet_directory() . '/assets/gamtech-store.js' ),
+        true  // load in footer
+    );
+
+    // Pass WC checkout URL to JS
+    wp_localize_script( 'gamtech-store-js', 'gsData', array(
+        'checkoutUrl' => function_exists( 'wc_get_checkout_url' ) ? wc_get_checkout_url() : home_url( '/checkout/' ),
+        'shopUrl'     => function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' ),
+        'cartCount'   => function_exists( 'WC' ) && WC()->cart ? WC()->cart->get_cart_contents_count() : 0,
+        'currency'    => function_exists( 'get_woocommerce_currency_symbol' ) ? get_woocommerce_currency_symbol() : '$',
+    ) );
+}
+add_action( 'wp_enqueue_scripts', 'gamtech_store_enqueue_assets', 20 );
+
+
+// =====================================================
+// 16. GAMTECH STORE — REMOVE WOODMART HTML WRAPPER
+//     (the template renders its own <html>/<head>/<body>
+//      so we suppress Woodmart's wp_head output on it)
+// =====================================================
+function gamtech_store_suppress_woodmart() {
+    if ( ! is_page_template( 'page-gamtech-store.php' ) ) {
+        return;
+    }
+    // Remove woodmart/child stylesheet on this template (it has its own)
+    add_filter( 'body_class', function( $classes ) {
+        $classes[] = 'gs-body-wrap';
+        return $classes;
+    } );
+}
+add_action( 'wp', 'gamtech_store_suppress_woodmart', 5 );
