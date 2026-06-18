@@ -1,14 +1,14 @@
 <?php
 /**
- * Single product template — Cello Electronics
- * Amazon-style product detail page
+ * Single product — GamTech dark theme
  */
-if ( ! defined( 'ABSPATH' ) ) exit;
+defined( 'ABSPATH' ) || exit;
+
 get_header();
 ?>
 
-<div style="padding: 16px 0; background: #f8f9fa; border-bottom: 1px solid #e8eaed;">
-  <div class="container">
+<div class="gs-page-head">
+  <div class="gs-breadcrumb">
     <?php woocommerce_breadcrumb(); ?>
   </div>
 </div>

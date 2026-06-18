@@ -6,11 +6,13 @@
 
 defined( 'ABSPATH' ) || exit;
 
+require_once get_stylesheet_directory() . '/inc/gamtech-core.php';
+
 // =====================================================
 // 1. ENQUEUE STYLES & GOOGLE FONTS
 // =====================================================
 function woodmart_child_enqueue_styles() {
-    // Parent theme stylesheet
+    // Parent theme stylesheet (minimal dependency)
     wp_enqueue_style(
         'woodmart-style',
         get_template_directory_uri() . '/style.css',
@@ -21,26 +23,33 @@ function woodmart_child_enqueue_styles() {
     // Google Fonts — Poppins
     wp_enqueue_style(
         'cello-google-fonts',
-        'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap',
+        'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap',
         array(),
         null
     );
 
-    // Child theme base stylesheet (keep for WordPress theme detection)
+    // GamTech unified dark theme
     wp_enqueue_style(
-        'child-style',
-        get_stylesheet_directory_uri() . '/style.css',
-        array( 'woodmart-style' ),
-        '4.0'
+        'gamtech-unified-css',
+        get_stylesheet_directory_uri() . '/assets/gamtech-unified.css',
+        array( 'cello-google-fonts' ),
+        '2.0.' . filemtime( get_stylesheet_directory() . '/assets/gamtech-unified.css' )
     );
 
-    // NEW: Main Cello design stylesheet — fresh filename bypasses all edge caches
-    wp_enqueue_style(
-        'cello-main-style',
-        get_stylesheet_directory_uri() . '/cello-main.css',
-        array( 'child-style' ),
-        '5.0.' . time()
+    wp_enqueue_script(
+        'gamtech-unified-js',
+        get_stylesheet_directory_uri() . '/assets/gamtech-unified.js',
+        array(),
+        '2.0.' . filemtime( get_stylesheet_directory() . '/assets/gamtech-unified.js' ),
+        true
     );
+
+    wp_localize_script( 'gamtech-unified-js', 'gsData', array(
+        'checkoutUrl' => function_exists( 'wc_get_checkout_url' ) ? wc_get_checkout_url() : home_url( '/checkout/' ),
+        'shopUrl'     => function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' ),
+        'cartCount'   => function_exists( 'WC' ) && WC()->cart ? WC()->cart->get_cart_contents_count() : 0,
+        'currency'    => function_exists( 'get_woocommerce_currency_symbol' ) ? get_woocommerce_currency_symbol() : '$',
+    ) );
 }
 add_action( 'wp_enqueue_scripts', 'woodmart_child_enqueue_styles', 10010 );
 
@@ -131,19 +140,19 @@ add_action( 'customize_register', 'cello_customizer' );
 // 4. DYNAMIC CSS FROM CUSTOMIZER
 // =====================================================
 function cello_dynamic_css() {
-    $primary = get_theme_mod( 'gamtech_primary_color', '#1a237e' );
-    $accent  = get_theme_mod( 'gamtech_accent_color', '#f4c430' );
+    $primary = get_theme_mod( 'gamtech_primary_color', '#7c3aed' );
+    $accent  = get_theme_mod( 'gamtech_accent_color', '#a78bfa' );
 
     $css = '
     :root {
         --gt-primary:      ' . esc_attr( $primary ) . ';
         --gt-accent:       ' . esc_attr( $accent ) . ';
-        --gt-primary-dark: ' . cello_darken_color( $primary, 15 ) . ';
-        --gt-accent-dark:  ' . cello_darken_color( $accent, 15 ) . ';
+        --pu:              ' . esc_attr( $primary ) . ';
+        --pul:             ' . esc_attr( $accent ) . ';
     }
     ';
 
-    wp_add_inline_style( 'cello-main-style', $css );
+    wp_add_inline_style( 'gamtech-unified-css', $css );
 }
 add_action( 'wp_enqueue_scripts', 'cello_dynamic_css', 20 );
 
@@ -215,6 +224,7 @@ add_action( 'template_redirect', 'cello_remove_woo_breadcrumbs_homepage' );
 // =====================================================
 function cello_body_classes( $classes ) {
     $classes[] = 'cello-theme';
+    $classes[] = 'gs-body';
     if ( is_front_page() ) {
         $classes[] = 'cello-homepage';
     }
@@ -385,65 +395,3 @@ function cello_disable_woodmart_header_builder() {
 }
 add_action( 'wp', 'cello_disable_woodmart_header_builder', 5 );
 
-
-// =====================================================
-// 15. GAMTECH STORE PAGE — ENQUEUE ASSETS
-// =====================================================
-function gamtech_store_enqueue_assets() {
-    // Only load on pages using the GamTech Store template
-    if ( ! is_page_template( 'page-gamtech-store.php' ) ) {
-        return;
-    }
-
-    // Google Fonts — Poppins (already loaded by parent, but ensure it here)
-    wp_enqueue_style(
-        'gs-google-fonts',
-        'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap',
-        array(),
-        null
-    );
-
-    // GamTech Store CSS
-    wp_enqueue_style(
-        'gamtech-store-css',
-        get_stylesheet_directory_uri() . '/assets/gamtech-store.css',
-        array(),
-        '1.0.' . filemtime( get_stylesheet_directory() . '/assets/gamtech-store.css' )
-    );
-
-    // GamTech Store JS
-    wp_enqueue_script(
-        'gamtech-store-js',
-        get_stylesheet_directory_uri() . '/assets/gamtech-store.js',
-        array(),
-        '1.0.' . filemtime( get_stylesheet_directory() . '/assets/gamtech-store.js' ),
-        true  // load in footer
-    );
-
-    // Pass WC checkout URL to JS
-    wp_localize_script( 'gamtech-store-js', 'gsData', array(
-        'checkoutUrl' => function_exists( 'wc_get_checkout_url' ) ? wc_get_checkout_url() : home_url( '/checkout/' ),
-        'shopUrl'     => function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' ),
-        'cartCount'   => function_exists( 'WC' ) && WC()->cart ? WC()->cart->get_cart_contents_count() : 0,
-        'currency'    => function_exists( 'get_woocommerce_currency_symbol' ) ? get_woocommerce_currency_symbol() : '$',
-    ) );
-}
-add_action( 'wp_enqueue_scripts', 'gamtech_store_enqueue_assets', 20 );
-
-
-// =====================================================
-// 16. GAMTECH STORE — REMOVE WOODMART HTML WRAPPER
-//     (the template renders its own <html>/<head>/<body>
-//      so we suppress Woodmart's wp_head output on it)
-// =====================================================
-function gamtech_store_suppress_woodmart() {
-    if ( ! is_page_template( 'page-gamtech-store.php' ) ) {
-        return;
-    }
-    // Remove woodmart/child stylesheet on this template (it has its own)
-    add_filter( 'body_class', function( $classes ) {
-        $classes[] = 'gs-body-wrap';
-        return $classes;
-    } );
-}
-add_action( 'wp', 'gamtech_store_suppress_woodmart', 5 );
