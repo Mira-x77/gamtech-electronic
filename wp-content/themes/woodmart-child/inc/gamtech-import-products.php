@@ -11,17 +11,27 @@ defined( 'ABSPATH' ) || exit;
 
 function gamtech_run_product_import() {
     if ( ! isset( $_GET['run_gamtech_import'] ) ) return;
+
+    // Clean any buffered output so we can send our own headers/content
+    while ( ob_get_level() > 0 ) { ob_end_clean(); }
+
     if ( ( $_GET['key'] ?? '' ) !== 'gamtech2026import' ) {
-        wp_die( 'Unauthorized', 403 );
+        header( 'HTTP/1.1 403 Forbidden' );
+        echo 'Unauthorized';
+        exit;
     }
 
     // Prevent re-running if already done
     if ( get_option( 'gamtech_import_done' ) === 'yes' ) {
-        wp_die( '<h2>Import already completed.</h2><p>Delete the wp_option "gamtech_import_done" to re-run.</p>' );
+        header( 'Content-Type: text/plain; charset=utf-8' );
+        echo 'Import already completed. Delete wp_option gamtech_import_done to re-run.';
+        exit;
     }
 
     if ( ! function_exists( 'wc_get_product' ) ) {
-        wp_die( 'WooCommerce is not active.' );
+        header( 'Content-Type: text/plain; charset=utf-8' );
+        echo 'WooCommerce is not active.';
+        exit;
     }
 
     @set_time_limit( 300 );
@@ -309,4 +319,4 @@ function gamtech_run_product_import() {
     echo implode( "\n", $log );
     exit;
 }
-add_action( 'init', 'gamtech_run_product_import', 1 );
+add_action( 'wp_loaded', 'gamtech_run_product_import', 1 );
