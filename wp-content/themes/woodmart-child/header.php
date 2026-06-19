@@ -17,7 +17,7 @@ $contact    = get_permalink( get_page_by_path( 'contact' ) );
 <html <?php language_attributes(); ?>>
 <head>
 <meta charset="<?php bloginfo( 'charset' ); ?>">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <link rel="profile" href="http://gmpg.org/xfn/11">
 <?php wp_head(); ?>
 </head>
@@ -27,19 +27,6 @@ $contact    = get_permalink( get_page_by_path( 'contact' ) );
 <div class="gs-page">
 
 <div id="gs-ov" class="gs-overlay"></div>
-
-<div class="gs-mob-bar">
-  <button class="gs-mob-btn" id="gs-sb-tog" aria-label="<?php esc_attr_e( 'Menu', 'woodmart' ); ?>">
-    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-  </button>
-  <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="gs-mob-logo">Gam<span>Tech</span></a>
-  <div class="gs-mob-cart-wrap">
-    <button class="gs-mob-btn" id="gs-ct-tog-mob" aria-label="<?php esc_attr_e( 'Cart', 'woodmart' ); ?>">
-      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-    </button>
-    <span class="gs-mob-cart-bdg" id="gs-badge-mob"><?php echo esc_html( $wc_count ); ?></span>
-  </div>
-</div>
 
 <aside class="gs-sb" id="gs-sb">
   <div class="gs-logo">
@@ -110,6 +97,28 @@ $contact    = get_permalink( get_page_by_path( 'contact' ) );
 </aside>
 
 <div class="gs-center">
+  <!-- Mobile top bar -->
+  <div class="gs-mob-top" id="gs-mob-top">
+    <button class="gs-mob-menu-btn" id="gs-sb-tog" aria-label="<?php esc_attr_e( 'Menu', 'woodmart' ); ?>">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="gs-mob-top-logo">Gam<span>Tech</span></a>
+    <div style="display:flex;align-items:center;gap:6px">
+      <form method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>" class="gs-mob-search-form">
+        <input type="search" name="s" placeholder="Search..." value="<?php echo esc_attr( get_search_query() ); ?>">
+        <input type="hidden" name="post_type" value="product">
+        <button type="submit" aria-label="Search">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+      </form>
+      <div style="position:relative">
+        <button class="gs-mob-cart-btn gs-ct-tog-btn" aria-label="<?php esc_attr_e( 'Cart', 'woodmart' ); ?>">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        </button>
+        <span class="gs-mob-cart-bdg" id="gs-badge-mob"><?php echo esc_html( $wc_count ); ?></span>
+      </div>
+    </div>
+  </div>
   <header class="gs-hd">
     <div class="gs-search">
       <form method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>">
@@ -121,7 +130,7 @@ $contact    = get_permalink( get_page_by_path( 'contact' ) );
       </form>
     </div>
     <div class="gs-hd-icons">
-      <button class="gs-hd-btn" id="gs-ct-tog" aria-label="<?php esc_attr_e( 'Cart', 'woodmart' ); ?>">
+      <button class="gs-hd-btn gs-ct-tog-btn" aria-label="<?php esc_attr_e( 'Cart', 'woodmart' ); ?>">
         <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
         <span class="bdg" id="gs-badge-hd"><?php echo esc_html( $wc_count ); ?></span>
       </button>

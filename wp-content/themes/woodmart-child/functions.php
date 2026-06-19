@@ -8,6 +8,7 @@ defined( 'ABSPATH' ) || exit;
 
 require_once get_stylesheet_directory() . '/inc/gamtech-core.php';
 require_once get_stylesheet_directory() . '/inc/gamtech-import-products.php';
+require_once get_stylesheet_directory() . '/inc/gamtech-fix-categories.php';
 
 // =====================================================
 // 1. ENQUEUE STYLES & GOOGLE FONTS

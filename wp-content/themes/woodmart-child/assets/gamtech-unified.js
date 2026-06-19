@@ -9,10 +9,10 @@ document.addEventListener('DOMContentLoaded',function(){
   function openPanel(el){el.classList.add('open');ov&&ov.classList.add('on');}
   function closeAll(){sb&&sb.classList.remove('open');ct&&ct.classList.remove('open');ov&&ov.classList.remove('on');}
 
-  var sbTog=qs('#gs-sb-tog'), ctTog=qs('#gs-ct-tog'), ctTogM=qs('#gs-ct-tog-mob'), ctClose=qs('#gs-ct-close');
+  var sbTog=qs('#gs-sb-tog'), ctClose=qs('#gs-ct-close');
+  /* all cart toggle buttons (desktop header + mobile top bar) */
+  qa('.gs-ct-tog-btn').forEach(function(btn){btn.addEventListener('click',function(){openPanel(ct);});});
   sbTog&&sbTog.addEventListener('click',function(){openPanel(sb);});
-  ctTog&&ctTog.addEventListener('click',function(){openPanel(ct);});
-  ctTogM&&ctTogM.addEventListener('click',function(){openPanel(ct);});
   ctClose&&ctClose.addEventListener('click',closeAll);
   ov&&ov.addEventListener('click',closeAll);
 
