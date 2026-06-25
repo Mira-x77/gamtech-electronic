@@ -16,25 +16,6 @@ $wc_items = $cart_data['items'];
   </main>
 
   <footer class="gs-ft">
-    <div class="gs-ft-features">
-      <div class="gs-ft-card">
-        <div class="gs-ft-ico"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-        <div class="gs-ft-b"><h4><?php esc_html_e( 'Secure Payment', 'woodmart' ); ?></h4><p><?php esc_html_e( '100% secure checkout', 'woodmart' ); ?></p></div>
-      </div>
-      <div class="gs-ft-card">
-        <div class="gs-ft-ico"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></div>
-        <div class="gs-ft-b"><h4><?php esc_html_e( 'Easy Returns', 'woodmart' ); ?></h4><p><?php esc_html_e( '30-day return policy', 'woodmart' ); ?></p></div>
-      </div>
-      <div class="gs-ft-card">
-        <div class="gs-ft-ico"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.21h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.09 6.09l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
-        <div class="gs-ft-b"><h4><?php esc_html_e( '24/7 Support', 'woodmart' ); ?></h4><p><?php esc_html_e( 'Dedicated support team', 'woodmart' ); ?></p></div>
-      </div>
-      <div class="gs-ft-card">
-        <div class="gs-ft-ico"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-        <div class="gs-ft-b"><h4><?php esc_html_e( 'Trusted Store', 'woodmart' ); ?></h4><p><?php esc_html_e( '4.8 average rating', 'woodmart' ); ?></p></div>
-      </div>
-    </div>
-
     <div class="gs-ft-links">
       <a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php esc_html_e( 'Home', 'woodmart' ); ?></a>
       <a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>"><?php esc_html_e( 'Shop', 'woodmart' ); ?></a>
