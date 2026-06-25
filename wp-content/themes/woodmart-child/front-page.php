@@ -27,7 +27,7 @@ get_header();
 
 <section class="gs-hero-slider">
   <div class="gs-hero-slides" id="gs-hero-slides">
-    <div class="gs-hero-slide active">
+    <div class="gs-hero-slide active" style="background-image:url('<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/hero1.png' ); ?>')">
       <div class="gs-hero-slide-content">
         <div class="gs-hero-tag"><span class="dot"></span><?php esc_html_e( 'Tech Store 2026', 'woodmart' ); ?></div>
         <h1><?php esc_html_e( 'Power Up Your', 'woodmart' ); ?><br><span><?php esc_html_e( 'Workspace ✦', 'woodmart' ); ?></span></h1>
@@ -37,11 +37,8 @@ get_header();
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
       </div>
-      <div class="gs-hero-slide-img">
-        <img src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/hero1.png' ); ?>" alt="<?php esc_attr_e( 'Featured Products', 'woodmart' ); ?>">
-      </div>
     </div>
-    <div class="gs-hero-slide">
+    <div class="gs-hero-slide" style="background-image:url('<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/hero2.png' ); ?>')">
       <div class="gs-hero-slide-content">
         <div class="gs-hero-tag"><span class="dot"></span><?php esc_html_e( 'Audio Collection', 'woodmart' ); ?></div>
         <h1><?php esc_html_e( 'Premium', 'woodmart' ); ?><br><span><?php esc_html_e( 'Audio ✦', 'woodmart' ); ?></span></h1>
@@ -51,14 +48,23 @@ get_header();
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
       </div>
-      <div class="gs-hero-slide-img">
-        <img src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/hero2.png' ); ?>" alt="<?php esc_attr_e( 'Audio Products', 'woodmart' ); ?>">
+    </div>
+    <div class="gs-hero-slide" style="background-image:url('<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/hero3.png' ); ?>')">
+      <div class="gs-hero-slide-content">
+        <div class="gs-hero-tag"><span class="dot"></span><?php esc_html_e( 'Best Products', 'woodmart' ); ?></div>
+        <h1><?php esc_html_e( 'Top Rated', 'woodmart' ); ?><br><span><?php esc_html_e( 'Gear ✦', 'woodmart' ); ?></span></h1>
+        <p><?php esc_html_e( 'Best-selling electronics chosen by our customers.', 'woodmart' ); ?></p>
+        <a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) . '?orderby=popularity' ); ?>" class="gs-hero-cta">
+          <?php esc_html_e( 'View Best Sellers', 'woodmart' ); ?>
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
       </div>
     </div>
   </div>
   <div class="gs-hero-dots" id="gs-hero-dots">
     <span class="gs-hero-dot active" data-slide="0"></span>
     <span class="gs-hero-dot" data-slide="1"></span>
+    <span class="gs-hero-dot" data-slide="2"></span>
   </div>
 </section>
 
