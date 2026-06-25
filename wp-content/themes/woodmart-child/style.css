@@ -1,25 +1,24 @@
 /*
- Theme Name:   Woodmart Child — Cello
- Description:  Woodmart Child Theme — Cello Electronics
+ Theme Name:   Woodmart Child — GamTech
+ Description:  Woodmart Child Theme — GamTech Electronics
  Author:       XTemos
  Author URI:   http://xtemos.com
  Template:     woodmart
- Version:      2.0.0
+ Version:      2.1.0
  Text Domain:  woodmart
 */
 
 /* =====================================================
-   CELLO DESIGN SYSTEM
-   Reference: Cello-style electronics store
+   GAMTECH DESIGN SYSTEM
+   Reference: GamTech Electronics store
    Colors:
-     Primary (Navy): #1a237e
-     Accent (Gold):  #f4c430
-     Top bar:        #1565c0
-     White:          #ffffff
-     Text:           #212121
-     Light grey:     #f5f5f5
-     Border:         #e0e0e0
-     Sale red:       #e53935
+     Primary (Purple): #7c3aed
+     Accent (Lavender): #a78bfa
+     Background:      #0f0f0f
+     Card:            #181818
+     Text:            #d4d4d8
+     White:           #ffffff
+     Sale red:        #ef4444
    ===================================================== */
 
 /* =====================================================

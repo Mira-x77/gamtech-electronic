@@ -121,5 +121,19 @@ document.addEventListener('DOMContentLoaded',function(){
       if(panel)panel.classList.add('active');
     });
   });
+
+  /* hero slider auto-slide */
+  var slides=qa('.gs-hero-slide'), dots=qa('.gs-hero-dot'), cur=0;
+  function showSlide(i){
+    slides.forEach(function(s){s.classList.remove('active')});
+    dots.forEach(function(d){d.classList.remove('active')});
+    cur=i;if(cur>=slides.length)cur=0;if(cur<0)cur=slides.length-1;
+    slides[cur]&&slides[cur].classList.add('active');
+    dots[cur]&&dots[cur].classList.add('active');
+  }
+  if(slides.length>1){
+    dots.forEach(function(d){d.addEventListener('click',function(){showSlide(parseInt(d.dataset.slide)||0);});});
+    setInterval(function(){showSlide(cur+1);},5000);
+  }
 });
 })();

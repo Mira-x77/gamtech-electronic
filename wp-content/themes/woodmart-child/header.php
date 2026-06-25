@@ -30,10 +30,9 @@ $contact    = get_permalink( get_page_by_path( 'contact' ) );
 
 <aside class="gs-sb" id="gs-sb">
   <div class="gs-logo">
-    <div class="gs-logo-ico">
-      <svg width="18" height="18" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-    </div>
-    <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="gs-logo-txt">Gam<span>Tech</span></a>
+    <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="gs-logo-link">
+      <img src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/gamtech-logo.png' ); ?>" alt="GamTech" class="gs-logo-img">
+    </a>
   </div>
 
   <div class="gs-nav-sec">
@@ -102,7 +101,7 @@ $contact    = get_permalink( get_page_by_path( 'contact' ) );
     <button class="gs-mob-menu-btn" id="gs-sb-tog" aria-label="<?php esc_attr_e( 'Menu', 'woodmart' ); ?>">
       <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
-    <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="gs-mob-top-logo">Gam<span>Tech</span></a>
+    <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="gs-mob-top-logo"><img src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/gamtech-logo.png' ); ?>" alt="GamTech" style="height:30px"></a>
     <div style="display:flex;align-items:center;gap:6px">
       <form method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>" class="gs-mob-search-form">
         <input type="search" name="s" placeholder="Search..." value="<?php echo esc_attr( get_search_query() ); ?>">

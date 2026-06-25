@@ -87,7 +87,7 @@ add_action( 'after_setup_theme', 'cello_child_setup', 11 );
 function cello_customizer( $wp_customize ) {
     // Section
     $wp_customize->add_section( 'gamtech_general', array(
-        'title'    => __( 'Cello Settings', 'woodmart' ),
+        'title'    => __( 'GamTech Settings', 'woodmart' ),
         'priority' => 30,
     ) );
 
@@ -225,16 +225,16 @@ add_action( 'template_redirect', 'cello_remove_woo_breadcrumbs_homepage' );
 // 8. CUSTOM BODY CLASSES
 // =====================================================
 function cello_body_classes( $classes ) {
-    $classes[] = 'cello-theme';
+    $classes[] = 'gamtech-theme';
     $classes[] = 'gs-body';
     if ( is_front_page() ) {
-        $classes[] = 'cello-homepage';
+        $classes[] = 'gamtech-homepage';
     }
     if ( is_shop() || is_product_category() || is_product_tag() ) {
-        $classes[] = 'cello-shop';
+        $classes[] = 'gamtech-shop';
     }
     if ( is_product() ) {
-        $classes[] = 'cello-single-product';
+        $classes[] = 'gamtech-single-product';
     }
     return $classes;
 }
@@ -322,7 +322,7 @@ add_filter( 'bloginfo', function( $output, $show ) {
         return $output;
     }
     if ( $show === 'name' ) {
-        return 'Cello';
+        return 'GamTech';
     }
     if ( $show === 'description' ) {
         return __( 'Your trusted electronics store. Quality products, fast delivery.', 'woodmart' );
