@@ -128,4 +128,34 @@ get_header();
   ?>
 </div>
 
+<?php
+$featured_cats = array( 'Mouse', 'Keyboards', 'Headphones & Audio', 'Storage', 'Networking', 'Laptop Accessories' );
+foreach ( $featured_cats as $fc_name ) :
+    $fc_q = gamtech_product_query( array(
+        'posts_per_page' => 4,
+        'tax_query'      => array( array(
+            'taxonomy' => 'product_cat',
+            'field'    => 'name',
+            'terms'    => $fc_name,
+        ) ),
+        'orderby'        => 'rand',
+    ) );
+    if ( ! $fc_q->have_posts() ) continue;
+    ?>
+<div class="gs-sh">
+  <div><h2><?php echo esc_html( $fc_name ); ?></h2><p><?php esc_html_e( 'Browse our', 'woodmart' ); ?> <?php echo esc_html( strtolower( $fc_name ) ); ?></p></div>
+  <a href="<?php echo esc_url( gamtech_category_url( $fc_name ) ); ?>" class="gs-viewall"><?php esc_html_e( 'View All', 'woodmart' ); ?></a>
+</div>
+<div class="gs-grid">
+  <?php
+  while ( $fc_q->have_posts() ) {
+      $fc_q->the_post();
+      global $product;
+      gamtech_product_card( $product );
+  }
+  wp_reset_postdata();
+  ?>
+</div>
+<?php endforeach; ?>
+
 <?php get_footer(); ?>
