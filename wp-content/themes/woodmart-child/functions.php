@@ -4,6 +4,27 @@
  * Woodmart Child Theme
  */
 
+// Catch PHP fatal errors and show a helpful page instead of blank 500
+register_shutdown_function( function() {
+    $error = error_get_last();
+    if ( $error && in_array( $error['type'], array( E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR ) ) ) {
+        if ( ! headers_sent() ) {
+            header( 'Content-Type: text/html; charset=utf-8' );
+            http_response_code( 500 );
+        }
+        echo '<!DOCTYPE html><html><head><title>Site Error</title>';
+        echo '<style>body{font-family:sans-serif;max-width:700px;margin:40px auto;padding:20px;background:#1a1a2e;color:#e0e0e0}';
+        echo 'h1{color:#e74c3c}code{background:#333;padding:2px 6px;border-radius:3px;font-size:13px}';
+        echo '.box{background:#16213e;padding:20px;border-radius:8px;border-left:4px solid #e74c3c}</style></head><body>';
+        echo '<h1>Something went wrong</h1>';
+        echo '<div class="box"><p><strong>Error:</strong> ' . htmlspecialchars( $error['message'] ) . '</p>';
+        echo '<p><strong>File:</strong> <code>' . htmlspecialchars( $error['file'] ) . ':' . $error['line'] . '</code></p></div>';
+        echo '<p style="margin-top:20px">Try refreshing the page. If this keeps happening, contact support.</p>';
+        echo '</body></html>';
+        exit;
+    }
+} );
+
 defined( 'ABSPATH' ) || exit;
 
 require_once get_stylesheet_directory() . '/inc/gamtech-core.php';

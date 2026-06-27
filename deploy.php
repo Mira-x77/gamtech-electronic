@@ -31,34 +31,8 @@ if ( isset( $data['ref'] ) && $data['ref'] !== 'refs/heads/' . GIT_BRANCH ) {
 // Run git pull
 $output = shell_exec( 'cd ' . escapeshellarg( REPO_PATH ) . ' && git pull origin ' . GIT_BRANCH . ' 2>&1' );
 
-// Auto-recover wp-config.php if missing (prevents 500 error)
-$wp_config = REPO_PATH . '/wp-config.php';
-if ( ! file_exists( $wp_config ) && file_exists( REPO_PATH . '/setup-config.php' ) ) {
-    // Minimal production wp-config.php
-    $config = '<?php
-define( \'DB_NAME\',     \'c2423708c_gamtech\' );
-define( \'DB_USER\',     \'c2423708c_gamtech\' );
-define( \'DB_PASSWORD\', \'CHANGE_ME\' );
-define( \'DB_HOST\',     \'localhost\' );
-define( \'DB_CHARSET\',  \'utf8mb4\' );
-define( \'DB_COLLATE\',  \'\' );
-define( \'AUTH_KEY\',         \'gmT!ch@2026#k1\' );
-define( \'SECURE_AUTH_KEY\',  \'gmT!ch@2026#k2\' );
-define( \'LOGGED_IN_KEY\',    \'gmT!ch@2026#k3\' );
-define( \'NONCE_KEY\',        \'gmT!ch@2026#k4\' );
-define( \'AUTH_SALT\',        \'gmT!ch@2026#s1\' );
-define( \'SECURE_AUTH_SALT\', \'gmT!ch@2026#s2\' );
-define( \'LOGGED_IN_SALT\',   \'gmT!ch@2026#s3\' );
-define( \'NONCE_SALT\',       \'gmT!ch@2026#s4\' );
-$table_prefix = \'wp_\';
-define( \'WP_DEBUG\', false );
-define( \'WP_MEMORY_LIMIT\', \'256M\' );
-define( \'AUTOMATIC_UPDATER_DISABLED\', true );
-if ( ! defined( \'ABSPATH\' ) ) { define( \'ABSPATH\', __DIR__ . \'/\' ); }
-require_once ABSPATH . \'wp-settings.php\';
-';
-    file_put_contents( $wp_config, $config );
-}
+// Clean up development files that shouldn't be on production
+@shell_exec( 'cd ' . escapeshellarg( REPO_PATH ) . ' && rm -rf .git docker product-images vibe_images .kiro .agents alive.php alive.html debug-site.php setup-config.php 2>&1' );
 
 // Purge Varnish / edge cache via localhost
 shell_exec( 'curl -s -X PURGE http://localhost/ 2>&1' );
