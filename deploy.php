@@ -2,9 +2,12 @@
 /**
  * Auto-deploy webhook — triggered by GitHub on every push to main.
  * Secured with a secret token.
+ * 
+ * Handles both git pull (normal) and fresh clone (if .git was deleted).
  */
 
 define( 'DEPLOY_SECRET', 'gamtech2026deploy' );
+define( 'REPO_URL',      'https://github.com/Mira-x77/gamtech-electronic.git' );
 define( 'REPO_PATH',     '/home/c2423708c/public_html' );
 define( 'GIT_BRANCH',    'main' );
 
@@ -28,24 +31,32 @@ if ( isset( $data['ref'] ) && $data['ref'] !== 'refs/heads/' . GIT_BRANCH ) {
     die( 'Not main branch, skipping.' );
 }
 
-// Run git pull
-$output = shell_exec( 'cd ' . escapeshellarg( REPO_PATH ) . ' && git pull origin ' . GIT_BRANCH . ' 2>&1' );
+// Deploy: git pull or fresh clone if .git is missing
+$git_dir = REPO_PATH . '/.git';
+if ( is_dir( $git_dir ) ) {
+    $output = shell_exec( 'cd ' . escapeshellarg( REPO_PATH ) . ' && git pull origin ' . GIT_BRANCH . ' 2>&1' );
+} else {
+    // .git missing — back up wp-config.php, clone fresh, restore wp-config
+    $wp_config_backup = '';
+    if ( file_exists( REPO_PATH . '/wp-config.php' ) ) {
+        $wp_config_backup = file_get_contents( REPO_PATH . '/wp-config.php' );
+    }
+    shell_exec( 'cd ' . escapeshellarg( REPO_PATH ) . ' && git clone --branch ' . GIT_BRANCH . ' ' . REPO_URL . ' . 2>&1' );
+    $output = "Fresh clone (no .git found)";
+    // Restore wp-config.php if it existed
+    if ( $wp_config_backup ) {
+        file_put_contents( REPO_PATH . '/wp-config.php', $wp_config_backup );
+    }
+}
 
-// Clean up development files that shouldn't be on production
-@shell_exec( 'cd ' . escapeshellarg( REPO_PATH ) . ' && rm -rf .git docker product-images vibe_images .kiro .agents alive.php alive.html debug-site.php setup-config.php 2>&1' );
-
-// Purge Varnish / edge cache via localhost
+// Purge cache
 shell_exec( 'curl -s -X PURGE http://localhost/ 2>&1' );
 shell_exec( 'curl -s -X PURGE http://127.0.0.1/ 2>&1' );
-// Also try banning all cached objects
-shell_exec( 'curl -s -X PURGE http://localhost/wp-content/ 2>&1' );
-// Touch key files to force WordPress cache invalidation
 @touch( REPO_PATH . '/wp-content/themes/woodmart-child/style.css' );
 @touch( REPO_PATH . '/wp-content/themes/woodmart-child/functions.php' );
 @touch( REPO_PATH . '/wp-content/themes/woodmart-child/front-page.php' );
 @touch( REPO_PATH . '/wp-content/themes/woodmart-child/header.php' );
 @touch( REPO_PATH . '/wp-content/themes/woodmart-child/footer.php' );
-// Clear any object caches
 if ( function_exists( 'wp_cache_flush' ) ) {
     wp_cache_flush();
 }
