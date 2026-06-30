@@ -75,6 +75,13 @@ button{font-family:var(--font);cursor:pointer;border:none;outline:none;backgroun
 .gs-sb-cat svg{flex-shrink:0;opacity:.6}
 .gs-sb-cat:hover svg{opacity:1}
 
+/* sidebar deliver */
+.gs-sb-deliver{display:flex;align-items:center;gap:7px;padding:10px 16px;
+  border-top:1px solid var(--b1);flex-shrink:0}
+.gs-sb-deliver svg{color:var(--pul);flex-shrink:0}
+.gs-sb-deliver-sub{display:block;font-size:9px;color:var(--di);line-height:1.1}
+.gs-sb-deliver-loc{display:block;font-size:11px;font-weight:700;color:var(--wh);line-height:1.2}
+
 /* sidebar promo card */
 .gs-sb-promo{margin:8px;border-radius:var(--r);
   background:linear-gradient(135deg,#7c3aed,#5b21b6);
@@ -107,45 +114,26 @@ button{font-family:var(--font);cursor:pointer;border:none;outline:none;backgroun
 /* ═══ CENTER COLUMN ═══════════════════════════════════════ */
 .gs-center{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden;height:100%}
 
-/* ═══ HEADER — Amazon-style (inside center column) ══════ */
+/* ═══ HEADER — search bar + actions (inside center column) ═══ */
 .gs-hd{flex-shrink:0;background:var(--bg2);border-bottom:1px solid var(--b1);
-  display:flex;align-items:center;gap:8px;padding:0 10px;height:56px;z-index:90;overflow:hidden}
-
-/* Logo */
-.gs-hd-logo{display:flex;align-items:center;padding:0 8px;height:100%;flex-shrink:0;transition:var(--tr)}
-.gs-hd-logo:hover{opacity:.85}
-.gs-hd-logo-img{height:30px;width:auto;object-fit:contain}
-
-/* Deliver to */
-.gs-hd-deliver{display:flex;align-items:center;gap:5px;padding:4px 8px;
-  border:1px solid transparent;border-radius:var(--rs);cursor:pointer;
-  transition:var(--tr);flex-shrink:0;white-space:nowrap}
-.gs-hd-deliver:hover{border-color:var(--wh)}
-.gs-hd-deliver svg{color:var(--wh);flex-shrink:0}
-.gs-hd-deliver-sub{display:block;font-size:9px;color:var(--mu);line-height:1.1}
-.gs-hd-deliver-loc{display:block;font-size:11px;font-weight:700;color:var(--wh);line-height:1.2}
+  display:flex;align-items:center;gap:10px;padding:10px 16px;z-index:90}
 
 /* Search bar */
-.gs-hd-search-wrap{flex:1;padding:0 6px;min-width:0;overflow:hidden}
-.gs-hd-search-form{display:flex;align-items:stretch;height:38px;border-radius:8px;overflow:hidden;
+.gs-hd-search-wrap{flex:1;min-width:0}
+.gs-hd-search-form{display:flex;align-items:stretch;height:40px;border-radius:8px;overflow:hidden;
   border:2px solid var(--b2);transition:var(--tr)}
 .gs-hd-search-form:focus-within{border-color:var(--pu);box-shadow:0 0 0 3px var(--pug)}
-.gs-hd-search-cat{background:var(--bg3);border:none;border-right:1px solid var(--b2);
-  color:var(--tx);font-size:11px;font-weight:600;font-family:var(--font);
-  padding:0 8px;cursor:pointer;outline:none;flex-shrink:0;min-width:56px;max-width:80px;
-  appearance:auto;-webkit-appearance:auto}
-.gs-hd-search-cat:focus{background:var(--bg)}
 .gs-hd-search-input{flex:1;border:none;background:var(--wh);color:#111;
-  font-size:13px;font-family:var(--font);padding:0 10px;outline:none;min-width:0}
+  font-size:13px;font-family:var(--font);padding:0 14px;outline:none;min-width:0}
 .gs-hd-search-input::placeholder{color:#888}
-.gs-hd-search-btn{background:var(--pu);border:none;padding:0 14px;
+.gs-hd-search-btn{background:var(--pu);border:none;padding:0 16px;
   display:flex;align-items:center;justify-content:center;cursor:pointer;
   transition:var(--tr);flex-shrink:0}
 .gs-hd-search-btn:hover{background:var(--pud)}
 .gs-hd-search-btn svg{color:var(--wh)}
 
 /* Actions (Account + Cart) */
-.gs-hd-actions{display:flex;align-items:center;gap:2px;flex-shrink:0;margin-left:auto}
+.gs-hd-actions{display:flex;align-items:center;gap:4px;flex-shrink:0}
 .gs-hd-action{display:flex;flex-direction:column;padding:4px 10px;
   border:1px solid transparent;border-radius:var(--rs);cursor:pointer;
   transition:var(--tr);text-decoration:none;background:none;font-family:var(--font);flex-shrink:0}
@@ -160,6 +148,20 @@ button{font-family:var(--font);cursor:pointer;border:none;outline:none;backgroun
   background:var(--pu);color:var(--wh);font-size:9px;font-weight:800;border-radius:8px;
   display:flex;align-items:center;justify-content:center;padding:0 3px;
   border:2px solid var(--bg2);line-height:1}
+
+/* Category icons row (under header) */
+.gs-hd-cats{display:flex;align-items:center;gap:6px;padding:10px 16px;
+  background:var(--bg2);border-bottom:1px solid var(--b1);overflow-x:auto;flex-shrink:0;
+  scrollbar-width:none}
+.gs-hd-cats::-webkit-scrollbar{display:none}
+.gs-hd-cat{display:flex;flex-direction:column;align-items:center;gap:5px;
+  padding:8px 10px;border-radius:var(--rs);text-decoration:none;flex-shrink:0;transition:var(--tr);min-width:70px}
+.gs-hd-cat:hover{background:var(--bg3)}
+.gs-hd-cat-ico{width:44px;height:44px;border-radius:50%;background:var(--bg3);
+  border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;
+  color:var(--tx);transition:var(--tr)}
+.gs-hd-cat:hover .gs-hd-cat-ico{border-color:var(--pu);color:var(--pul);background:rgba(124,58,237,.1)}
+.gs-hd-cat-lbl{font-size:10px;font-weight:500;color:var(--mu);white-space:nowrap;text-align:center;line-height:1.2}
 
 /* scrollable main */
 .gs-mn{flex:1;overflow-y:auto;overflow-x:hidden;background:var(--bg);padding:20px;
@@ -451,7 +453,6 @@ button{font-family:var(--font);cursor:pointer;border:none;outline:none;backgroun
   .gs-ct.open{transform:translateX(0)}
   .gs-grid{grid-template-columns:repeat(3,1fr)}
   .gs-promos{grid-template-columns:repeat(2,1fr)}
-  .gs-hd-deliver{display:none}
 }
 
 /* ── 768px: both sidebars become drawers ── */
