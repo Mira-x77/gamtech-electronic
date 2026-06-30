@@ -133,20 +133,6 @@ $contact    = get_permalink( get_page_by_path( 'contact' ) );
     </div>
   </header>
 
-  <!-- Category icons row (under search) -->
-  <div class="gs-hd-cats">
-    <?php foreach ( $store_cats as $cname => $cico ) :
-      $short = strlen( $cname ) > 12 ? substr( $cname, 0, 11 ) . '…' : $cname;
-      ?>
-      <a href="<?php echo esc_url( gamtech_category_url( $cname ) ); ?>" class="gs-hd-cat">
-        <div class="gs-hd-cat-ico">
-          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><?php echo $cico; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></svg>
-        </div>
-        <span class="gs-hd-cat-lbl"><?php echo esc_html( $short ); ?></span>
-      </a>
-    <?php endforeach; ?>
-  </div>
-
   <!-- Mobile top bar -->
   <div class="gs-mob-top" id="gs-mob-top">
     <button class="gs-mob-menu-btn" id="gs-sb-tog" aria-label="<?php esc_attr_e( 'Menu', 'woodmart' ); ?>">

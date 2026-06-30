@@ -68,6 +68,19 @@ get_header();
   </div>
 </section>
 
+<div class="gs-cats">
+  <?php foreach ( $store_cats as $cname => $cico ) :
+    $short = strlen( $cname ) > 12 ? substr( $cname, 0, 11 ) . '…' : $cname;
+    ?>
+    <a href="<?php echo esc_url( gamtech_category_url( $cname ) ); ?>" class="gs-cat">
+      <div class="gs-cat-ico">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><?php echo $cico; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></svg>
+      </div>
+      <span class="gs-cat-lbl"><?php echo esc_html( $short ); ?></span>
+    </a>
+  <?php endforeach; ?>
+</div>
+
 <div class="gs-promos">
   <a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) . '?on_sale=1' ); ?>" class="gs-promo">
     <div class="gs-pi r"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>

@@ -149,20 +149,6 @@ button{font-family:var(--font);cursor:pointer;border:none;outline:none;backgroun
   display:flex;align-items:center;justify-content:center;padding:0 3px;
   border:2px solid var(--bg2);line-height:1}
 
-/* Category icons row (under header) */
-.gs-hd-cats{display:flex;align-items:center;gap:6px;padding:10px 16px;
-  background:var(--bg2);border-bottom:1px solid var(--b1);overflow-x:auto;flex-shrink:0;
-  scrollbar-width:none}
-.gs-hd-cats::-webkit-scrollbar{display:none}
-.gs-hd-cat{display:flex;flex-direction:column;align-items:center;gap:5px;
-  padding:8px 10px;border-radius:var(--rs);text-decoration:none;flex-shrink:0;transition:var(--tr);min-width:70px}
-.gs-hd-cat:hover{background:var(--bg3)}
-.gs-hd-cat-ico{width:44px;height:44px;border-radius:50%;background:var(--bg3);
-  border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;
-  color:var(--tx);transition:var(--tr)}
-.gs-hd-cat:hover .gs-hd-cat-ico{border-color:var(--pu);color:var(--pul);background:rgba(124,58,237,.1)}
-.gs-hd-cat-lbl{font-size:10px;font-weight:500;color:var(--mu);white-space:nowrap;text-align:center;line-height:1.2}
-
 /* scrollable main */
 .gs-mn{flex:1;overflow-y:auto;overflow-x:hidden;background:var(--bg);padding:20px;
   scrollbar-width:thin;scrollbar-color:var(--b2) transparent}
