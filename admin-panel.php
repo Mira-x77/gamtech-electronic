@@ -1,19 +1,35 @@
 <?php
 /**
- * GamTech Admin Panel — standalone
- * Visit: /admin-panel.php?key=gamtech2026admin
+ * GamTech Admin Panel
+ * Visit: https://gamtech-electronic.com/admin
  */
 require_once dirname(__FILE__) . '/wp-blog-header.php';
 
+$admin_url = home_url( '/admin' );
 $key = isset( $_GET['key'] ) ? sanitize_text_field( $_GET['key'] ) : '';
 if ( $key !== 'gamtech2026admin' ) { die( 'Access denied.' ); }
+
+function gs_admin_flush() {
+    if ( function_exists( 'wp_cache_flush' ) ) { wp_cache_flush(); }
+    global $wp_object_cache;
+    if ( $wp_object_cache ) { $wp_object_cache->flush(); }
+    if ( function_exists( 'wc_delete_product_transients' ) ) { wc_delete_product_transients(); }
+    @shell_exec( 'curl -s -X PURGE http://localhost/ 2>/dev/null' );
+    @shell_exec( 'curl -s -X PURGE http://127.0.0.1/ 2>/dev/null' );
+}
+
+function gs_admin_redirect( $msg ) {
+    $admin_url = home_url( '/admin' );
+    wp_safe_redirect( add_query_arg( array( 'key' => 'gamtech2026admin', 'msg' => $msg, 't' => time() ), $admin_url ) );
+    exit;
+}
 
 // ─── DELETE ────────────────────────────────────────────────────
 if ( isset( $_POST['gs_del'] ) && wp_verify_nonce( $_POST['_n'] ?? '', 'gs_del' ) ) {
     $pid = (int) $_POST['pid'];
     if ( $pid > 0 ) wp_delete_post( $pid, true );
-    wp_safe_redirect( add_query_arg( array( 'key' => $key, 'msg' => 'deleted', 't' => time() ), __FILE__ ) );
-    exit;
+    gs_admin_flush();
+    gs_admin_redirect( 'deleted' );
 }
 
 // ─── ADD ───────────────────────────────────────────────────────
@@ -39,8 +55,8 @@ if ( isset( $_POST['gs_add'] ) && wp_verify_nonce( $_POST['_n'] ?? '', 'gs_add' 
             if ( ! is_wp_error( $aid ) ) set_post_thumbnail( $pid, $aid );
         }
     }
-    wp_safe_redirect( add_query_arg( array( 'key' => $key, 'msg' => 'added', 't' => time() ), __FILE__ ) );
-    exit;
+    gs_admin_flush();
+    gs_admin_redirect( 'added' );
 }
 
 // ─── EDIT ──────────────────────────────────────────────────────
@@ -68,8 +84,8 @@ if ( isset( $_POST['gs_edit'] ) && wp_verify_nonce( $_POST['_n'] ?? '', 'gs_edit
         $aid = media_handle_upload( 'img', $pid );
         if ( ! is_wp_error( $aid ) ) set_post_thumbnail( $pid, $aid );
     }
-    wp_safe_redirect( add_query_arg( array( 'key' => $key, 'msg' => 'updated', 't' => time() ), __FILE__ ) );
-    exit;
+    gs_admin_flush();
+    gs_admin_redirect( 'updated' );
 }
 
 // ─── DATA ──────────────────────────────────────────────────────
@@ -110,6 +126,12 @@ foreach ( $all->posts as $id ) {
     if ( $pp && $pp->get_regular_price() !== '' ) $priced++; else $unpriced++;
 }
 wp_reset_postdata();
+
+function gs_admin_link( $params = array() ) {
+    $base = home_url( '/admin' );
+    $params['key'] = 'gamtech2026admin';
+    return esc_url( add_query_arg( $params, $base ) );
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -156,7 +178,6 @@ tr:hover{background:rgba(124,58,237,.05)}
 .pg a,.pg span{padding:5px 10px;border-radius:6px;font-size:12px;text-decoration:none;color:#fff;background:#1a1a24;border:1px solid #2a2a3a}
 .pg a:hover{border-color:#7c3aed}
 .pg .cur{background:#7c3aed;border-color:#7c3aed}
-/* MODAL */
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:999;display:none;align-items:center;justify-content:center;padding:20px}
 .ov.on{display:flex}
 .modal{background:#0f0f13;border:1px solid #2a2a3a;border-radius:12px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;padding:24px}
@@ -189,8 +210,8 @@ tr:hover{background:rgba(124,58,237,.05)}
 <?php elseif ($msg==='deleted'): ?><div class="msg ok">Product deleted.</div><?php endif; ?>
 
 <div class="toolbar">
-  <form>
-    <input type="hidden" name="key" value="<?= esc_attr($key) ?>">
+  <form action="<?= gs_admin_link() ?>" method="get">
+    <input type="hidden" name="key" value="gamtech2026admin">
     <input class="inp" name="s" placeholder="Search products..." value="<?= esc_attr($s) ?>">
     <select class="inp" name="cat" onchange="this.form.submit()">
       <option value="0">All categories</option>
@@ -248,12 +269,12 @@ tr:hover{background:rgba(124,58,237,.05)}
 
 <?php if ($total_pages>1): ?>
 <div class="pg">
-  <?php if ($page>1): ?><a href="<?= esc_url(add_query_arg(array('key'=>$key,'paged'=>$page-1,'s'=>$s,'cat'=>$fcat))) ?>">← Prev</a><?php endif; ?>
+  <?php if ($page>1): ?><a href="<?= gs_admin_link(array('paged'=>$page-1,'s'=>$s,'cat'=>$fcat)) ?>">← Prev</a><?php endif; ?>
   <?php for($i=1;$i<=$total_pages;$i++):?>
     <?php if($i===$page):?><span class="cur"><?=$i?></span>
-    <?php else:?><a href="<?= esc_url(add_query_arg(array('key'=>$key,'paged'=>$i,'s'=>$s,'cat'=>$fcat))) ?>"><?=$i?></a><?php endif;?>
+    <?php else:?><a href="<?= gs_admin_link(array('paged'=>$i,'s'=>$s,'cat'=>$fcat)) ?>"><?=$i?></a><?php endif;?>
   <?php endfor;?>
-  <?php if ($page<$total_pages):?><a href="<?= esc_url(add_query_arg(array('key'=>$key,'paged'=>$page+1,'s'=>$s,'cat'=>$fcat))) ?>">Next →</a><?php endif;?>
+  <?php if ($page<$total_pages):?><a href="<?= gs_admin_link(array('paged'=>$page+1,'s'=>$s,'cat'=>$fcat)) ?>">Next →</a><?php endif;?>
 </div>
 <?php endif; ?>
 <?php endif; ?>
@@ -263,7 +284,7 @@ tr:hover{background:rgba(124,58,237,.05)}
 <div class="ov" id="m-add">
 <div class="modal">
 <h2>Add Product</h2>
-<form method="post" enctype="multipart/form-data">
+<form method="post" enctype="multipart/form-data" action="<?= gs_admin_link() ?>">
 <?= wp_nonce_field('gs_add','_n',false) ?>
 <input type="hidden" name="gs_add" value="1">
 <label>Product Name *</label>
@@ -284,7 +305,7 @@ tr:hover{background:rgba(124,58,237,.05)}
 <div class="ov" id="m-edit">
 <div class="modal">
 <h2>Edit Product</h2>
-<form method="post" enctype="multipart/form-data">
+<form method="post" enctype="multipart/form-data" action="<?= gs_admin_link() ?>">
 <?= wp_nonce_field('gs_edit','_n',false) ?>
 <input type="hidden" name="gs_edit" value="1">
 <input type="hidden" name="pid" id="eid">
