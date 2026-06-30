@@ -121,26 +121,37 @@ get_header();
         <?php
         $paged = isset( $_GET['paged'] ) ? max( 1, (int) $_GET['paged'] ) : 1;
         $per_page = 50;
-        $all_products = wc_get_products( array(
-            'limit'   => -1,
-            'orderby' => 'title',
-            'order'   => 'ASC',
-            'status'  => 'publish',
+        $products_q = new WP_Query( array(
+            'post_type'      => 'product',
+            'post_status'    => 'publish',
+            'posts_per_page' => $per_page,
+            'paged'          => $paged,
+            'orderby'        => 'title',
+            'order'          => 'ASC',
         ) );
-        $total = count( $all_products );
+        $total = $products_q->found_posts;
         $priced_count = 0;
         $unpriced_count = 0;
-        foreach ( $all_products as $p ) {
-            if ( $p->get_regular_price() !== '' ) {
+        $all_q = new WP_Query( array(
+            'post_type'      => 'product',
+            'post_status'    => 'publish',
+            'posts_per_page' => -1,
+            'fields'         => 'ids',
+        ) );
+        foreach ( $all_q->posts as $pid ) {
+            $p = wc_get_product( $pid );
+            if ( $p && $p->get_regular_price() !== '' ) {
                 $priced_count++;
             } else {
                 $unpriced_count++;
             }
         }
-        $total_pages = ceil( $total / $per_page );
-        $page_products = array_slice( $all_products, ( $paged - 1 ) * $per_page, $per_page );
+        wp_reset_postdata();
+        $total_pages = $products_q->max_num_pages;
 
-        foreach ( $page_products as $product ) :
+        while ( $products_q->have_posts() ) : $products_q->the_post();
+            $product = wc_get_product( get_the_ID() );
+            if ( ! $product ) continue;
             $pid    = $product->get_id();
             $name   = $product->get_name();
             $img    = $product->get_image_id()
@@ -176,7 +187,7 @@ get_header();
                 <?php endif; ?>
               </td>
             </tr>
-          <?php endforeach; ?>
+          <?php endwhile; wp_reset_postdata(); ?>
       </tbody>
     </table>
 
