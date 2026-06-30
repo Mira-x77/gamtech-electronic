@@ -199,17 +199,17 @@ get_header();
     <?php if ( $total_pages > 1 ) : ?>
       <div class="gs-pe-pagination">
         <?php if ( $paged > 1 ) : ?>
-          <a href="<?php echo esc_url( add_query_arg( 'paged', $paged - 1 ) ); ?>">← Prev</a>
+          <a href="<?php echo esc_url( add_query_arg( array( 'paged' => $paged - 1, 'key' => $editor_key ) ) ); ?>">← Prev</a>
         <?php endif; ?>
         <?php for ( $i = 1; $i <= $total_pages; $i++ ) : ?>
           <?php if ( $i === $paged ) : ?>
             <span class="current"><?php echo $i; ?></span>
           <?php else : ?>
-            <a href="<?php echo esc_url( add_query_arg( 'paged', $i ) ); ?>"><?php echo $i; ?></a>
+            <a href="<?php echo esc_url( add_query_arg( array( 'paged' => $i, 'key' => $editor_key ) ) ); ?>"><?php echo $i; ?></a>
           <?php endif; ?>
         <?php endfor; ?>
         <?php if ( $paged < $total_pages ) : ?>
-          <a href="<?php echo esc_url( add_query_arg( 'paged', $paged + 1 ) ); ?>">Next →</a>
+          <a href="<?php echo esc_url( add_query_arg( array( 'paged' => $paged + 1, 'key' => $editor_key ) ) ); ?>">Next →</a>
         <?php endif; ?>
       </div>
     <?php endif; ?>
