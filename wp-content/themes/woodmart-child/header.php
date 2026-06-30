@@ -97,6 +97,53 @@ $contact    = get_permalink( get_page_by_path( 'contact' ) );
 
 <div class="gs-center">
   <!-- Mobile top bar -->
+  <!-- Desktop Amazon-style header -->
+  <header class="gs-hd" id="gs-hd-desktop">
+    <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="gs-hd-logo">
+      <img src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/gamtech-logo.png' ); ?>" alt="GamTech" class="gs-hd-logo-img">
+    </a>
+
+    <div class="gs-hd-deliver">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      <div>
+        <span class="gs-hd-deliver-sub">Deliver to</span>
+        <span class="gs-hd-deliver-loc">Togo</span>
+      </div>
+    </div>
+
+    <div class="gs-hd-search-wrap">
+      <form method="get" action="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>" class="gs-hd-search-form">
+        <select name="product_cat" class="gs-hd-search-cat" aria-label="Category">
+          <option value="">All</option>
+          <?php foreach ( $store_cats as $cname => $cico ) : ?>
+            <option value="<?php echo esc_attr( sanitize_title( $cname ) ); ?>"><?php echo esc_html( $cname ); ?></option>
+          <?php endforeach; ?>
+        </select>
+        <input type="search" name="s" class="gs-hd-search-input" placeholder="Search GamTech..." value="<?php echo esc_attr( get_search_query() ); ?>" aria-label="Search">
+        <input type="hidden" name="post_type" value="product">
+        <button type="submit" class="gs-hd-search-btn" aria-label="Search">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+      </form>
+    </div>
+
+    <div class="gs-hd-actions">
+      <a href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' ) ); ?>" class="gs-hd-action">
+        <span class="gs-hd-action-sub">Hello, <?php echo esc_html( $user->display_name ? $user->display_name : 'sign in' ); ?></span>
+        <span class="gs-hd-action-main">Account &amp; Orders</span>
+      </a>
+
+      <button class="gs-hd-action gs-ct-tog-btn" aria-label="Cart">
+        <div class="gs-hd-cart">
+          <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          <span class="gs-hd-cart-count" id="gs-badge-hd"><?php echo esc_html( $wc_count ); ?></span>
+        </div>
+        <span class="gs-hd-action-main">Cart</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile top bar -->
   <div class="gs-mob-top" id="gs-mob-top">
     <button class="gs-mob-menu-btn" id="gs-sb-tog" aria-label="<?php esc_attr_e( 'Menu', 'woodmart' ); ?>">
       <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
@@ -118,27 +165,5 @@ $contact    = get_permalink( get_page_by_path( 'contact' ) );
       </div>
     </div>
   </div>
-  <header class="gs-hd">
-    <div class="gs-search">
-      <form method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>">
-        <input type="search" name="s" placeholder="<?php esc_attr_e( 'Search products, brands...', 'woodmart' ); ?>" value="<?php echo esc_attr( get_search_query() ); ?>">
-        <input type="hidden" name="post_type" value="product">
-        <button type="submit" class="gs-search-btn" aria-label="<?php esc_attr_e( 'Search', 'woodmart' ); ?>">
-          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        </button>
-      </form>
-    </div>
-    <div class="gs-hd-icons">
-      <button class="gs-hd-btn gs-ct-tog-btn" aria-label="<?php esc_attr_e( 'Cart', 'woodmart' ); ?>">
-        <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-        <span class="bdg" id="gs-badge-hd"><?php echo esc_html( $wc_count ); ?></span>
-      </button>
-      <a href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' ) ); ?>" class="gs-avatar">
-        <div class="av-img"><?php echo esc_html( strtoupper( substr( $user->display_name ? $user->display_name : 'G', 0, 1 ) ) ); ?></div>
-        <span class="av-nm"><?php echo esc_html( $user->display_name ? $user->display_name : __( 'Guest', 'woodmart' ) ); ?></span>
-        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-      </a>
-    </div>
-  </header>
 
   <main class="gs-mn">
