@@ -108,10 +108,10 @@ $contact    = get_permalink( get_page_by_path( 'contact' ) );
   <!-- Desktop header -->
   <header class="gs-hd" id="gs-hd-desktop">
     <div class="gs-hd-search-wrap">
-      <form method="get" action="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>" class="gs-hd-search-form">
-        <input type="search" name="s" class="gs-hd-search-input" placeholder="Search products, brands..." value="<?php echo esc_attr( get_search_query() ); ?>" aria-label="Search">
+      <form method="get" action="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>" class="gs-hd-search-form" style="display:flex !important;flex-direction:row !important;align-items:stretch !important;height:40px;border-radius:8px;overflow:hidden;border:2px solid #2e2e2e;transition:all .2s ease">
+        <input type="search" name="s" class="gs-hd-search-input" placeholder="Search products, brands..." value="<?php echo esc_attr( get_search_query() ); ?>" aria-label="Search" style="flex:1 !important;width:auto !important;border:none !important;background:#fff !important;color:#111 !important;font-size:13px !important;padding:0 14px !important;outline:none !important;border-radius:0 !important;margin:0 !important">
         <input type="hidden" name="post_type" value="product">
-        <button type="submit" class="gs-hd-search-btn" aria-label="Search">
+        <button type="submit" class="gs-hd-search-btn" aria-label="Search" style="background:#7c3aed !important;border:none !important;padding:0 16px !important;display:flex !important;align-items:center;justify-content:center;cursor:pointer;border-radius:0 !important;margin:0 !important;flex-shrink:0 !important">
           <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         </button>
       </form>
