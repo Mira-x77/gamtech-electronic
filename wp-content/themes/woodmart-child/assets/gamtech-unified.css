@@ -391,7 +391,8 @@ button{font-family:var(--font);cursor:pointer;border:none;outline:none;backgroun
   width:30px;height:30px;display:flex;align-items:center;justify-content:center;
   color:#fff !important;flex-shrink:0;cursor:pointer;
 }
-.gs-mob-search-form button svg{color:#fff !important}
+.gs-mob-search-form button svg,
+.gs-mob-search-form button svg *{stroke:#fff !important;color:#fff !important}
 .gs-mob-cart-btn{
   background:var(--bg3);border:1.5px solid var(--b2);color:var(--tx);
   width:36px;height:36px;border-radius:10px;
@@ -399,7 +400,8 @@ button{font-family:var(--font);cursor:pointer;border:none;outline:none;backgroun
   cursor:pointer;transition:var(--tr);flex-shrink:0;
   -webkit-tap-highlight-color:transparent
 }
-.gs-mob-cart-btn svg{color:var(--wh)}
+.gs-mob-cart-btn svg,
+.gs-mob-cart-btn svg *{stroke:#fff !important;color:#fff !important}
 .gs-mob-cart-btn:active{background:var(--pu);border-color:var(--pu)}
 .gs-mob-cart-bdg{
   position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;
