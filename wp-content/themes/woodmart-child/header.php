@@ -138,7 +138,7 @@ $contact    = get_permalink( get_page_by_path( 'contact' ) );
     <button class="gs-mob-menu-btn" id="gs-sb-tog" aria-label="<?php esc_attr_e( 'Menu', 'woodmart' ); ?>">
       <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
-    <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="gs-mob-top-logo"><img src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/gamtech-logo.png' ); ?>" alt="GamTech" style="height:30px"></a>
+    <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="gs-mob-top-logo"><img src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/gamtech-logo.png' ); ?>" alt="GamTech"></a>
     <div style="display:flex;align-items:center;gap:6px">
       <form method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>" class="gs-mob-search-form">
         <input type="search" name="s" placeholder="Search..." value="<?php echo esc_attr( get_search_query() ); ?>">
