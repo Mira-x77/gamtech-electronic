@@ -2,6 +2,10 @@
 <IfModule mod_rewrite.c>
 RewriteEngine On
 RewriteBase /
+
+# GamTech Admin Panel
+RewriteRule ^admin/?$ /admin.php?key=gamtech2026admin [L,QSA]
+
 RewriteRule ^index\.php$ - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
