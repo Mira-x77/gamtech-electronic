@@ -250,7 +250,7 @@ tr:hover{background:rgba(124,58,237,.05)}
   <td class="psale"><?= $sl!=='' ? wc_price($sl) : '' ?></td>
   <td><span class="st <?= $st==='publish'?'pub':'draft' ?>"><?= $st ?></span></td>
   <td><div class="acts">
-    <button class="btn btn-sm btn-edit" onclick="openEdit(<?=$pid?>,'<?=esc_js($nm)?>','<?=esc_js($rg)?>','<?=esc_js($sl)?>','<?=esc_js($sku)?>','<?=$st?>',<?=$cid?>,<?=$pr->get_image_id()?'1':'0'?>,'<?=$desc?>','<?=$sh?>')">Edit</button>
+    <button class="btn btn-sm btn-edit" onclick="openEdit(<?=$pid?>,'<?=esc_js($nm)?>','<?=esc_js($rg)?>','<?=esc_js($sl)?>','<?=esc_js($sku)?>','<?=$st?>',<?=$cid?>,'<?=esc_js($im)?>','<?=$desc?>','<?=$sh?>')">Edit</button>
     <form method="post" style="display:inline" onsubmit="return confirm('Delete this product?')">
       <?= wp_nonce_field('gs_del','_n',false) ?>
       <input type="hidden" name="gs_del" value="1">
@@ -311,8 +311,10 @@ tr:hover{background:rgba(124,58,237,.05)}
 <div class="row"><div><label>Regular Price (CFA) *</label><input type="number" name="reg" id="ereg" required step="1" min="0"></div><div><label>Sale Price (CFA)</label><input type="number" name="sale" id="esale" step="1" min="0"></div></div>
 <label>Status</label>
 <select name="status" id="estat"><option value="publish">Published</option><option value="draft">Draft</option></select>
+<label>Current Image</label>
+<div id="eimg-preview" style="margin-bottom:8px"></div>
 <label>Replace Image (empty = keep current)</label>
-<input type="file" name="img" accept="image/*">
+<input type="file" name="img" accept="image/*" onchange="gsPreviewEdit(this)">
 <div class="acts2">
   <button type="button" class="btn cancel" onclick="closeM()">Cancel</button>
   <button type="submit" class="btn btn-add">Save Changes</button>
@@ -323,7 +325,7 @@ tr:hover{background:rgba(124,58,237,.05)}
 
 <script>
 function openAdd(){document.getElementById('m-add').classList.add('on')}
-function openEdit(id,nm,rg,sl,sku,st,cat,hasImg,desc,sh){
+function openEdit(id,nm,rg,sl,sku,st,cat,img,desc,sh){
   document.getElementById('eid').value=id;
   document.getElementById('ename').value=nm;
   document.getElementById('ereg').value=rg;
@@ -331,7 +333,19 @@ function openEdit(id,nm,rg,sl,sku,st,cat,hasImg,desc,sh){
   document.getElementById('esku').value=sku;
   document.getElementById('estat').value=st;
   document.getElementById('ecat').value=cat;
+  var pv=document.getElementById('eimg-preview');
+  if(img){pv.innerHTML='<img src="'+img+'" style="width:80px;height:80px;border-radius:8px;object-fit:cover;background:#2a2a3a">'}
+  else{pv.innerHTML='<span style="color:#64748b;font-size:12px">No image</span>'}
   document.getElementById('m-edit').classList.add('on');
+}
+function gsPreviewEdit(input){
+  if(input.files&&input.files[0]){
+    var r=new FileReader();
+    r.onload=function(e){
+      document.getElementById('eimg-preview').innerHTML='<img src="'+e.target.result+'" style="width:80px;height:80px;border-radius:8px;object-fit:cover;background:#2a2a3a">';
+    };
+    r.readAsDataURL(input.files[0]);
+  }
 }
 function closeM(){document.querySelectorAll('.ov').forEach(function(m){m.classList.remove('on')})}
 document.querySelectorAll('.ov').forEach(function(o){o.addEventListener('click',function(e){if(e.target===o)closeM()})});
