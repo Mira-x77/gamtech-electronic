@@ -1,13 +1,11 @@
 <?php
 /**
  * GamTech Admin Panel
- * Visit: https://gamtech-electronic.com/admin
+ * Accessed via /admin
  */
 require_once dirname(__FILE__) . '/wp-blog-header.php';
 
 $admin_url = home_url( '/admin' );
-$key = isset( $_GET['key'] ) ? sanitize_text_field( $_GET['key'] ) : '';
-if ( $key !== 'gamtech2026admin' ) { die( 'Access denied.' ); }
 
 function gs_admin_flush() {
     if ( function_exists( 'wp_cache_flush' ) ) { wp_cache_flush(); }
@@ -20,7 +18,7 @@ function gs_admin_flush() {
 
 function gs_admin_redirect( $msg ) {
     $admin_url = home_url( '/admin' );
-    wp_safe_redirect( add_query_arg( array( 'key' => 'gamtech2026admin', 'msg' => $msg, 't' => time() ), $admin_url ) );
+    wp_safe_redirect( add_query_arg( array( 'msg' => $msg, 't' => time() ), $admin_url ) );
     exit;
 }
 
@@ -129,7 +127,6 @@ wp_reset_postdata();
 
 function gs_admin_link( $params = array() ) {
     $base = home_url( '/admin' );
-    $params['key'] = 'gamtech2026admin';
     return esc_url( add_query_arg( $params, $base ) );
 }
 ?>
@@ -211,7 +208,6 @@ tr:hover{background:rgba(124,58,237,.05)}
 
 <div class="toolbar">
   <form action="<?= gs_admin_link() ?>" method="get">
-    <input type="hidden" name="key" value="gamtech2026admin">
     <input class="inp" name="s" placeholder="Search products..." value="<?= esc_attr($s) ?>">
     <select class="inp" name="cat" onchange="this.form.submit()">
       <option value="0">All categories</option>
