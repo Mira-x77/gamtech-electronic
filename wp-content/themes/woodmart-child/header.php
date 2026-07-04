@@ -135,21 +135,21 @@ $contact    = get_permalink( get_page_by_path( 'contact' ) );
 
   <!-- Mobile top bar -->
   <div class="gs-mob-top" id="gs-mob-top">
-    <button class="gs-mob-menu-btn" id="gs-sb-tog" aria-label="<?php esc_attr_e( 'Menu', 'woodmart' ); ?>">
-      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    <button class="gs-mob-menu-btn" id="gs-sb-tog" aria-label="<?php esc_attr_e( 'Menu', 'woodmart' ); ?>" style="color:#d4d4d8">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:#d4d4d8"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
-    <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="gs-mob-top-logo"><img src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/gamtech-logo.png' ); ?>" alt="GamTech"></a>
-    <div style="display:flex;align-items:center;gap:6px">
+    <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="gs-mob-top-logo"><img src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/gamtech-logo.png' ); ?>" alt="GamTech" style="height:26px;width:auto"></a>
+    <div style="display:flex;align-items:center;gap:6px;flex:1;min-width:0">
       <form method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>" class="gs-mob-search-form">
         <input type="search" name="s" placeholder="Search..." value="<?php echo esc_attr( get_search_query() ); ?>">
         <input type="hidden" name="post_type" value="product">
-        <button type="submit" aria-label="Search">
-          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <button type="submit" aria-label="Search" style="background:#7c3aed;border:none;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">
+          <svg width="15" height="15" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24" style="color:white"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         </button>
       </form>
-      <div style="position:relative">
-        <button class="gs-mob-cart-btn gs-ct-tog-btn" aria-label="<?php esc_attr_e( 'Cart', 'woodmart' ); ?>">
-          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      <div style="position:relative;flex-shrink:0">
+        <button class="gs-mob-cart-btn gs-ct-tog-btn" aria-label="<?php esc_attr_e( 'Cart', 'woodmart' ); ?>" style="background:#1e1e1e;border:1.5px solid #2e2e2e;color:white;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer">
+          <svg width="18" height="18" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24" style="color:white"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
         </button>
         <span class="gs-mob-cart-bdg" id="gs-badge-mob"><?php echo esc_html( $wc_count ); ?></span>
       </div>
