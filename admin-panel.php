@@ -42,6 +42,9 @@ if ( isset( $_POST['gs_add'] ) && wp_verify_nonce( $_POST['_n'] ?? '', 'gs_add' 
         $p->set_regular_price( sanitize_text_field( $_POST['reg'] ) );
         $p->set_sale_price( sanitize_text_field( $_POST['sale'] ) );
         $p->set_sku( sanitize_text_field( $_POST['sku'] ) );
+        $p->set_description( wp_kses_post( $_POST['description'] ?? '' ) );
+        $p->set_short_description( sanitize_text_field( $_POST['short_description'] ?? '' ) );
+        $p->set_stock_status( ! empty( $_POST['out_of_stock'] ) ? 'outofstock' : 'instock' );
         $p->save();
         $cat = (int) ( $_POST['cat'] ?? 0 );
         if ( $cat > 0 ) wp_set_object_terms( $pid, $cat, 'product_cat' );
@@ -71,6 +74,9 @@ if ( isset( $_POST['gs_edit'] ) && wp_verify_nonce( $_POST['_n'] ?? '', 'gs_edit
         $p->set_sale_price( sanitize_text_field( $_POST['sale'] ) );
         $p->set_sku( sanitize_text_field( $_POST['sku'] ) );
         $p->set_status( sanitize_text_field( $_POST['status'] ) );
+        $p->set_description( wp_kses_post( $_POST['description'] ?? '' ) );
+        $p->set_short_description( sanitize_text_field( $_POST['short_description'] ?? '' ) );
+        $p->set_stock_status( ! empty( $_POST['out_of_stock'] ) ? 'outofstock' : 'instock' );
         $p->save();
     }
     $cat = (int) ( $_POST['cat'] ?? 0 );
@@ -84,6 +90,37 @@ if ( isset( $_POST['gs_edit'] ) && wp_verify_nonce( $_POST['_n'] ?? '', 'gs_edit
     }
     gs_admin_flush();
     gs_admin_redirect( 'updated' );
+}
+
+// ─── COPY ──────────────────────────────────────────────────────
+if ( isset( $_POST['gs_copy'] ) && wp_verify_nonce( $_POST['_n'] ?? '', 'gs_edit' ) ) {
+    $orig = wc_get_product( (int) $_POST['pid'] );
+    if ( $orig ) {
+        $new_id = wp_insert_post( array(
+            'post_title'   => $orig->get_name() . ' (Copy)',
+            'post_type'    => 'product',
+            'post_status'  => 'publish',
+            'post_content' => $orig->get_description(),
+        ));
+        if ( $new_id && ! is_wp_error( $new_id ) ) {
+            $np = wc_get_product( $new_id );
+            $np->set_short_description( $orig->get_short_description() );
+            $np->set_sku( $orig->get_sku() ? $orig->get_sku() . '-copy' : '' );
+            $np->set_regular_price( '' );
+            $np->set_sale_price( '' );
+            $np->set_stock_status( $orig->get_stock_status() );
+            $np->save();
+            $orig_cats = wp_get_post_terms( $orig->get_id(), 'product_cat', array( 'fields' => 'ids' ) );
+            if ( ! is_wp_error( $orig_cats ) && ! empty( $orig_cats ) ) {
+                wp_set_object_terms( $new_id, $orig_cats, 'product_cat' );
+            }
+            if ( $orig->get_image_id() ) {
+                set_post_thumbnail( $new_id, $orig->get_image_id() );
+            }
+        }
+    }
+    gs_admin_flush();
+    gs_admin_redirect( 'copied' );
 }
 
 // ─── DATA ──────────────────────────────────────────────────────
@@ -170,6 +207,7 @@ tr:hover{background:rgba(124,58,237,.05)}
 .st{font-size:10px;font-weight:600;padding:2px 6px;border-radius:3px;display:inline-block}
 .st.pub{background:rgba(34,197,94,.12);color:#22c55e}
 .st.draft{background:rgba(251,191,36,.12);color:#f59e0b}
+.st.oos{background:rgba(239,68,68,.12);color:#ef4444}
 .acts{display:flex;gap:4px}
 .pg{display:flex;gap:6px;justify-content:center;margin-top:16px;flex-wrap:wrap}
 .pg a,.pg span{padding:5px 10px;border-radius:6px;font-size:12px;text-decoration:none;color:#fff;background:#1a1a24;border:1px solid #2a2a3a}
@@ -204,6 +242,7 @@ tr:hover{background:rgba(124,58,237,.05)}
 
 <?php if ($msg==='added'): ?><div class="msg ok">Product added!</div>
 <?php elseif ($msg==='updated'): ?><div class="msg ok">Product updated!</div>
+<?php elseif ($msg==='copied'): ?><div class="msg ok">Product copied! Edit the copy to set a new price.</div>
 <?php elseif ($msg==='deleted'): ?><div class="msg ok">Product deleted.</div><?php endif; ?>
 
 <div class="toolbar">
@@ -248,9 +287,9 @@ tr:hover{background:rgba(124,58,237,.05)}
   <td class="pcat"><?= esc_html($cn) ?></td>
   <td class="pprice"><?= $rg!=='' ? wc_price($rg) : '<span style="color:#ef4444">—</span>' ?></td>
   <td class="psale"><?= $sl!=='' ? wc_price($sl) : '' ?></td>
-  <td><span class="st <?= $st==='publish'?'pub':'draft' ?>"><?= $st ?></span></td>
+  <td><span class="st <?= $pr->get_stock_status()==='outofstock'?'oos':($st==='publish'?'pub':'draft') ?>"><?= $pr->get_stock_status()==='outofstock'?'out of stock':$st ?></span></td>
   <td><div class="acts">
-    <button class="btn btn-sm btn-edit" onclick="openEdit(<?=$pid?>,'<?=esc_js($nm)?>','<?=esc_js($rg)?>','<?=esc_js($sl)?>','<?=esc_js($sku)?>','<?=$st?>',<?=$cid?>,'<?=esc_js($im)?>','<?=$desc?>','<?=$sh?>')">Edit</button>
+    <button class="btn btn-sm btn-edit" onclick="openEdit(<?=$pid?>,'<?=esc_js($nm)?>','<?=esc_js($rg)?>','<?=esc_js($sl)?>','<?=esc_js($sku)?>','<?=$st?>',<?=$cid?>,'<?=esc_js($im)?>','<?=$desc?>','<?=$sh?>','<?=$pr->get_stock_status()==='outofstock'?1:0?>')">Edit</button>
     <form method="post" style="display:inline" onsubmit="return confirm('Delete this product?')">
       <?= wp_nonce_field('gs_del','_n',false) ?>
       <input type="hidden" name="gs_del" value="1">
@@ -287,6 +326,13 @@ tr:hover{background:rgba(124,58,237,.05)}
 <input type="text" name="name" required placeholder="e.g. Logitech MX Master 3S">
 <div class="row"><div><label>Category</label><select name="cat"><option value="0">— Select —</option><?php foreach($cat_opts as $cid=>$cn):?><option value="<?=$cid?>"><?=esc_html($cn)?></option><?php endforeach;?></select></div><div><label>SKU</label><input type="text" name="sku" placeholder="e.g. GMX-MS3S"></div></div>
 <div class="row"><div><label>Regular Price (CFA) *</label><input type="number" name="reg" required step="1" min="0"></div><div><label>Sale Price (CFA)</label><input type="number" name="sale" step="1" min="0"></div></div>
+<label>Description (product details, lengths, specs)</label>
+<textarea name="description" rows="4" placeholder="e.g. Available in 1m, 3m, 5m. Packs of 5. Copper core, PVC jacket."></textarea>
+<label>Short Description</label>
+<textarea name="short_description" rows="2" placeholder="Brief summary..."></textarea>
+<label style="margin-top:12px;display:flex;align-items:center;gap:6px;cursor:pointer">
+  <input type="checkbox" name="out_of_stock" value="1"> Mark as Out of Stock
+</label>
 <label>Product Image</label>
 <input type="file" name="img" accept="image/*">
 <div class="acts2">
@@ -303,12 +349,18 @@ tr:hover{background:rgba(124,58,237,.05)}
 <h2>Edit Product</h2>
 <form method="post" enctype="multipart/form-data" action="<?= gs_admin_link() ?>">
 <?= wp_nonce_field('gs_edit','_n',false) ?>
-<input type="hidden" name="gs_edit" value="1">
 <input type="hidden" name="pid" id="eid">
 <label>Product Name *</label>
 <input type="text" name="name" id="ename" required>
 <div class="row"><div><label>Category</label><select name="cat" id="ecat"><option value="0">— Select —</option><?php foreach($cat_opts as $cid=>$cn):?><option value="<?=$cid?>"><?=esc_html($cn)?></option><?php endforeach;?></select></div><div><label>SKU</label><input type="text" name="sku" id="esku"></div></div>
 <div class="row"><div><label>Regular Price (CFA) *</label><input type="number" name="reg" id="ereg" required step="1" min="0"></div><div><label>Sale Price (CFA)</label><input type="number" name="sale" id="esale" step="1" min="0"></div></div>
+<label>Description</label>
+<textarea name="description" id="edesc" rows="4" placeholder="Product details..."></textarea>
+<label>Short Description</label>
+<textarea name="short_description" id="eshort" rows="2" placeholder="Brief summary..."></textarea>
+<label style="margin-top:12px;display:flex;align-items:center;gap:6px;cursor:pointer">
+  <input type="checkbox" name="out_of_stock" id="estock" value="1"> Mark as Out of Stock
+</label>
 <label>Status</label>
 <select name="status" id="estat"><option value="publish">Published</option><option value="draft">Draft</option></select>
 <label>Current Image</label>
@@ -317,7 +369,8 @@ tr:hover{background:rgba(124,58,237,.05)}
 <input type="file" name="img" accept="image/*" onchange="gsPreviewEdit(this)">
 <div class="acts2">
   <button type="button" class="btn cancel" onclick="closeM()">Cancel</button>
-  <button type="submit" class="btn btn-add">Save Changes</button>
+  <button type="submit" name="gs_copy" value="1" formnovalidate class="btn" style="background:#22c55e;color:#fff" onclick="return confirm('Copy this product? Image will be reused, price cleared.')">Save as Copy</button>
+  <button type="submit" name="gs_edit" value="1" class="btn btn-add">Save Changes</button>
 </div>
 </form>
 </div>
@@ -325,7 +378,7 @@ tr:hover{background:rgba(124,58,237,.05)}
 
 <script>
 function openAdd(){document.getElementById('m-add').classList.add('on')}
-function openEdit(id,nm,rg,sl,sku,st,cat,img,desc,sh){
+function openEdit(id,nm,rg,sl,sku,st,cat,img,desc,sh,oos){
   document.getElementById('eid').value=id;
   document.getElementById('ename').value=nm;
   document.getElementById('ereg').value=rg;
@@ -333,6 +386,9 @@ function openEdit(id,nm,rg,sl,sku,st,cat,img,desc,sh){
   document.getElementById('esku').value=sku;
   document.getElementById('estat').value=st;
   document.getElementById('ecat').value=cat;
+  document.getElementById('edesc').value=desc||'';
+  document.getElementById('eshort').value=sh||'';
+  document.getElementById('estock').checked=oos==1;
   var pv=document.getElementById('eimg-preview');
   if(img){pv.innerHTML='<img src="'+img+'" style="width:80px;height:80px;border-radius:8px;object-fit:cover;background:#2a2a3a">'}
   else{pv.innerHTML='<span style="color:#64748b;font-size:12px">No image</span>'}
