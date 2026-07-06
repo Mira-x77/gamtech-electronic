@@ -5,6 +5,10 @@
  */
 session_start();
 
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
+
 $already_authed = !empty($_SESSION['gs_admin']) || !empty($_COOKIE['gs_admin']);
 
 if ($already_authed) {
