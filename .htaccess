@@ -3,20 +3,9 @@
 RewriteEngine On
 RewriteBase /
 
-# GamTech Admin Panel — no cache
+# GamTech Admin Panel
 RewriteRule ^admin-panel/?$ /gs-panel.php?key=gamtech2026admin [L,QSA]
 RewriteRule ^admin/?$ /gs-panel.php?key=gamtech2026admin [L,QSA]
-
-<IfModule mod_headers.c>
-    <LocationMatch "^/admin">
-        Header set Cache-Control "no-store, no-cache, must-revalidate"
-        Header set Pragma "no-cache"
-    </LocationMatch>
-    <LocationMatch "^/gs-panel">
-        Header set Cache-Control "no-store, no-cache, must-revalidate"
-        Header set Pragma "no-cache"
-    </LocationMatch>
-</IfModule>
 
 RewriteRule ^index\.php$ - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
