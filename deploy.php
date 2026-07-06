@@ -52,7 +52,7 @@ if ( is_dir( $git_dir ) ) {
 }
 
 // Clean up dev files that shouldn't be on production
-@shell_exec( 'cd ' . escapeshellarg( REPO_PATH ) . ' && rm -rf docker product-images vibe_images .kiro .agents temp_repo deploy2.php deploy3.php deploy4.php 2>&1' );
+@shell_exec( 'cd ' . escapeshellarg( REPO_PATH ) . ' && rm -rf docker vibe_images .kiro .agents temp_repo deploy2.php deploy3.php deploy4.php 2>&1' );
 
 // Purge cache
 shell_exec( 'curl -s -X PURGE http://localhost/ 2>&1' );

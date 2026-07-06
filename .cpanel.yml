@@ -3,4 +3,4 @@ deployment:
   tasks:
     - export DEPLOYPATH=/home/c2423708c/public_html
     - /bin/cp -r . $DEPLOYPATH
-    - /bin/rm -rf $DEPLOYPATH/docker $DEPLOYPATH/product-images $DEPLOYPATH/vibe_images $DEPLOYPATH/.kiro $DEPLOYPATH/.agents
+    - /bin/rm -rf $DEPLOYPATH/docker $DEPLOYPATH/vibe_images $DEPLOYPATH/.kiro $DEPLOYPATH/.agents
