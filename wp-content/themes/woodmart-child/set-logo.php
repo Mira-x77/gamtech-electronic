@@ -17,8 +17,9 @@ $_SERVER['REQUEST_URI'] = '/';
 $wp_root = dirname( dirname( dirname( dirname( __FILE__ ) ) ) );
 require_once $wp_root . '/wp-load.php';
 
-$logo_file     = get_stylesheet_directory() . '/assets/images/logo-dark.png';
-$logo_rel_path = 'themes/woodmart-child/assets/images/logo-dark.png';
+// Updated to use gamtech-logo.png (the actual logo file that exists)
+$logo_file     = get_stylesheet_directory() . '/assets/images/gamtech-logo.png';
+$logo_rel_path = 'themes/woodmart-child/assets/images/gamtech-logo.png';
 
 if ( ! file_exists( $logo_file ) ) {
     die( "ERROR: Logo file not found at {$logo_file}\n" );
@@ -46,9 +47,9 @@ if ( $existing ) {
     $upload_dir = wp_upload_dir();
 
     $attachment = array(
-        'guid'           => $upload_dir['baseurl'] . '/themes/woodmart-child/assets/images/logo-dark.png',
+        'guid'           => $upload_dir['baseurl'] . '/themes/woodmart-child/assets/images/gamtech-logo.png',
         'post_mime_type' => $filetype['type'],
-        'post_title'     => 'Cello Logo',
+        'post_title'     => 'GamTech Logo',
         'post_content'   => '',
         'post_status'    => 'inherit',
     );

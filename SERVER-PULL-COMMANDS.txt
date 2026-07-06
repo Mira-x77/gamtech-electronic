@@ -1,0 +1,80 @@
+=====================================
+SERVER PULL & FIX COMMANDS
+gamtech-electronic.com
+=====================================
+
+OPTION 1: Via cPanel Terminal
+-------------------------------------
+1. Log into cPanel
+2. Open "Terminal" 
+3. Run these commands:
+
+cd /home/c2423708c/public_html
+git pull origin main
+killall -USR2 php-fpm
+
+
+OPTION 2: Via SSH
+-------------------------------------
+ssh username@gamtech-electronic.com
+cd /home/c2423708c/public_html
+git pull origin main
+killall -USR2 php-fpm
+
+
+OPTION 3: Check deploy.php (Auto Deploy)
+-------------------------------------
+If you have auto-deploy set up, just visit:
+https://gamtech-electronic.com/deploy.php
+
+(This should auto-pull from GitHub)
+
+
+AFTER PULLING - CHECK ERROR LOG
+-------------------------------------
+tail -50 /home/c2423708c/public_html/error_log
+
+
+IF GIT PULL FAILS WITH "DIRTY WORKING TREE"
+-------------------------------------
+git status
+git stash
+git pull origin main
+git stash pop
+
+
+IF STILL GETTING 500 ERROR AFTER PULL
+-------------------------------------
+# Check which files are different
+git diff HEAD
+
+# Reset to latest GitHub version (CAREFUL - loses local changes)
+git reset --hard origin/main
+
+# Clear all caches
+rm -rf wp-content/cache/*
+killall -USR2 php-fpm
+
+
+QUICK TEST AFTER PULL
+-------------------------------------
+# Test PHP syntax
+php -l wp-content/themes/woodmart-child/functions.php
+
+# Test WordPress loads
+php -r "require 'wp-load.php'; echo 'WP OK';"
+
+# Check error log
+tail -10 error_log
+
+
+=====================================
+✅ EXPECTED RESULT AFTER PULL:
+=====================================
+- Logo file references updated
+- Deleted logo files removed from tracking
+- Git back on main branch
+- Site should load without 500 error
+
+If still broken, send me the error_log output!
+=====================================
