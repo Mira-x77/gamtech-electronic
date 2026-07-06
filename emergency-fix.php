@@ -163,12 +163,13 @@ if ($action === 'git_reset') {
     echo "<h2>Resetting to GitHub...</h2>";
     echo "<pre style='background:#222;padding:10px;'>";
     
-    // Fetch and reset
+    // Fetch and reset (NO git clean -fd — that deletes WordPress core files!)
     echo shell_exec('cd ' . escapeshellarg(__DIR__) . ' && git fetch origin 2>&1');
     echo "\n";
     echo shell_exec('cd ' . escapeshellarg(__DIR__) . ' && git reset --hard origin/main 2>&1');
     echo "\n";
-    echo shell_exec('cd ' . escapeshellarg(__DIR__) . ' && git clean -fd 2>&1');
+    // DO NOT run git clean -fd — it deletes wp-includes, wp-admin, and all uploads!
+    echo "✅ Reset complete (WordPress core files preserved)\n";
     
     echo "</pre>";
     echo "✅ Reset complete<br>";

@@ -34,6 +34,8 @@ if ( isset( $data['ref'] ) && $data['ref'] !== 'refs/heads/' . GIT_BRANCH ) {
 // Deploy: git pull or fresh clone if .git is missing
 $git_dir = REPO_PATH . '/.git';
 if ( is_dir( $git_dir ) ) {
+    // Stash any local changes (e.g. .htaccess modified on server) before pulling
+    shell_exec( 'cd ' . escapeshellarg( REPO_PATH ) . ' && git stash 2>&1' );
     $output = shell_exec( 'cd ' . escapeshellarg( REPO_PATH ) . ' && git pull origin ' . GIT_BRANCH . ' 2>&1' );
 } else {
     // .git missing — back up wp-config.php, clone fresh, restore wp-config

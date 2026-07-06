@@ -12,3 +12,17 @@ docker/db-init/*.sql
 screenshot-*.png
 site-check-*.png
 _trigger_deploy.*
+
+# NEVER commit these to git — they live on the server only
+wp-includes/
+wp-admin/
+wp-content/plugins/
+wp-content/upgrade/
+wp-content/upgrade-temp-backup/
+wp-content/backups/
+wp-content/debug.log
+sitemap.xml
+sitemap.xml.gz
+robots.txt
+.npm/
+node_modules/
