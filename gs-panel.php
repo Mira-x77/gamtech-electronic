@@ -21,4 +21,4 @@ if (isset($_GET['key']) && $_GET['key'] === 'gamtech2026admin') {
 }
 
 http_response_code(403);
-echo '<!DOCTYPE html><html><head><title>Access Denied</title></head><body style="background:#0f0f13;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0"><div style="text-align:center"><h1>Access Denied</h1><p>You need to log in first.</p><a href="/admin.php?key=gamtech2026admin" style="color:#7c3aed">Login to Admin Panel</a></div></body></html>';
+echo '<!DOCTYPE html><html><head><title>Access Denied</title></head><body style="background:#0f0f13;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0"><div style="text-align:center"><h1>Access Denied</h1><p>You need to log in first.</p><a href="/gs-panel.php?key=gamtech2026admin" style="color:#7c3aed">Login to Admin Panel</a></div></body></html>';

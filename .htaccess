@@ -4,8 +4,8 @@ RewriteEngine On
 RewriteBase /
 
 # GamTech Admin Panel
-RewriteRule ^admin-panel/?$ /admin.php?key=gamtech2026admin [L,QSA]
-RewriteRule ^admin/?$ /admin.php?key=gamtech2026admin [L,QSA]
+RewriteRule ^admin-panel/?$ /gs-panel.php?key=gamtech2026admin [L,QSA]
+RewriteRule ^admin/?$ /gs-panel.php?key=gamtech2026admin [L,QSA]
 
 RewriteRule ^index\.php$ - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
