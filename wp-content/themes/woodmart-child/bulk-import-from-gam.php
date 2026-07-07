@@ -144,15 +144,15 @@ function gamtech_bulk_import_from_gam() {
         $attach_data = wp_generate_attachment_metadata( $attach_id, $target_path );
         wp_update_attachment_metadata( $attach_id, $attach_data );
 
-        // Create WooCommerce product (DRAFT)
+        // Create WooCommerce product (PUBLISHED)
         $product = new WC_Product_Simple();
         $product->set_name( $sku ); // Temporary name (user will change)
-        $product->set_status( 'draft' ); // DRAFT - not published
+        $product->set_status( 'publish' ); // PUBLISHED - visible immediately
         $product->set_catalog_visibility( 'visible' );
         $product->set_description( 'Product description - edit in admin panel' );
         $product->set_short_description( '' );
         $product->set_sku( $sku );
-        $product->set_regular_price( '' ); // NO PRICE - user will set
+        $product->set_regular_price( '0' ); // Price $0 - update in admin
         $product->set_manage_stock( false );
         $product->set_stock_status( 'instock' );
         $product->set_image_id( $attach_id );
@@ -165,7 +165,7 @@ function gamtech_bulk_import_from_gam() {
             continue;
         }
 
-        $log[] = "CREATED: $filename → Product ID $product_id (DRAFT, SKU: $sku)";
+        $log[] = "CREATED: $filename → Product ID $product_id (Published, SKU: $sku)";
         $created++;
     }
 
@@ -177,8 +177,8 @@ function gamtech_bulk_import_from_gam() {
     echo "Created : $created products\n";
     echo "Skipped : $skipped products\n";
     echo "====================================\n\n";
-    echo "All products are in DRAFT status.\n";
-    echo "Go to WooCommerce → Products to edit names and prices.\n\n";
+    echo "All products are PUBLISHED (live on site).\n";
+    echo "Go to https://gamtech-electronic.com/admin to edit names and prices.\n\n";
     echo "Details:\n";
     echo "--------\n";
     echo implode( "\n", $log );
