@@ -64,6 +64,9 @@ if ( function_exists( 'wp_cache_flush' ) ) {
     wp_cache_flush();
 }
 
+ // Restore any tracked files that may have been deleted on the server
+shell_exec( 'cd ' . escapeshellarg( REPO_PATH ) . ' && git checkout -- . 2>&1' );
+
 // Clear PHP opcache so new code takes effect immediately
 if ( function_exists( 'opcache_reset' ) ) {
     opcache_reset();
