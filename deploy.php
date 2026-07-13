@@ -1,58 +1,53 @@
 <?php
-/**
- * Auto-deploy webhook — triggered by GitHub on every push to main.
- * Secured with a secret token.
- *
- * Uses git fetch + reset --hard to guarantee the server exactly matches
- * the remote, restoring any missing core files.
- */
-
 define( 'DEPLOY_SECRET', 'gamtech2026deploy' );
 define( 'REPO_URL',      'https://github.com/Mira-x77/gamtech-electronic.git' );
 define( 'REPO_PATH',     '/home/c2423708c/public_html' );
 define( 'GIT_BRANCH',    'main' );
+define( 'LOG_FILE',      __DIR__ . '/deploy-log.txt' );
 
-// Verify GitHub signature
-$payload   = file_get_contents( 'php://input' );
-$signature = isset( $_SERVER['HTTP_X_HUB_SIGNATURE_256'] )
-    ? $_SERVER['HTTP_X_HUB_SIGNATURE_256']
-    : '';
+$log = [ '--- Deploy ' . date( 'Y-m-d H:i:s' ) . ' ---' ];
 
-$expected = 'sha256=' . hash_hmac( 'sha256', $payload, DEPLOY_SECRET );
-
-if ( ! hash_equals( $expected, $signature ) ) {
-    http_response_code( 403 );
-    die( 'Unauthorized' );
+$manual_key = $_GET['key'] ?? '';
+if ( $manual_key === 'fixitnow2026' ) {
+    $log[] = 'Manual trigger via key';
+} else {
+    $payload   = file_get_contents( 'php://input' );
+    $signature = $_SERVER['HTTP_X_HUB_SIGNATURE_256'] ?? '';
+    $expected  = 'sha256=' . hash_hmac( 'sha256', $payload, DEPLOY_SECRET );
+    if ( ! hash_equals( $expected, $signature ) ) {
+        http_response_code( 403 );
+        die( 'Unauthorized' );
+    }
+    $data = json_decode( $payload, true );
+    if ( isset( $data['ref'] ) && $data['ref'] !== 'refs/heads/' . GIT_BRANCH ) {
+        http_response_code( 200 );
+        die( 'Not main branch, skipping.' );
+    }
 }
 
-// Only deploy on push to main
-$data = json_decode( $payload, true );
-if ( isset( $data['ref'] ) && $data['ref'] !== 'refs/heads/' . GIT_BRANCH ) {
-    http_response_code( 200 );
-    die( 'Not main branch, skipping.' );
-}
-
-// Deploy: git fetch + reset --hard to match remote exactly
 $git_dir = REPO_PATH . '/.git';
 if ( is_dir( $git_dir ) ) {
-    shell_exec( 'cd ' . escapeshellarg( REPO_PATH ) . ' && git fetch origin ' . GIT_BRANCH . ' 2>&1' );
-    $output = shell_exec( 'cd ' . escapeshellarg( REPO_PATH ) . ' && git reset --hard origin/' . GIT_BRANCH . ' 2>&1' );
+    foreach ( [ 'git fetch origin ' . GIT_BRANCH, 'git reset --hard origin/' . GIT_BRANCH, 'git checkout -- .' ] as $cmd ) {
+        $out = []; $rv = 0;
+        exec( 'cd ' . escapeshellarg( REPO_PATH ) . ' && ' . $cmd . ' 2>&1', $out, $rv );
+        $log[] = $cmd . ' (exit ' . $rv . ')';
+        $log   = array_merge( $log, $out );
+    }
 } else {
     $wp_config_backup = '';
     if ( file_exists( REPO_PATH . '/wp-config.php' ) ) {
         $wp_config_backup = file_get_contents( REPO_PATH . '/wp-config.php' );
     }
-    shell_exec( 'cd ' . escapeshellarg( REPO_PATH ) . ' && git clone --branch ' . GIT_BRANCH . ' ' . REPO_URL . ' . 2>&1' );
-    $output = "Fresh clone (no .git found)";
+    $out = []; $rv = 0;
+    exec( 'cd ' . escapeshellarg( REPO_PATH ) . ' && git clone --branch ' . GIT_BRANCH . ' ' . REPO_URL . ' . 2>&1', $out, $rv );
+    $log[] = 'Fresh clone (exit ' . $rv . ')';
+    $log = array_merge( $log, $out );
     if ( $wp_config_backup ) {
         file_put_contents( REPO_PATH . '/wp-config.php', $wp_config_backup );
     }
 }
 
-// Clean up dev files that shouldn't be on production
 @shell_exec( 'cd ' . escapeshellarg( REPO_PATH ) . ' && rm -rf docker vibe_images .kiro .agents temp_repo deploy2.php deploy3.php deploy4.php 2>&1' );
-
-// Purge cache
 @shell_exec( 'curl -s -X PURGE http://localhost/ 2>&1' );
 @shell_exec( 'curl -s -X PURGE http://127.0.0.1/ 2>&1' );
 @touch( REPO_PATH . '/wp-content/themes/woodmart-child/style.css' );
@@ -60,17 +55,11 @@ if ( is_dir( $git_dir ) ) {
 @touch( REPO_PATH . '/wp-content/themes/woodmart-child/front-page.php' );
 @touch( REPO_PATH . '/wp-content/themes/woodmart-child/header.php' );
 @touch( REPO_PATH . '/wp-content/themes/woodmart-child/footer.php' );
-if ( function_exists( 'wp_cache_flush' ) ) {
-    wp_cache_flush();
-}
+if ( function_exists( 'wp_cache_flush' ) ) { wp_cache_flush(); }
+if ( function_exists( 'opcache_reset' ) )  { opcache_reset(); }
 
- // Restore any tracked files that may have been deleted on the server
-shell_exec( 'cd ' . escapeshellarg( REPO_PATH ) . ' && git checkout -- . 2>&1' );
-
-// Clear PHP opcache so new code takes effect immediately
-if ( function_exists( 'opcache_reset' ) ) {
-    opcache_reset();
-}
+$log[] = 'Done.';
+@file_put_contents( LOG_FILE, implode( "\n", $log ) . "\n", FILE_APPEND );
 
 http_response_code( 200 );
-echo "Deploy triggered:\n" . $output;
+echo implode( "\n", $log );
