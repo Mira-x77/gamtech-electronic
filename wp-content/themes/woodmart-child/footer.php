@@ -74,11 +74,18 @@ $wc_items = $cart_data['items'];
     <div class="gs-srow disc"><span class="l"><?php esc_html_e( 'Discount', 'woodmart' ); ?></span><span class="v" id="gs-disc"><?php echo wp_kses_post( wc_price( 0 ) ); ?></span></div>
     <div class="gs-srow ship"><span class="l"><?php esc_html_e( 'Shipping', 'woodmart' ); ?></span><span class="v"><?php esc_html_e( 'Free', 'woodmart' ); ?></span></div>
     <div class="gs-srow tot"><span class="l"><?php esc_html_e( 'Total', 'woodmart' ); ?></span><span class="v" id="gs-tot"><?php echo wp_kses_post( wc_price( $wc_total ) ); ?></span></div>
-    <a href="<?php echo esc_url( wc_get_checkout_url() ); ?>" class="gs-checkout-btn">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-      <?php printf( esc_html__( 'Checkout (%d)', 'woodmart' ), (int) $wc_count ); ?>
-      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-    </a>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <a href="#" class="gs-checkout-btn gs-whatsapp-btn" data-phone="212690597003">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        <?php esc_html_e( 'Order via WhatsApp #1', 'woodmart' ); ?>
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="#" class="gs-checkout-btn gs-whatsapp-btn" data-phone="212679193772" style="background:var(--bg3);border:1.5px solid var(--b2);">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        <?php esc_html_e( 'Order via WhatsApp #2', 'woodmart' ); ?>
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
     <div class="gs-pay-ico"><span>VISA</span><span>MC</span><span>PayPal</span><span>Apple Pay</span></div>
   </div>
   <div class="gs-ct-sugg">

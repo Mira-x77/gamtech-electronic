@@ -135,5 +135,46 @@ document.addEventListener('DOMContentLoaded',function(){
     dots.forEach(function(d){d.addEventListener('click',function(){showSlide(parseInt(d.dataset.slide)||0);});});
     setInterval(function(){showSlide(cur+1);},5000);
   }
+
+  /* WhatsApp Checkout - Multiple Numbers */
+  qa('.gs-whatsapp-btn').forEach(function(btn){
+    btn.addEventListener('click',function(e){
+      e.preventDefault();
+      var items=qa('.gs-ct-item');
+      if(items.length===0){
+        alert('Your cart is empty!');
+        return;
+      }
+      
+      var message='Hello! I would like to order the following items:\n\n';
+      var total=0;
+      var itemNum=1;
+      
+      items.forEach(function(item){
+        var name=(item.querySelector('.gs-ct-name')||{}).textContent||'Product';
+        var priceEl=item.querySelector('.gs-ct-price');
+        var qtyEl=item.querySelector('.gs-qty-n');
+        var price=parseFloat(priceEl.dataset.price)||0;
+        var qty=parseInt(qtyEl.textContent)||1;
+        var itemTotal=price*qty;
+        total+=itemTotal;
+        
+        message+=itemNum+'. '+name+'\n';
+        message+='   Quantity: '+qty+'\n';
+        message+='   Price: $'+price.toFixed(2)+' each\n';
+        message+='   Subtotal: $'+itemTotal.toFixed(2)+'\n\n';
+        itemNum++;
+      });
+      
+      message+='─────────────────────\n';
+      message+='*Total: $'+total.toFixed(2)+'*\n\n';
+      message+='Please confirm my order. Thank you!';
+      
+      var whatsappNumber=btn.dataset.phone||'212690597003';
+      var whatsappUrl='https://wa.me/'+whatsappNumber+'?text='+encodeURIComponent(message);
+      
+      window.open(whatsappUrl,'_blank');
+    });
+  });
 });
 })();
