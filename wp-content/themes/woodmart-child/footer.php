@@ -75,16 +75,16 @@ $wc_items = $cart_data['items'];
     <div class="gs-srow ship"><span class="l"><?php esc_html_e( 'Shipping', 'woodmart' ); ?></span><span class="v"><?php esc_html_e( 'Free', 'woodmart' ); ?></span></div>
     <div class="gs-srow tot"><span class="l"><?php esc_html_e( 'Total', 'woodmart' ); ?></span><span class="v" id="gs-tot"><?php echo wp_kses_post( wc_price( $wc_total ) ); ?></span></div>
     <div style="display:flex;flex-direction:column;gap:8px;">
-      <a href="#" class="gs-checkout-btn gs-whatsapp-btn" data-phone="22890597003">
+      <button type="button" class="gs-checkout-btn gs-whatsapp-btn" data-phone="22890597003">
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-        <?php esc_html_e( 'Order via WhatsApp #1', 'woodmart' ); ?>
+        <span><?php esc_html_e( 'Order via WhatsApp #1', 'woodmart' ); ?></span>
         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </a>
-      <a href="#" class="gs-checkout-btn gs-whatsapp-btn" data-phone="22879193772" style="background:var(--bg3);border:1.5px solid var(--b2);">
+      </button>
+      <button type="button" class="gs-checkout-btn gs-whatsapp-btn" data-phone="22879193772" style="background:var(--bg3);border:1.5px solid var(--b2);">
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-        <?php esc_html_e( 'Order via WhatsApp #2', 'woodmart' ); ?>
+        <span><?php esc_html_e( 'Order via WhatsApp #2', 'woodmart' ); ?></span>
         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </a>
+      </button>
     </div>
     <div class="gs-pay-ico"><span>VISA</span><span>MC</span><span>PayPal</span><span>Apple Pay</span></div>
   </div>

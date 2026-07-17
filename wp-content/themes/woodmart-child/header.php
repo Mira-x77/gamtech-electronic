@@ -32,6 +32,7 @@ $contact    = get_permalink( get_page_by_path( 'contact' ) );
   <div class="gs-logo">
     <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="gs-logo-link">
       <img src="<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/gamtech-logo.png' ); ?>" alt="GamTech" class="gs-logo-img">
+      <span class="gs-logo-text">GAM-TECH</span>
     </a>
   </div>
 

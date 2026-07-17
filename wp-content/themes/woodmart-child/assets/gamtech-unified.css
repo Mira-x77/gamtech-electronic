@@ -41,8 +41,9 @@ button{font-family:var(--font);cursor:pointer;border:none;outline:none;backgroun
 
 /* logo */
 .gs-logo{display:flex;align-items:center;padding:16px 16px 14px;border-bottom:1px solid var(--b1);flex-shrink:0}
-.gs-logo-link{display:block}
+.gs-logo-link{display:flex;align-items:center;gap:12px;text-decoration:none}
 .gs-logo-img{height:36px;width:auto;object-fit:contain}
+.gs-logo-text{font-size:20px;font-weight:800;color:var(--tx);letter-spacing:0.5px;text-transform:uppercase}
 
 /* nav */
 .gs-nav-sec{padding:12px 8px 4px}
