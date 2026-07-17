@@ -182,7 +182,7 @@ function gamtech_product_card( $product, $badge = '' ) {
                 <?php endif; ?>
             </div>
         </div>
-        <a href="<?php echo esc_url( $add ); ?>" class="gs-add-btn"
+        <a href="#" class="gs-add-btn"
            data-id="<?php echo esc_attr( $id ); ?>"
            data-price="<?php echo esc_attr( $prc ); ?>"
            data-name="<?php echo esc_attr( $name ); ?>"

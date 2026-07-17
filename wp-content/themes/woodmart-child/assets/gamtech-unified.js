@@ -61,11 +61,13 @@ document.addEventListener('DOMContentLoaded',function(){
   document.addEventListener('click',function(e){
     var btn=e.target.closest('.gs-add-btn');
     if(!btn)return;
+    e.preventDefault(); // Prevent page navigation
     var card=btn.closest('.gs-card');if(!card)return;
     var name=(card.querySelector('.gs-card-name')||{}).textContent||'Product';
     var pn=parseFloat(btn.dataset.price)||0;
     var img=btn.dataset.img||'';
-    var html='<div class="gs-ct-item" style="animation:gsfade .3s ease">'
+    var productId=btn.dataset.id||'';
+    var html='<div class="gs-ct-item" style="animation:gsfade .3s ease" data-id="'+productId+'">'
       +(img?'<img class="gs-ct-thumb" src="'+img+'" alt="">':'<div class="gs-ct-thumb-ph"><svg width="18" height="18" fill="none" stroke="var(--b2)" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/></svg></div>')
       +'<div class="gs-ct-info"><div class="gs-ct-name">'+name.replace(/</g,'&lt;')+'</div><div class="gs-ct-sub">GamTech</div>'
       +'<div class="gs-ct-price" data-price="'+pn.toFixed(2)+'">$'+pn.toFixed(2)+'</div>'
@@ -136,7 +138,7 @@ document.addEventListener('DOMContentLoaded',function(){
     setInterval(function(){showSlide(cur+1);},5000);
   }
 
-  /* WhatsApp Checkout - Multiple Numbers */
+  /* WhatsApp Checkout - Multiple Numbers with Order Page Link */
   qa('.gs-whatsapp-btn').forEach(function(btn){
     btn.addEventListener('click',function(e){
       e.preventDefault();
@@ -146,7 +148,9 @@ document.addEventListener('DOMContentLoaded',function(){
         return;
       }
       
-      var message='Hello! I would like to order the following items:\n\n';
+      // Generate unique order ID
+      var orderId='ORD-'+Date.now();
+      var orderData=[];
       var total=0;
       var itemNum=1;
       
@@ -154,21 +158,41 @@ document.addEventListener('DOMContentLoaded',function(){
         var name=(item.querySelector('.gs-ct-name')||{}).textContent||'Product';
         var priceEl=item.querySelector('.gs-ct-price');
         var qtyEl=item.querySelector('.gs-qty-n');
+        var imgEl=item.querySelector('.gs-ct-thumb');
         var price=parseFloat(priceEl.dataset.price)||0;
         var qty=parseInt(qtyEl.textContent)||1;
         var itemTotal=price*qty;
+        var img=imgEl?imgEl.src:'';
         total+=itemTotal;
         
-        message+=itemNum+'. '+name+'\n';
-        message+='   Quantity: '+qty+'\n';
-        message+='   Price: $'+price.toFixed(2)+' each\n';
-        message+='   Subtotal: $'+itemTotal.toFixed(2)+'\n\n';
+        orderData.push({
+          name:name,
+          price:price,
+          qty:qty,
+          img:img,
+          total:itemTotal
+        });
         itemNum++;
+      });
+      
+      // Save order to sessionStorage
+      sessionStorage.setItem(orderId,JSON.stringify({items:orderData,total:total,timestamp:new Date().toISOString()}));
+      
+      // Create order page URL
+      var orderPageUrl=window.location.origin+'/planning/?order='+orderId;
+      
+      // Build WhatsApp message
+      var message='🛒 *New Order Request*\n\n';
+      message+='Order ID: '+orderId+'\n\n';
+      
+      orderData.forEach(function(item,idx){
+        message+=(idx+1)+'. '+item.name+'\n';
+        message+='   Qty: '+item.qty+' × $'+item.price.toFixed(2)+' = $'+item.total.toFixed(2)+'\n\n';
       });
       
       message+='─────────────────────\n';
       message+='*Total: $'+total.toFixed(2)+'*\n\n';
-      message+='Please confirm my order. Thank you!';
+      message+='📋 View full order details with images:\n'+orderPageUrl;
       
       var whatsappNumber=btn.dataset.phone||'212690597003';
       var whatsappUrl='https://wa.me/'+whatsappNumber+'?text='+encodeURIComponent(message);
