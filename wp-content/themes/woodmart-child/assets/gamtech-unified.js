@@ -138,56 +138,78 @@ document.addEventListener('DOMContentLoaded',function(){
     setInterval(function(){showSlide(cur+1);},5000);
   }
 
-  /* WhatsApp Checkout - Multiple Numbers */
-  console.log('WhatsApp: Setting up checkout handlers');
-  
-  function formatCartMessage(cart){
-    var lines=["🛒 New Order:", ""];
-    var total=0;
-    cart.forEach(function(item,i){
-      var lineTotal=item.price*item.quantity;
-      total+=lineTotal;
-      lines.push((i+1)+". "+item.name+" x"+item.qty+" — $"+lineTotal.toFixed(2));
-    });
-    lines.push("");
-    lines.push("Total: $"+total.toFixed(2));
-    return lines.join("\n");
-  }
-  
-  function sendCartToWhatsApp(cart,phone){
-    if(!cart||cart.length===0){
-      alert("Your cart is empty!");
+  /* WhatsApp Checkout - Event Delegation on document */
+  document.addEventListener('click', function(e) {
+    var btn = e.target.closest('.gs-whatsapp-btn');
+    if (!btn) return;
+    
+    e.preventDefault();
+    e.stopPropagation();
+    
+    console.log('WhatsApp button clicked!', btn);
+    
+    var items = qa('.gs-ct-item');
+    if (items.length === 0) {
+      alert('Your cart is empty!');
       return;
     }
-    var message=formatCartMessage(cart);
-    var encodedMessage=encodeURIComponent(message);
-    var url="https://wa.me/"+phone+"?text="+encodedMessage;
-    console.log("WhatsApp: Opening", url);
-    window.location.href=url;
-  }
-  
-  function getCartItems(){
-    var items=qa('.gs-ct-item');
-    var cart=[];
-    items.forEach(function(item){
-      var name=(item.querySelector('.gs-ct-name')||{}).textContent||'Product';
-      var priceEl=item.querySelector('.gs-ct-price');
-      var qtyEl=item.querySelector('.gs-qty-n');
-      var price=priceEl?(parseFloat(priceEl.dataset.price)||0):0;
-      var qty=qtyEl?(parseInt(qtyEl.textContent)||1):1;
-      cart.push({name:name,price:price,qty:qty});
+    
+    // Generate unique order ID
+    var orderId = 'ORD-' + Date.now();
+    var orderData = [];
+    var total = 0;
+    var itemNum = 1;
+    
+    items.forEach(function(item) {
+      var name = (item.querySelector('.gs-ct-name') || {}).textContent || 'Product';
+      var priceEl = item.querySelector('.gs-ct-price');
+      var qtyEl = item.querySelector('.gs-qty-n');
+      var imgEl = item.querySelector('.gs-ct-thumb');
+      var price = priceEl ? (parseFloat(priceEl.dataset.price) || 0) : 0;
+      var qty = qtyEl ? (parseInt(qtyEl.textContent) || 1) : 1;
+      var itemTotal = price * qty;
+      var img = imgEl ? imgEl.src : '';
+      total += itemTotal;
+      
+      orderData.push({
+        name: name,
+        price: price,
+        qty: qty,
+        img: img,
+        total: itemTotal
+      });
+      itemNum++;
     });
-    return cart;
-  }
-
-  qa('.gs-whatsapp-btn').forEach(function(btn){
-    btn.addEventListener('click',function(e){
-      e.preventDefault();
-      e.stopPropagation();
-      var phone=btn.dataset.phone;
-      var cart=getCartItems();
-      sendCartToWhatsApp(cart,phone);
+    
+    // Save order to sessionStorage (wrapped in try-catch in case sessionStorage is disabled/restricted)
+    try {
+      sessionStorage.setItem(orderId, JSON.stringify({ items: orderData, total: total, timestamp: new Date().toISOString() }));
+    } catch (err) {
+      console.warn('sessionStorage is not available:', err);
+    }
+    
+    // Create order page URL
+    var orderPageUrl = window.location.origin + '/planning/?order=' + orderId;
+    
+    // Build WhatsApp message
+    var message = 'New Order - ' + orderId + '\n\n';
+    
+    orderData.forEach(function(item, idx) {
+      message += (idx + 1) + '. ' + item.name + '\n';
+      message += 'Qty: ' + item.qty + ' x $' + item.price.toFixed(2) + ' = $' + item.total.toFixed(2) + '\n\n';
     });
+    
+    message += 'Total: $' + total.toFixed(2) + '\n\n';
+    message += 'View order: ' + orderPageUrl;
+    
+    var whatsappNumber = btn.dataset.phone || '22890597003';
+    var whatsappUrl = 'https://wa.me/' + whatsappNumber + '?text=' + encodeURIComponent(message);
+    
+    console.log('Redirecting to WhatsApp:', whatsappUrl);
+    console.log('Phone number:', whatsappNumber);
+    
+    // Direct redirect is the most reliable method on mobile and prevents browser popup blockers from blocking it
+    window.location.href = whatsappUrl;
   });
 });
 })();
