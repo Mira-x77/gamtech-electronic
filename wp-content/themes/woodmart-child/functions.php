@@ -30,7 +30,7 @@ defined( 'ABSPATH' ) || exit;
 require_once get_stylesheet_directory() . '/inc/gamtech-core.php';
 require_once get_stylesheet_directory() . '/inc/gamtech-import-products.php';
 require_once get_stylesheet_directory() . '/inc/gamtech-fix-categories.php';
-require_once get_stylesheet_directory() . '/bulk-import-from-gam.php';
+// require_once get_stylesheet_directory() . '/bulk-import-from-gam.php'; // Disabled - causing 500 error
 require_once get_stylesheet_directory() . '/inc/gamtech-import-chargers.php';
 
 // =====================================================
