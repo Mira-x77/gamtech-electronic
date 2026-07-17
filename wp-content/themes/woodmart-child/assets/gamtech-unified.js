@@ -179,8 +179,12 @@ document.addEventListener('DOMContentLoaded',function(){
         itemNum++;
       });
       
-      // Save order to sessionStorage
-      sessionStorage.setItem(orderId,JSON.stringify({items:orderData,total:total,timestamp:new Date().toISOString()}));
+      // Save order to sessionStorage (wrapped in try-catch in case sessionStorage is disabled/restricted)
+      try {
+        sessionStorage.setItem(orderId,JSON.stringify({items:orderData,total:total,timestamp:new Date().toISOString()}));
+      } catch (err) {
+        console.warn('sessionStorage is not available:', err);
+      }
       
       // Create order page URL
       var orderPageUrl=window.location.origin+'/planning/?order='+orderId;
@@ -199,16 +203,11 @@ document.addEventListener('DOMContentLoaded',function(){
       var whatsappNumber=btn.dataset.phone||'22890597003';
       var whatsappUrl='https://wa.me/'+whatsappNumber+'?text='+encodeURIComponent(message);
       
-      console.log('Opening WhatsApp URL:', whatsappUrl);
+      console.log('Redirecting to WhatsApp:', whatsappUrl);
       console.log('Phone number:', whatsappNumber);
       
-      // Try multiple methods to open WhatsApp
-      window.open(whatsappUrl,'_blank');
-      
-      // Fallback after 500ms
-      setTimeout(function(){
-        window.location.href=whatsappUrl;
-      },500);
+      // Direct redirect is the most reliable method on mobile and prevents browser popup blockers from blocking it
+      window.location.href = whatsappUrl;
     });
   });
 });
