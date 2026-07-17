@@ -1,11 +1,9 @@
 (function(){
 'use strict';
-console.log('GamTech Unified JS loaded!');
 var qs=function(s,c){return(c||document).querySelector(s)};
 var qa=function(s,c){return Array.from((c||document).querySelectorAll(s))};
 
 document.addEventListener('DOMContentLoaded',function(){
-  console.log('GamTech: DOMContentLoaded fired!');
   var sb=qs('#gs-sb'), ct=qs('#gs-ct'), ov=qs('#gs-ov');
 
   function openPanel(el){el.classList.add('open');ov&&ov.classList.add('on');}
@@ -140,93 +138,56 @@ document.addEventListener('DOMContentLoaded',function(){
     setInterval(function(){showSlide(cur+1);},5000);
   }
 
-  /* WhatsApp Checkout - Multiple Numbers with Order Page Link */
-  console.log('WhatsApp: Setting up event delegation');
+  /* WhatsApp Checkout - Multiple Numbers */
+  console.log('WhatsApp: Setting up checkout handlers');
   
-  // Use event delegation on the cart sum container (parent element that always exists)
-  var cartSum=qs('.gs-ct-sum');
-  if(cartSum){
-    cartSum.addEventListener('click',function(e){
-      var btn=e.target.closest('.gs-whatsapp-btn');
-      if(!btn){
-        console.log('WhatsApp: Click was not on a WhatsApp button');
-        return;
-      }
-      
+  function formatCartMessage(cart){
+    var lines=["🛒 New Order:", ""];
+    var total=0;
+    cart.forEach(function(item,i){
+      var lineTotal=item.price*item.quantity;
+      total+=lineTotal;
+      lines.push((i+1)+". "+item.name+" x"+item.qty+" — $"+lineTotal.toFixed(2));
+    });
+    lines.push("");
+    lines.push("Total: $"+total.toFixed(2));
+    return lines.join("\n");
+  }
+  
+  function sendCartToWhatsApp(cart,phone){
+    if(!cart||cart.length===0){
+      alert("Your cart is empty!");
+      return;
+    }
+    var message=formatCartMessage(cart);
+    var encodedMessage=encodeURIComponent(message);
+    var url="https://wa.me/"+phone+"?text="+encodedMessage;
+    console.log("WhatsApp: Opening", url);
+    window.location.href=url;
+  }
+  
+  function getCartItems(){
+    var items=qa('.gs-ct-item');
+    var cart=[];
+    items.forEach(function(item){
+      var name=(item.querySelector('.gs-ct-name')||{}).textContent||'Product';
+      var priceEl=item.querySelector('.gs-ct-price');
+      var qtyEl=item.querySelector('.gs-qty-n');
+      var price=priceEl?(parseFloat(priceEl.dataset.price)||0):0;
+      var qty=qtyEl?(parseInt(qtyEl.textContent)||1):1;
+      cart.push({name:name,price:price,qty:qty});
+    });
+    return cart;
+  }
+
+  qa('.gs-whatsapp-btn').forEach(function(btn){
+    btn.addEventListener('click',function(e){
       e.preventDefault();
       e.stopPropagation();
-      
-      console.log('WhatsApp: Button clicked!', btn);
-      
-      var items=qa('.gs-ct-item');
-      console.log('WhatsApp: Found', items.length, 'items in cart');
-      
-      if(items.length===0){
-        alert('Your cart is empty!');
-        return;
-      }
-      
-      // Generate unique order ID
-      var orderId='ORD-'+Date.now();
-      var orderData=[];
-      var total=0;
-      
-      items.forEach(function(item){
-        var name=(item.querySelector('.gs-ct-name')||{}).textContent||'Product';
-        var priceEl=item.querySelector('.gs-ct-price');
-        var qtyEl=item.querySelector('.gs-qty-n');
-        var imgEl=item.querySelector('.gs-ct-thumb');
-        var price=priceEl ? (parseFloat(priceEl.dataset.price)||0) : 0;
-        var qty=qtyEl ? (parseInt(qtyEl.textContent)||1) : 1;
-        var itemTotal=price*qty;
-        var img=imgEl?imgEl.src:'';
-        total+=itemTotal;
-        
-        orderData.push({
-          name:name,
-          price:price,
-          qty:qty,
-          img:img,
-          total:itemTotal
-        });
-      });
-      
-      console.log('WhatsApp: Order data prepared:', orderData);
-      
-      // Save order to sessionStorage
-      try {
-        sessionStorage.setItem(orderId,JSON.stringify({items:orderData,total:total,timestamp:new Date().toISOString()}));
-        console.log('WhatsApp: Order saved to sessionStorage');
-      } catch (err) {
-        console.warn('WhatsApp: sessionStorage error:', err);
-      }
-      
-      // Create order page URL
-      var orderPageUrl=window.location.origin+'/planning/?order='+orderId;
-      
-      // Build WhatsApp message
-      var message='New Order - '+orderId+'\n\n';
-      
-      orderData.forEach(function(item,idx){
-        message+=(idx+1)+'. '+item.name+'\n';
-        message+='Qty: '+item.qty+' x $'+item.price.toFixed(2)+' = $'+item.total.toFixed(2)+'\n\n';
-      });
-      
-      message+='Total: $'+total.toFixed(2)+'\n\n';
-      message+='View order: '+orderPageUrl;
-      
-      var whatsappNumber=btn.dataset.phone||'22890597003';
-      var whatsappUrl='https://wa.me/'+whatsappNumber+'?text='+encodeURIComponent(message);
-      
-      console.log('WhatsApp: Redirecting to:', whatsappUrl);
-      console.log('WhatsApp: Phone number:', whatsappNumber);
-      
-      // Direct redirect
-      window.location.href=whatsappUrl;
+      var phone=btn.dataset.phone;
+      var cart=getCartItems();
+      sendCartToWhatsApp(cart,phone);
     });
-    console.log('WhatsApp: Event delegation set up successfully on .gs-ct-sum');
-  } else {
-    console.error('WhatsApp: Could not find .gs-ct-sum element for event delegation');
-  }
+  });
 });
 })();
