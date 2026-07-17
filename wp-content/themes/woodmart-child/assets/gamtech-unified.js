@@ -142,6 +142,10 @@ document.addEventListener('DOMContentLoaded',function(){
   qa('.gs-whatsapp-btn').forEach(function(btn){
     btn.addEventListener('click',function(e){
       e.preventDefault();
+      e.stopPropagation();
+      
+      console.log('WhatsApp button clicked!');
+      
       var items=qa('.gs-ct-item');
       if(items.length===0){
         alert('Your cart is empty!');
@@ -181,23 +185,30 @@ document.addEventListener('DOMContentLoaded',function(){
       // Create order page URL
       var orderPageUrl=window.location.origin+'/planning/?order='+orderId;
       
-      // Build WhatsApp message
-      var message='🛒 *New Order Request*\n\n';
-      message+='Order ID: '+orderId+'\n\n';
+      // Build WhatsApp message - simpler format
+      var message='New Order - '+orderId+'\n\n';
       
       orderData.forEach(function(item,idx){
         message+=(idx+1)+'. '+item.name+'\n';
-        message+='   Qty: '+item.qty+' × $'+item.price.toFixed(2)+' = $'+item.total.toFixed(2)+'\n\n';
+        message+='Qty: '+item.qty+' x $'+item.price.toFixed(2)+' = $'+item.total.toFixed(2)+'\n\n';
       });
       
-      message+='─────────────────────\n';
-      message+='*Total: $'+total.toFixed(2)+'*\n\n';
-      message+='📋 View full order details with images:\n'+orderPageUrl;
+      message+='Total: $'+total.toFixed(2)+'\n\n';
+      message+='View order: '+orderPageUrl;
       
       var whatsappNumber=btn.dataset.phone||'22890597003';
       var whatsappUrl='https://wa.me/'+whatsappNumber+'?text='+encodeURIComponent(message);
       
+      console.log('Opening WhatsApp URL:', whatsappUrl);
+      console.log('Phone number:', whatsappNumber);
+      
+      // Try multiple methods to open WhatsApp
       window.open(whatsappUrl,'_blank');
+      
+      // Fallback after 500ms
+      setTimeout(function(){
+        window.location.href=whatsappUrl;
+      },500);
     });
   });
 });
