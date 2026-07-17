@@ -75,17 +75,56 @@ $wc_items = $cart_data['items'];
     <div class="gs-srow ship"><span class="l"><?php esc_html_e( 'Shipping', 'woodmart' ); ?></span><span class="v"><?php esc_html_e( 'Free', 'woodmart' ); ?></span></div>
     <div class="gs-srow tot"><span class="l"><?php esc_html_e( 'Total', 'woodmart' ); ?></span><span class="v" id="gs-tot"><?php echo wp_kses_post( wc_price( $wc_total ) ); ?></span></div>
     <div style="display:flex;flex-direction:column;gap:8px;">
-      <button type="button" class="gs-checkout-btn gs-whatsapp-btn" data-phone="22890597003">
+      <button type="button" class="gs-checkout-btn gs-whatsapp-btn" data-phone="22890597003" onclick="gamtechWhatsApp(this)">
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
         <span><?php esc_html_e( 'Order via WhatsApp #1', 'woodmart' ); ?></span>
         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </button>
-      <button type="button" class="gs-checkout-btn gs-whatsapp-btn" data-phone="22879193772" style="background:var(--bg3);border:1.5px solid var(--b2);">
+      <button type="button" class="gs-checkout-btn gs-whatsapp-btn" data-phone="22879193772" onclick="gamtechWhatsApp(this)" style="background:var(--bg3);border:1.5px solid var(--b2);">
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
         <span><?php esc_html_e( 'Order via WhatsApp #2', 'woodmart' ); ?></span>
         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </button>
     </div>
+    <script>
+    /* Inline WhatsApp checkout — zero external dependencies */
+    function gamtechWhatsApp(btn) {
+      var phone = btn.getAttribute('data-phone') || '22890597003';
+      var items = document.querySelectorAll('.gs-ct-item');
+      
+      if (!items || items.length === 0) {
+        alert('Your cart is empty! Add items before ordering.');
+        return;
+      }
+      
+      var orderId = 'ORD-' + Date.now();
+      var message = 'New Order - ' + orderId + '\n\n';
+      var total = 0;
+      var num = 1;
+      
+      items.forEach(function(item) {
+        var nameEl = item.querySelector('.gs-ct-name');
+        var priceEl = item.querySelector('.gs-ct-price');
+        var qtyEl = item.querySelector('.gs-qty-n');
+        var name = nameEl ? nameEl.textContent.trim() : 'Product';
+        var price = priceEl ? (parseFloat(priceEl.getAttribute('data-price')) || 0) : 0;
+        var qty = qtyEl ? (parseInt(qtyEl.textContent) || 1) : 1;
+        var lineTotal = price * qty;
+        total += lineTotal;
+        
+        message += num + '. ' + name + '\n';
+        message += 'Qty: ' + qty + ' x $' + price.toFixed(2) + ' = $' + lineTotal.toFixed(2) + '\n\n';
+        num++;
+      });
+      
+      message += 'Total: $' + total.toFixed(2) + '\n\n';
+      message += 'Order placed from: ' + window.location.origin;
+      
+      var url = 'https://wa.me/' + phone + '?text=' + encodeURIComponent(message);
+      console.log('GamTech WhatsApp redirect:', url);
+      window.location.href = url;
+    }
+    </script>
     <div class="gs-pay-ico"><span>VISA</span><span>MC</span><span>PayPal</span><span>Apple Pay</span></div>
   </div>
   <div class="gs-ct-sugg">
