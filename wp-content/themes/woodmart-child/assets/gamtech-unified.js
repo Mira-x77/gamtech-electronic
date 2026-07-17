@@ -1,9 +1,11 @@
 (function(){
 'use strict';
+console.log('GamTech Unified JS loaded!');
 var qs=function(s,c){return(c||document).querySelector(s)};
 var qa=function(s,c){return Array.from((c||document).querySelectorAll(s))};
 
 document.addEventListener('DOMContentLoaded',function(){
+  console.log('GamTech: DOMContentLoaded fired!');
   var sb=qs('#gs-sb'), ct=qs('#gs-ct'), ov=qs('#gs-ov');
 
   function openPanel(el){el.classList.add('open');ov&&ov.classList.add('on');}
