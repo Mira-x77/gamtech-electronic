@@ -163,8 +163,8 @@ document.addEventListener('DOMContentLoaded',function(){
         var priceEl=item.querySelector('.gs-ct-price');
         var qtyEl=item.querySelector('.gs-qty-n');
         var imgEl=item.querySelector('.gs-ct-thumb');
-        var price=parseFloat(priceEl.dataset.price)||0;
-        var qty=parseInt(qtyEl.textContent)||1;
+        var price=priceEl ? (parseFloat(priceEl.dataset.price)||0) : 0;
+        var qty=qtyEl ? (parseInt(qtyEl.textContent)||1) : 1;
         var itemTotal=price*qty;
         var img=imgEl?imgEl.src:'';
         total+=itemTotal;
