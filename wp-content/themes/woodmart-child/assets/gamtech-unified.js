@@ -139,14 +139,26 @@ document.addEventListener('DOMContentLoaded',function(){
   }
 
   /* WhatsApp Checkout - Multiple Numbers with Order Page Link */
-  qa('.gs-whatsapp-btn').forEach(function(btn){
-    btn.addEventListener('click',function(e){
+  console.log('WhatsApp: Setting up event delegation');
+  
+  // Use event delegation on the cart sum container (parent element that always exists)
+  var cartSum=qs('.gs-ct-sum');
+  if(cartSum){
+    cartSum.addEventListener('click',function(e){
+      var btn=e.target.closest('.gs-whatsapp-btn');
+      if(!btn){
+        console.log('WhatsApp: Click was not on a WhatsApp button');
+        return;
+      }
+      
       e.preventDefault();
       e.stopPropagation();
       
-      console.log('WhatsApp button clicked!');
+      console.log('WhatsApp: Button clicked!', btn);
       
       var items=qa('.gs-ct-item');
+      console.log('WhatsApp: Found', items.length, 'items in cart');
+      
       if(items.length===0){
         alert('Your cart is empty!');
         return;
@@ -156,7 +168,6 @@ document.addEventListener('DOMContentLoaded',function(){
       var orderId='ORD-'+Date.now();
       var orderData=[];
       var total=0;
-      var itemNum=1;
       
       items.forEach(function(item){
         var name=(item.querySelector('.gs-ct-name')||{}).textContent||'Product';
@@ -176,20 +187,22 @@ document.addEventListener('DOMContentLoaded',function(){
           img:img,
           total:itemTotal
         });
-        itemNum++;
       });
       
-      // Save order to sessionStorage (wrapped in try-catch in case sessionStorage is disabled/restricted)
+      console.log('WhatsApp: Order data prepared:', orderData);
+      
+      // Save order to sessionStorage
       try {
         sessionStorage.setItem(orderId,JSON.stringify({items:orderData,total:total,timestamp:new Date().toISOString()}));
+        console.log('WhatsApp: Order saved to sessionStorage');
       } catch (err) {
-        console.warn('sessionStorage is not available:', err);
+        console.warn('WhatsApp: sessionStorage error:', err);
       }
       
       // Create order page URL
       var orderPageUrl=window.location.origin+'/planning/?order='+orderId;
       
-      // Build WhatsApp message - simpler format
+      // Build WhatsApp message
       var message='New Order - '+orderId+'\n\n';
       
       orderData.forEach(function(item,idx){
@@ -203,12 +216,15 @@ document.addEventListener('DOMContentLoaded',function(){
       var whatsappNumber=btn.dataset.phone||'22890597003';
       var whatsappUrl='https://wa.me/'+whatsappNumber+'?text='+encodeURIComponent(message);
       
-      console.log('Redirecting to WhatsApp:', whatsappUrl);
-      console.log('Phone number:', whatsappNumber);
+      console.log('WhatsApp: Redirecting to:', whatsappUrl);
+      console.log('WhatsApp: Phone number:', whatsappNumber);
       
-      // Direct redirect is the most reliable method on mobile and prevents browser popup blockers from blocking it
-      window.location.href = whatsappUrl;
+      // Direct redirect
+      window.location.href=whatsappUrl;
     });
-  });
+    console.log('WhatsApp: Event delegation set up successfully on .gs-ct-sum');
+  } else {
+    console.error('WhatsApp: Could not find .gs-ct-sum element for event delegation');
+  }
 });
 })();
