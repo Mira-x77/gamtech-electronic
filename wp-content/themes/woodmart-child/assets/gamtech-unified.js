@@ -194,7 +194,7 @@ document.addEventListener('DOMContentLoaded',function(){
       message+='*Total: $'+total.toFixed(2)+'*\n\n';
       message+='📋 View full order details with images:\n'+orderPageUrl;
       
-      var whatsappNumber=btn.dataset.phone||'212690597003';
+      var whatsappNumber=btn.dataset.phone||'22890597003';
       var whatsappUrl='https://wa.me/'+whatsappNumber+'?text='+encodeURIComponent(message);
       
       window.open(whatsappUrl,'_blank');
