@@ -47,18 +47,39 @@ if ( is_dir( $git_dir ) ) {
     }
 }
 
+require_once __DIR__ . '/inc/deploy-helpers.php';
+
 @shell_exec( 'cd ' . escapeshellarg( REPO_PATH ) . ' && rm -rf docker vibe_images .kiro .agents temp_repo deploy2.php deploy3.php deploy4.php 2>&1' );
-@shell_exec( 'curl -s -X PURGE http://localhost/ 2>&1' );
-@shell_exec( 'curl -s -X PURGE http://127.0.0.1/ 2>&1' );
+
+// Rotate bloated error_log (a 256MB+ log causes 500 errors on its own)
+$log[] = gamtech_rotate_error_log();
+
+// Verify critical files survived the deploy
+$log[] = 'Critical file check:';
+$log   = array_merge( $log, gamtech_verify_critical_files() );
+
+// PHP syntax check on child theme
+$syntax_out = []; $syntax_rv = 0;
+exec(
+    'php -l ' . escapeshellarg( REPO_PATH . '/wp-content/themes/woodmart-child/functions.php' ) . ' 2>&1',
+    $syntax_out,
+    $syntax_rv
+);
+$log[] = 'Syntax check functions.php: ' . ( $syntax_rv === 0 ? 'OK' : implode( ' ', $syntax_out ) );
+
+// Bust opcache + reload PHP-FPM (without this, old broken code keeps running)
+$log[] = 'Cache clear:';
+$log   = array_merge( $log, gamtech_clear_php_cache() );
+
 @touch( REPO_PATH . '/wp-content/themes/woodmart-child/style.css' );
 @touch( REPO_PATH . '/wp-content/themes/woodmart-child/functions.php' );
 @touch( REPO_PATH . '/wp-content/themes/woodmart-child/front-page.php' );
 @touch( REPO_PATH . '/wp-content/themes/woodmart-child/header.php' );
 @touch( REPO_PATH . '/wp-content/themes/woodmart-child/footer.php' );
-if ( function_exists( 'wp_cache_flush' ) ) { wp_cache_flush(); }
-if ( function_exists( 'opcache_reset' ) )  { opcache_reset(); }
 
-$log[] = 'Done.';
+$http_code = gamtech_http_self_check();
+$log[]     = 'Post-deploy HTTP check: ' . $http_code;
+$log[]     = $http_code === '200' ? 'Deploy successful' : 'WARNING: site may still be down';
 @file_put_contents( LOG_FILE, implode( "\n", $log ) . "\n", FILE_APPEND );
 
 http_response_code( 200 );

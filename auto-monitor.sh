@@ -5,11 +5,24 @@
 SITE_URL="https://gamtech-electronic.com"
 SITE_DIR="/home/c2423708c/public_html"
 LOG_FILE="/home/c2423708c/site-monitor.log"
+ERROR_LOG="/home/c2423708c/public_html/error_log"
+ERROR_LOG_MAX_MB=10
 
 # Function to log messages
 log_message() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" >> "$LOG_FILE"
 }
+
+# Rotate error_log if it is bloated (256MB+ logs crash PHP diagnostics and can fill disk)
+if [ -f "$ERROR_LOG" ]; then
+    ERROR_SIZE_MB=$(du -m "$ERROR_LOG" 2>/dev/null | cut -f1)
+    if [ "$ERROR_SIZE_MB" -gt "$ERROR_LOG_MAX_MB" ] 2>/dev/null; then
+        log_message "⚠️  error_log is ${ERROR_SIZE_MB}MB — rotating..."
+        tail -n 500 "$ERROR_LOG" > "${ERROR_LOG}.$(date +%Y%m%d).bak" 2>/dev/null
+        : > "$ERROR_LOG"
+        log_message "   error_log truncated (backup saved)"
+    fi
+fi
 
 # Check if site is responding
 HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "$SITE_URL" 2>/dev/null)
@@ -51,10 +64,11 @@ if [ "$HTTP_CODE" != "200" ]; then
     log_message "   Resetting to origin/main..."
     git reset --hard origin/main >> "$LOG_FILE" 2>&1
     
-    # Step 4: Clear PHP cache/opcache if possible
+    # Step 4: Clear PHP cache/opcache and reload PHP-FPM
     if command -v wp &> /dev/null; then
         wp cache flush --allow-root --path="$SITE_DIR" >> "$LOG_FILE" 2>&1
     fi
+    killall -USR2 php-fpm >> "$LOG_FILE" 2>&1 || true
     
     # Step 5: Check if site is back up
     sleep 3

@@ -28,15 +28,10 @@ foreach ($files as $f) {
 }
 
 echo "<br><h2>Test 3: Error Log (last 30 lines)</h2>";
-$el = __DIR__ . '/error_log';
-if (file_exists($el)) {
-    $lines = file($el);
-    echo "<pre style='background:#000;color:#0f0;padding:15px;overflow:auto;max-height:400px;'>";
-    echo htmlspecialchars(implode('', array_slice($lines, -30)));
-    echo "</pre>";
-} else {
-    echo "❌ No error_log found<br>";
-}
+require_once __DIR__ . '/inc/deploy-helpers.php';
+echo "<pre style='background:#000;color:#0f0;padding:15px;overflow:auto;max-height:400px;'>";
+echo htmlspecialchars( gamtech_tail_error_log( 30 ) );
+echo "</pre>";
 
 echo "<h2>Test 4: Git Status</h2>";
 if (is_dir(__DIR__ . '/.git')) {

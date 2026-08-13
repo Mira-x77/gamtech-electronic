@@ -27,16 +27,23 @@ if (!$action) {
 
 // Check errors
 if ($action === 'check') {
+    require_once __DIR__ . '/inc/deploy-helpers.php';
     echo "<h2>Error Log (Last 50 lines)</h2>";
-    $log = __DIR__ . '/error_log';
-    if (file_exists($log)) {
-        $lines = file($log);
-        echo "<pre style='background:#222;padding:10px;'>";
-        echo htmlspecialchars(implode('', array_slice($lines, -50)));
-        echo "</pre>";
-    } else {
-        echo "No error_log found<br>";
-    }
+    echo "<pre style='background:#222;padding:10px;'>";
+    echo htmlspecialchars( gamtech_tail_error_log( 50 ) );
+    echo "</pre>";
+    echo "<br><a href='?action=rotate_log&confirm=yes' class='btn'>Rotate error_log</a>";
+    echo "<br><a href='?' class='btn'>Back</a>";
+    exit;
+}
+
+// Rotate bloated error log
+if ($action === 'rotate_log' && isset($_GET['confirm'])) {
+    require_once __DIR__ . '/inc/deploy-helpers.php';
+    echo "<h2>Rotating error_log...</h2>";
+    echo "<pre style='background:#222;padding:10px;'>";
+    echo htmlspecialchars( gamtech_rotate_error_log() );
+    echo "</pre>";
     echo "<br><a href='?' class='btn'>Back</a>";
     exit;
 }

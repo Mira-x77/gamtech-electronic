@@ -1,6 +1,9 @@
 ---
+# IMPORTANT: Do NOT use "cp -r" — it corrupts files when the repo IS public_html.
+# Use deploy.php (GitHub webhook) as the ONLY deploy method.
+# This file only runs post-deploy maintenance if cPanel Git triggers it.
 deployment:
   tasks:
     - export DEPLOYPATH=/home/c2423708c/public_html
-    - /bin/cp -r . $DEPLOYPATH
-    - /bin/rm -rf $DEPLOYPATH/docker $DEPLOYPATH/vibe_images $DEPLOYPATH/.kiro $DEPLOYPATH/.agents
+    - /bin/bash $DEPLOYPATH/auto-monitor.sh
+    - killall -USR2 php-fpm || true
