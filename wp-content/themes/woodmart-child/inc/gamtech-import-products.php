@@ -177,11 +177,7 @@ function gamtech_run_product_import() {
         array( 'Multi-Port Adapters',           'Multi-Port-USB-Hub.jpg',        'Adapters & Hubs', null ),
     );
 
-    // ────────────────────────────────────────────────
-    // HELPER: get or create product_cat term
-    // ────────────────────────────────────────────────
-    $cat_cache = array();
-
+if ( ! function_exists( 'gamtech_get_or_create_cat' ) ) {
     function gamtech_get_or_create_cat( $name, $parent_id = 0, &$cache = array() ) {
         $key = $name . '_' . $parent_id;
         if ( isset( $cache[ $key ] ) ) return $cache[ $key ];
@@ -208,10 +204,9 @@ function gamtech_run_product_import() {
         $cache[ $key ] = $result['term_id'];
         return $result['term_id'];
     }
+}
 
-    // ────────────────────────────────────────────────
-    // HELPER: register image as WP attachment
-    // ────────────────────────────────────────────────
+if ( ! function_exists( 'gamtech_attach_image' ) ) {
     function gamtech_attach_image( $filename, $img_base, $img_url ) {
         $filepath = $img_base . $filename;
         if ( ! file_exists( $filepath ) ) return 0;
@@ -243,6 +238,10 @@ function gamtech_run_product_import() {
 
         return $attach_id;
     }
+}
+
+    $cat_cache = array();
+
 
     // ────────────────────────────────────────────────
     // RUN THE IMPORT

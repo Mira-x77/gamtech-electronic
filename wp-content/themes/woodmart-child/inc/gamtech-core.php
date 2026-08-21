@@ -37,8 +37,21 @@ function gamtech_category_url( $name ) {
     return add_query_arg( 's', $name, wc_get_page_permalink( 'shop' ) );
 }
 
+
+/**
+ * Safely resolve page permalink by slug.
+ */
+function gamtech_get_page_url( $slug ) {
+    $page = get_page_by_path( $slug );
+    if ( $page && isset( $page->ID ) ) {
+        return get_permalink( $page->ID );
+    }
+    return home_url( '/' . trim( $slug, '/' ) . '/' );
+}
+
 /**
  * Current nav key for active states.
+
  */
 function gamtech_current_nav() {
     if ( is_front_page() ) {

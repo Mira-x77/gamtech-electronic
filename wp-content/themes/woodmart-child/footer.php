@@ -19,9 +19,10 @@ $wc_items = $cart_data['items'];
     <div class="gs-ft-links">
       <a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php esc_html_e( 'Home', 'woodmart' ); ?></a>
       <a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>"><?php esc_html_e( 'Shop', 'woodmart' ); ?></a>
-      <a href="<?php echo esc_url( get_permalink( get_page_by_path( 'about' ) ) ); ?>"><?php esc_html_e( 'About', 'woodmart' ); ?></a>
-      <a href="<?php echo esc_url( get_permalink( get_page_by_path( 'contact' ) ) ); ?>"><?php esc_html_e( 'Contact', 'woodmart' ); ?></a>
-      <a href="<?php echo esc_url( get_permalink( get_page_by_path( 'privacy-policy' ) ) ); ?>"><?php esc_html_e( 'Privacy', 'woodmart' ); ?></a>
+      <a href="<?php echo esc_url( gamtech_get_page_url( 'about' ) ); ?>"><?php esc_html_e( 'About', 'woodmart' ); ?></a>
+      <a href="<?php echo esc_url( gamtech_get_page_url( 'contact' ) ); ?>"><?php esc_html_e( 'Contact', 'woodmart' ); ?></a>
+      <a href="<?php echo esc_url( gamtech_get_page_url( 'privacy-policy' ) ); ?>"><?php esc_html_e( 'Privacy', 'woodmart' ); ?></a>
+
       <span class="gs-ft-copy">&copy; <?php echo esc_html( date( 'Y' ) ); ?> GamTech</span>
     </div>
   </footer>

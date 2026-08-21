@@ -31,7 +31,7 @@ function gamtech_run_charger_import() {
     $img_dir     = $uploads_dir['basedir'] . '/product-images/chargers/';
     $img_url     = $uploads_dir['baseurl'] . '/product-images/chargers/';
 
-    // Get or create "Laptop Accessories > Chargers" category
+if ( ! function_exists( 'gamtech_charger_get_or_create_cat' ) ) {
     function gamtech_charger_get_or_create_cat( $name, $parent_id = 0, &$cache = array() ) {
         $key = $name . '_' . $parent_id;
         if ( isset( $cache[ $key ] ) ) return $cache[ $key ];
@@ -57,14 +57,9 @@ function gamtech_run_charger_import() {
         $cache[ $key ] = $result['term_id'];
         return $result['term_id'];
     }
+}
 
-    $cat_cache = array();
-    $parent_id = gamtech_charger_get_or_create_cat( 'Laptop Accessories', 0, $cat_cache );
-    $sub_id    = gamtech_charger_get_or_create_cat( 'Chargers', $parent_id, $cat_cache );
-    $assign_cats = array( $parent_id );
-    if ( $sub_id ) $assign_cats[] = $sub_id;
-
-    // Register image as WP attachment
+if ( ! function_exists( 'gamtech_charger_attach_image' ) ) {
     function gamtech_charger_attach_image( $filename, $img_dir, $img_url ) {
         $filepath = $img_dir . $filename;
         if ( ! file_exists( $filepath ) ) return 0;
@@ -95,8 +90,17 @@ function gamtech_run_charger_import() {
 
         return $attach_id;
     }
+}
+
+
+    $cat_cache = array();
+    $parent_id = gamtech_charger_get_or_create_cat( 'Laptop Accessories', 0, $cat_cache );
+    $sub_id    = gamtech_charger_get_or_create_cat( 'Chargers', $parent_id, $cat_cache );
+    $assign_cats = array( $parent_id );
+    if ( $sub_id ) $assign_cats[] = $sub_id;
 
     // Scan all image files in the chargers directory
+
     $allowed_exts = array( 'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp' );
     $image_files  = array();
 

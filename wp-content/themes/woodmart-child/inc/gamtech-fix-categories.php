@@ -144,7 +144,12 @@ function gamtech_run_category_fix() {
         'Multi-Port Adapters'         => array( 'Adapters & Hubs', null ),
     );
 
-    // Helper: get term ID by name
+    // Correct category map ends above
+
+if ( ! function_exists( 'gamtech_get_term_id' ) ) {
+    /**
+     * Helper: get term ID by name
+     */
     function gamtech_get_term_id( $name, $parent_id = 0 ) {
         $term = get_term_by( 'name', $name, 'product_cat' );
         if ( $term && ! is_wp_error( $term ) ) {
@@ -157,6 +162,8 @@ function gamtech_run_category_fix() {
         }
         return 0;
     }
+}
+
 
     $fixed = 0;
     $notfound = 0;

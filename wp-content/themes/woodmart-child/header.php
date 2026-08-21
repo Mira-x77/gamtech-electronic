@@ -11,8 +11,9 @@ $cart_data  = gamtech_get_cart_data();
 $wc_count   = $cart_data['count'];
 $wc_total   = $cart_data['total'];
 $wc_items   = $cart_data['items'];
-$user       = wp_get_current_user();
-$contact    = get_permalink( get_page_by_path( 'contact' ) );
+$contact_page = get_page_by_path( 'contact' );
+$contact      = $contact_page ? get_permalink( $contact_page ) : home_url( '/contact/' );
+
 ?><!DOCTYPE html>
 <html <?php language_attributes(); ?>>
 <head>
