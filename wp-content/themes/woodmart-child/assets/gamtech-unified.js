@@ -2,6 +2,7 @@
 'use strict';
 var qs=function(s,c){return(c||document).querySelector(s)};
 var qa=function(s,c){return Array.from((c||document).querySelectorAll(s))};
+function formatCFA(n){return Math.round(Number(n)||0).toLocaleString('fr-FR')+' CFA';}
 
 document.addEventListener('DOMContentLoaded',function(){
   var sb=qs('#gs-sb'), ct=qs('#gs-ct'), ov=qs('#gs-ov');
@@ -45,9 +46,9 @@ document.addEventListener('DOMContentLoaded',function(){
       sub+=(parseFloat(prEl.dataset.price)||0)*(parseInt(qEl.textContent)||1);
     });
     var disc=hasPromo?sub*0.1:0, tot=sub-disc;
-    var s=qs('#gs-sub');if(s)s.textContent='$'+sub.toFixed(2);
-    var d=qs('#gs-disc');if(d)d.textContent=disc>0?'-$'+disc.toFixed(2):'$0.00';
-    var t=qs('#gs-tot');if(t)t.textContent='$'+tot.toFixed(2);
+    var s=qs('#gs-sub');if(s)s.textContent=formatCFA(sub);
+    var d=qs('#gs-disc');if(d)d.textContent=disc>0?'-'+formatCFA(disc):formatCFA(0);
+    var t=qs('#gs-tot');if(t)t.textContent=formatCFA(tot);
   }
 
   function updateBadge(){
@@ -70,7 +71,7 @@ document.addEventListener('DOMContentLoaded',function(){
     var html='<div class="gs-ct-item" style="animation:gsfade .3s ease" data-id="'+productId+'">'
       +(img?'<img class="gs-ct-thumb" src="'+img+'" alt="">':'<div class="gs-ct-thumb-ph"><svg width="18" height="18" fill="none" stroke="var(--b2)" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/></svg></div>')
       +'<div class="gs-ct-info"><div class="gs-ct-name">'+name.replace(/</g,'&lt;')+'</div><div class="gs-ct-sub">GamTech</div>'
-      +'<div class="gs-ct-price" data-price="'+pn.toFixed(2)+'">$'+pn.toFixed(2)+'</div>'
+      +'<div class="gs-ct-price" data-price="'+pn+'">'+(pn?formatCFA(pn):'Ask for price')+'</div>'
       +'<div class="gs-qty"><button class="gs-qty-btn" data-action="minus">−</button><span class="gs-qty-n">1</span><button class="gs-qty-btn" data-action="plus">+</button></div></div>'
       +'<button class="gs-ct-del" aria-label="Remove"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button></div>';
     ctItems&&ctItems.insertAdjacentHTML('beforeend',html);
@@ -196,10 +197,10 @@ document.addEventListener('DOMContentLoaded',function(){
     
     orderData.forEach(function(item, idx) {
       message += (idx + 1) + '. ' + item.name + '\n';
-      message += 'Qty: ' + item.qty + ' x $' + item.price.toFixed(2) + ' = $' + item.total.toFixed(2) + '\n\n';
+      message += 'Qty: ' + item.qty + ' x ' + formatCFA(item.price) + ' = ' + formatCFA(item.total) + '\n\n';
     });
     
-    message += 'Total: $' + total.toFixed(2) + '\n\n';
+    message += 'Total: ' + formatCFA(total) + '\n\n';
     message += 'View order: ' + orderPageUrl;
     
     var whatsappNumber = btn.dataset.phone || '22890597003';

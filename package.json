@@ -1,0 +1,19 @@
+{
+  "name": "gamtech-electronic",
+  "private": true,
+  "description": "GamTech static store for Vercel",
+  "scripts": {
+    "prepare-store": "node preview/generate-catalog.mjs && node preview/prepare-static.mjs",
+    "dev": "npm run prepare-store && vite",
+    "start": "npm run prepare-store && vite",
+    "build": "npm run prepare-store && vite build",
+    "preview": "vite preview --host --port 3000"
+  },
+  "engines": {
+    "node": ">=20.18.0"
+  },
+  "devDependencies": {
+    "sharp": "^0.35.5",
+    "vite": "^7.3.6"
+  }
+}

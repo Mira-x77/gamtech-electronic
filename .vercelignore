@@ -1,0 +1,25 @@
+# WordPress — not used on Vercel (static store only)
+wp-admin
+wp-includes
+wp-content/plugins
+wp-content/themes/twentytwentyone
+wp-content/themes/twentytwentytwo
+wp-content/themes/twentytwentythree
+wp-content/themes/twentytwentyfour
+wp-content/themes/twentytwentyfive
+wp-content/themes/woodmart
+wp-content/languages
+wp-content/upgrade
+wp-content/upgrade-temp-backup
+wp-content/backups
+wp-content/cache
+wp-content/uploads/cache
+wp-content/database
+.wordpress-playground
+docker
+*.zip
+*.log
+node_modules
+preview/dist
+.npm
+wp-config.php

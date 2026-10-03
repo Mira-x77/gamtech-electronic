@@ -52,8 +52,8 @@ function gamtech_run_product_import() {
         array( 'Logitech Lift Vertical',        'Logitech-Lift-Vertical.jpg',    'Mouse', null ),
         array( 'Logitech MX Master 4',          'Logitech-MX-Master-4.png',      'Mouse', null ),
         array( 'Logitech Pro X Superlight 2',   'Logitech-Pro-X-Superlight-2.png','Mouse', null ),
-        array( 'Logitech G502 X',               'Logitech-G502-X.png',           'Mouse', null ),
-        array( 'Logitech Signature M650L',      'Logitech-Signature-M650L.jpg',  'Mouse', null ),
+        array( 'Logitech G502 X',               'Logitech-G502-X.png',           'Mouse', null, '35000' ),
+        array( 'Logitech Signature M650L',      'Logitech-Signature-M650L.jpg',  'Mouse', null, '25000' ),
         array( 'HP S1500',                      'HP-S1500-Mouse.jpg',            'Mouse', null ),
         array( 'HP M10',                        'HP-M10-Mouse.jpg',              'Mouse', null ),
         array( 'HP DM10',                       'HP-DM10-Mouse.jpg',             'Mouse', null ),
@@ -68,7 +68,7 @@ function gamtech_run_product_import() {
         // ── KEYBOARDS ──────────────────────────────
         array( 'MX Keys Mini',                  'Logitech-MX-Keys-Mini.png',     'Keyboards', null ),
         array( 'MX Keys S',                     'Logitech-MX-Keys-S.jpg',        'Keyboards', null ),
-        array( 'BT Mini Keyboard with LED',     'BT-Mini-Keyboard-LED.jpg',      'Keyboards', null ),
+        array( 'BT Mini Keyboard with LED',     'BT-Mini-Keyboard-LED.jpg',      'Keyboards', null, '3500' ),
         array( 'Pebble 2 Combo',                'Logitech-Pebble-2-Combo.png',   'Keyboards', null ),
         array( 'Foldable Keyboard with Touchpad','Foldable-Keyboard-Touchpad.jpg','Keyboards', null ),
         array( 'Gaming Keyboard',               'Logitech-Gaming-Keyboard.png',  'Keyboards', null ),
@@ -85,7 +85,7 @@ function gamtech_run_product_import() {
 
         // ── STORAGE: SSD ───────────────────────────
         array( '500GB SSD',                     'SSD-500GB.jpg',                 'Storage', 'SSD' ),
-        array( '1TB SSD',                       'SSD-1TB.jpg',                   'Storage', 'SSD' ),
+        array( '1TB SSD',                       'SSD-1TB.jpg',                   'Storage', 'SSD', '35000' ),
         array( 'NVMe SSD',                      'NVMe-SSD.jpg',                  'Storage', 'SSD' ),
         array( 'Lexar NM620 512GB',             'Lexar-NM620-512GB.jpg',         'Storage', 'SSD' ),
 
@@ -97,7 +97,7 @@ function gamtech_run_product_import() {
         array( 'ZNY 8GB',                       'ZNY-8GB-USB.png',               'Storage', 'USB Flash Drives' ),
         array( 'SanDisk 16GB',                  'SanDisk-16GB-USB.jpg',          'Storage', 'USB Flash Drives' ),
         array( 'SanDisk 64GB',                  'SanDisk-64GB-USB.jpg',          'Storage', 'USB Flash Drives' ),
-        array( 'SanDisk 128GB',                 'SanDisk-128GB-USB.jpg',         'Storage', 'USB Flash Drives' ),
+        array( 'SanDisk 128GB',                 'SanDisk-128GB-USB.jpg',         'Storage', 'USB Flash Drives', '12000' ),
         array( 'SanDisk 256GB',                 'SanDisk-256GB-USB.jpg',         'Storage', 'USB Flash Drives' ),
         array( 'SanDisk 512GB',                 'SanDisk-512GB-USB.png',         'Storage', 'USB Flash Drives' ),
 
@@ -252,6 +252,7 @@ if ( ! function_exists( 'gamtech_attach_image' ) ) {
 
     foreach ( $catalog as $entry ) {
         list( $name, $img_file, $cat_name, $subcat_name ) = $entry;
+        $given_price = isset( $entry[4] ) ? $entry[4] : '';
 
         // Get/create parent category
         $parent_id = gamtech_get_or_create_cat( $cat_name, 0, $cat_cache );
@@ -284,7 +285,7 @@ if ( ! function_exists( 'gamtech_attach_image' ) ) {
         $product->set_catalog_visibility( 'visible' );
         $product->set_description( '' );
         $product->set_short_description( '' );
-        $product->set_regular_price( '' ); // No price yet
+        $product->set_regular_price( $given_price !== '' ? (string) $given_price : '' );
         $product->set_category_ids( $assign_cats );
         $product->set_manage_stock( false );
         $product->set_stock_status( 'instock' );

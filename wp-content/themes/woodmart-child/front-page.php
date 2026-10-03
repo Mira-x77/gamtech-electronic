@@ -27,11 +27,11 @@ get_header();
 
 <section class="gs-hero-slider">
   <div class="gs-hero-slides" id="gs-hero-slides">
-    <div class="gs-hero-slide active" style="background-image:url('<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/hero1.png' ); ?>')">
+    <div class="gs-hero-slide gs-hero-store active" style="background-image:url('<?php echo esc_url( get_stylesheet_directory_uri() . '/assets/images/storefront.jpg' ); ?>')">
       <div class="gs-hero-slide-content">
-        <div class="gs-hero-tag"><span class="dot"></span><?php esc_html_e( 'Tech Store 2026', 'woodmart' ); ?></div>
-        <h1><?php esc_html_e( 'Power Up Your', 'woodmart' ); ?><br><span><?php esc_html_e( 'Workspace ✦', 'woodmart' ); ?></span></h1>
-        <p><?php esc_html_e( 'Mouse, keyboards, headphones, storage, networking and more.', 'woodmart' ); ?></p>
+        <div class="gs-hero-tag"><span class="dot"></span><?php esc_html_e( 'Boutique GamTech · Lomé', 'woodmart' ); ?></div>
+        <h1><?php esc_html_e( 'Toutes solutions', 'woodmart' ); ?><br><span><?php esc_html_e( 'informatiques ✦', 'woodmart' ); ?></span></h1>
+        <p><?php esc_html_e( 'Magasin ouvert à Lomé. Souris, claviers, stockage, réseaux et plus. WhatsApp (00228) 90 59 70 03 / 93 65 55 59', 'woodmart' ); ?></p>
         <a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>" class="gs-hero-cta">
           <?php esc_html_e( 'Shop Now', 'woodmart' ); ?>
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>

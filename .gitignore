@@ -22,5 +22,13 @@ wp-content/debug.log
 sitemap.xml
 sitemap.xml.gz
 robots.txt
-.npm/
 node_modules/
+
+# Vite static store output
+preview/dist/
+preview/public/
+preview/catalog-data.js
+
+# WordPress Playground (npm local runtime / SQLite)
+wp-content/database/
+.wordpress-playground/
