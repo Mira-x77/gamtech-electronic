@@ -4,6 +4,86 @@ var qs=function(s,c){return(c||document).querySelector(s)};
 var qa=function(s,c){return Array.from((c||document).querySelectorAll(s))};
 function formatCFA(n){return Math.round(Number(n)||0).toLocaleString('fr-FR')+' CFA';}
 
+function cartId(){
+  var id='';
+  try{id=localStorage.getItem('gs-cart-id')||'';}catch(e){}
+  if(!id){
+    id='GT-'+Math.random().toString(36).slice(2,8).toUpperCase();
+    try{localStorage.setItem('gs-cart-id',id);}catch(e){}
+  }
+  return id;
+}
+
+function showCartId(){
+  var el=qs('#gs-cart-id');
+  if(!el)return;
+  el.hidden=false;
+  el.textContent='Cart '+cartId();
+}
+
+function encodeOrder(o){
+  var compact={i:o.id,n:o.name,t:o.total,l:(o.items||[]).map(function(x){return[x.name,x.qty,x.price];})};
+  var json=JSON.stringify(compact);
+  return btoa(unescape(encodeURIComponent(json))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+
+function cookieGet(name){
+  var parts=('; '+document.cookie).split('; '+name+'=');
+  if(parts.length<2)return '';
+  return parts.pop().split(';').shift();
+}
+
+function cookieSet(name,value,days){
+  var max=days?'; max-age='+(days*86400):'';
+  document.cookie=name+'='+value+'; path=/'+max+'; SameSite=Lax';
+}
+
+function deviceId(){
+  var id=cookieGet('gs_did');
+  if(id)return id;
+  id='d'+Math.random().toString(36).slice(2)+Date.now().toString(36);
+  cookieSet('gs_did',id,365);
+  return id;
+}
+
+function paintHero(data){
+  var wrap=qs('#gs-hero-slides');
+  var dots=qs('#gs-hero-dots');
+  if(!wrap||!data||!data.slides||!data.slides.length)return false;
+  wrap.innerHTML=data.slides.map(function(s,i){
+    var img=s.img||'';
+    return '<div class="gs-hero-slide'+(i===0?' gs-hero-store active':'')+'" style="background-image:url(\''+String(img).replace(/'/g,'')+'\')">'
+      +'<div class="gs-hero-slide-content">'
+      +'<div class="gs-hero-tag"><span class="dot"></span>'+(s.tag||'')+'</div>'
+      +'<h1>'+(s.title||'')+(s.highlight?'<br><span>'+s.highlight+'</span>':'')+'</h1>'
+      +'<p>'+(s.text||'')+'</p>'
+      +'<a href="#shop" class="gs-hero-cta">'+(s.cta||'Shop Now')+'<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>'
+      +'</div></div>';
+  }).join('');
+  dots.innerHTML=data.slides.map(function(_s,i){
+    return '<span class="gs-hero-dot'+(i===0?' active':'')+'" data-slide="'+i+'"></span>';
+  }).join('');
+  return true;
+}
+
+function initHeroSlider(){
+  var slides=qa('.gs-hero-slide'), dots=qa('.gs-hero-dot'), cur=0;
+  function showSlide(i){
+    slides=qa('.gs-hero-slide');
+    dots=qa('.gs-hero-dot');
+    if(!slides.length)return;
+    slides.forEach(function(s){s.classList.remove('active')});
+    dots.forEach(function(d){d.classList.remove('active')});
+    cur=i;if(cur>=slides.length)cur=0;if(cur<0)cur=slides.length-1;
+    slides[cur]&&slides[cur].classList.add('active');
+    dots[cur]&&dots[cur].classList.add('active');
+  }
+  if(slides.length>1){
+    dots.forEach(function(d){d.addEventListener('click',function(){showSlide(parseInt(d.dataset.slide)||0);});});
+    setInterval(function(){showSlide(cur+1);},5000);
+  }
+}
+
 document.addEventListener('DOMContentLoaded',function(){
   var sb=qs('#gs-sb'), ct=qs('#gs-ct'), ov=qs('#gs-ov');
 
@@ -11,13 +91,11 @@ document.addEventListener('DOMContentLoaded',function(){
   function closeAll(){sb&&sb.classList.remove('open');ct&&ct.classList.remove('open');ov&&ov.classList.remove('on');}
 
   var sbTog=qs('#gs-sb-tog'), ctClose=qs('#gs-ct-close');
-  /* all cart toggle buttons (desktop header + mobile top bar) */
   qa('.gs-ct-tog-btn').forEach(function(btn){btn.addEventListener('click',function(){openPanel(ct);});});
   sbTog&&sbTog.addEventListener('click',function(){openPanel(sb);});
   ctClose&&ctClose.addEventListener('click',closeAll);
   ov&&ov.addEventListener('click',closeAll);
 
-  /* categories toggle in sidebar */
   var catsTog=qs('#gs-cats-tog'), catsList=qs('#gs-cats-list');
   if(catsTog&&catsList){
     catsTog.addEventListener('click',function(){
@@ -26,7 +104,6 @@ document.addEventListener('DOMContentLoaded',function(){
     });
   }
 
-  /* qty + delete */
   var ctItems=qs('#gs-ct-items');
   ctItems&&ctItems.addEventListener('click',function(e){
     var btn=e.target.closest('.gs-qty-btn');
@@ -58,13 +135,20 @@ document.addEventListener('DOMContentLoaded',function(){
     var bc=qs('#gs-ct-cnt');if(bc)bc.textContent=n;
   }
 
-  /* add to cart */
+  var nameIn=qs('#gs-cart-name');
+  if(nameIn){
+    try{nameIn.value=localStorage.getItem('gs-cart-name')||'';}catch(e){}
+    nameIn.addEventListener('input',function(){
+      try{localStorage.setItem('gs-cart-name',nameIn.value);}catch(e){}
+    });
+  }
+
   document.addEventListener('click',function(e){
     var btn=e.target.closest('.gs-add-btn');
     if(!btn)return;
-    e.preventDefault(); // Prevent page navigation
-    var card=btn.closest('.gs-card');if(!card)return;
-    var name=(card.querySelector('.gs-card-name')||{}).textContent||'Product';
+    e.preventDefault();
+    var card=btn.closest('.gs-card');
+    var name=btn.dataset.name||(card&&card.querySelector('.gs-card-name')||{}).textContent||'Product';
     var pn=parseFloat(btn.dataset.price)||0;
     var img=btn.dataset.img||'';
     var productId=btn.dataset.id||'';
@@ -75,6 +159,7 @@ document.addEventListener('DOMContentLoaded',function(){
       +'<div class="gs-qty"><button class="gs-qty-btn" data-action="minus">−</button><span class="gs-qty-n">1</span><button class="gs-qty-btn" data-action="plus">+</button></div></div>'
       +'<button class="gs-ct-del" aria-label="Remove"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button></div>';
     ctItems&&ctItems.insertAdjacentHTML('beforeend',html);
+    showCartId();
     recalc();updateBadge();
     if(window.innerWidth>768)openPanel(ct);
     var orig=btn.innerHTML;
@@ -83,7 +168,6 @@ document.addEventListener('DOMContentLoaded',function(){
     setTimeout(function(){btn.innerHTML=orig;btn.style.cssText='';},1200);
   });
 
-  /* promo */
   var applyBtn=qs('#gs-promo-btn');
   if(applyBtn){
     applyBtn.addEventListener('click',function(){
@@ -101,12 +185,10 @@ document.addEventListener('DOMContentLoaded',function(){
     var pi=qs('#gs-promo-in');pi&&pi.addEventListener('keydown',function(e){if(e.key==='Enter')applyBtn.click();});
   }
 
-  /* category active state */
   qa('.gs-cat').forEach(function(c){
     c.addEventListener('click',function(){qa('.gs-cat').forEach(function(x){x.classList.remove('active')});c.classList.add('active');});
   });
 
-  /* scroll-in fade */
   if('IntersectionObserver' in window){
     var io=new IntersectionObserver(function(entries){
       entries.forEach(function(en){if(en.isIntersecting){en.target.classList.add('gs-fade');io.unobserve(en.target);}});
@@ -114,103 +196,84 @@ document.addEventListener('DOMContentLoaded',function(){
     qa('.gs-card,.gs-promo,.gs-ft-card').forEach(function(el){io.observe(el);});
   }
 
-  /* product tabs */
-  qa('.gs-tab-btn').forEach(function(btn){
-    btn.addEventListener('click',function(){
-      qa('.gs-tab-btn').forEach(function(b){b.classList.remove('active');});
-      qa('.gs-tab-panel').forEach(function(p){p.classList.remove('active');});
-      btn.classList.add('active');
-      var panel=qs('#gs-tab-'+btn.dataset.tab);
-      if(panel)panel.classList.add('active');
-    });
-  });
+  fetch('/api/hero').then(function(r){return r.ok?r.json():Promise.reject();})
+    .catch(function(){return fetch('/hero.json').then(function(r){return r.ok?r.json():null;});})
+    .then(function(data){if(data)paintHero(data);initHeroSlider();})
+    .catch(function(){initHeroSlider();});
 
-  /* hero slider auto-slide */
-  var slides=qa('.gs-hero-slide'), dots=qa('.gs-hero-dot'), cur=0;
-  function showSlide(i){
-    slides.forEach(function(s){s.classList.remove('active')});
-    dots.forEach(function(d){d.classList.remove('active')});
-    cur=i;if(cur>=slides.length)cur=0;if(cur<0)cur=slides.length-1;
-    slides[cur]&&slides[cur].classList.add('active');
-    dots[cur]&&dots[cur].classList.add('active');
-  }
-  if(slides.length>1){
-    dots.forEach(function(d){d.addEventListener('click',function(){showSlide(parseInt(d.dataset.slide)||0);});});
-    setInterval(function(){showSlide(cur+1);},5000);
-  }
-
-  /* WhatsApp Checkout - Event Delegation on document */
   document.addEventListener('click', function(e) {
     var btn = e.target.closest('.gs-whatsapp-btn');
     if (!btn) return;
-    
     e.preventDefault();
     e.stopPropagation();
-    
-    console.log('WhatsApp button clicked!', btn);
-    
     var items = qa('.gs-ct-item');
     if (items.length === 0) {
       alert('Your cart is empty!');
       return;
     }
-    
-    // Generate unique order ID
-    var orderId = 'ORD-' + Date.now();
+    var name = ((qs('#gs-cart-name')||{}).value||'').trim();
+    var err = qs('#gs-cart-name-err');
+    if (!name) {
+      if (err) err.hidden = false;
+      qs('#gs-cart-name')&&qs('#gs-cart-name').focus();
+      openPanel(ct);
+      return;
+    }
+    if (err) err.hidden = true;
+    try{localStorage.setItem('gs-cart-name',name);}catch(ex){}
+    var id = cartId();
+    showCartId();
     var orderData = [];
     var total = 0;
-    var itemNum = 1;
-    
     items.forEach(function(item) {
-      var name = (item.querySelector('.gs-ct-name') || {}).textContent || 'Product';
+      var itemName = (item.querySelector('.gs-ct-name') || {}).textContent || 'Product';
       var priceEl = item.querySelector('.gs-ct-price');
       var qtyEl = item.querySelector('.gs-qty-n');
-      var imgEl = item.querySelector('.gs-ct-thumb');
       var price = priceEl ? (parseFloat(priceEl.dataset.price) || 0) : 0;
       var qty = qtyEl ? (parseInt(qtyEl.textContent) || 1) : 1;
-      var itemTotal = price * qty;
-      var img = imgEl ? imgEl.src : '';
-      total += itemTotal;
-      
-      orderData.push({
-        name: name,
-        price: price,
-        qty: qty,
-        img: img,
-        total: itemTotal
-      });
-      itemNum++;
+      total += price * qty;
+      orderData.push({ name: itemName, price: price, qty: qty });
     });
-    
-    // Save order to sessionStorage (wrapped in try-catch in case sessionStorage is disabled/restricted)
-    try {
-      sessionStorage.setItem(orderId, JSON.stringify({ items: orderData, total: total, timestamp: new Date().toISOString() }));
-    } catch (err) {
-      console.warn('sessionStorage is not available:', err);
-    }
-    
-    // Create order page URL
-    var orderPageUrl = window.location.origin + '/planning/?order=' + orderId;
-    
-    // Build WhatsApp message
-    var message = 'New Order - ' + orderId + '\n\n';
-    
+    var order = { id: id, name: name, items: orderData, total: total };
+    fetch('/api/order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(order)
+    }).catch(function(){});
+    var orderPageUrl = window.location.origin + '/order.html?c=' + encodeOrder(order);
+    var message = 'New order from ' + name + '\nCart ' + id + '\n\n';
     orderData.forEach(function(item, idx) {
       message += (idx + 1) + '. ' + item.name + '\n';
-      message += 'Qty: ' + item.qty + ' x ' + formatCFA(item.price) + ' = ' + formatCFA(item.total) + '\n\n';
+      message += 'Qty: ' + item.qty + ' x ' + formatCFA(item.price) + ' = ' + formatCFA(item.price * item.qty) + '\n\n';
     });
-    
     message += 'Total: ' + formatCFA(total) + '\n\n';
-    message += 'View order: ' + orderPageUrl;
-    
+    message += 'Open cart: ' + orderPageUrl;
     var whatsappNumber = btn.dataset.phone || '22890597003';
-    var whatsappUrl = 'https://wa.me/' + whatsappNumber + '?text=' + encodeURIComponent(message);
-    
-    console.log('Redirecting to WhatsApp:', whatsappUrl);
-    console.log('Phone number:', whatsappNumber);
-    
-    // Direct redirect is the most reliable method on mobile and prevents browser popup blockers from blocking it
-    window.location.href = whatsappUrl;
+    window.location.href = 'https://wa.me/' + whatsappNumber + '?text=' + encodeURIComponent(message);
+  });
+
+  var banner=qs('#gs-cookie');
+  var consent='';
+  try{consent=localStorage.getItem('gs_cookie')||'';}catch(e){}
+  function pingVisit(){
+    fetch('/api/visit',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({deviceId:deviceId(),day:new Date().toISOString().slice(0,10)})
+    }).catch(function(){});
+  }
+  if(consent==='yes'){
+    if(banner)banner.hidden=true;
+    pingVisit();
+  } else if(banner){
+    banner.hidden=false;
+  }
+  var acc=qs('#gs-cookie-accept');
+  acc&&acc.addEventListener('click',function(){
+    try{localStorage.setItem('gs_cookie','yes');}catch(e){}
+    deviceId();
+    if(banner)banner.hidden=true;
+    pingVisit();
   });
 });
 })();

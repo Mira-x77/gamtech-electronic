@@ -17,6 +17,10 @@ export function paths(root) {
     catalogJs: path.join(root, 'preview/catalog-data.js'),
     catalogJsPublic: path.join(root, 'preview/public/catalog-data.js'),
     imgDir: path.join(root, 'wp-content/uploads/product-images'),
+    visits: path.join(root, 'preview/data/visits.json'),
+    hero: path.join(root, 'preview/data/hero.json'),
+    heroPublic: path.join(root, 'preview/public/hero.json'),
+    orders: path.join(root, 'preview/data/orders.json'),
   };
 }
 

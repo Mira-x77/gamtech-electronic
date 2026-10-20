@@ -389,7 +389,7 @@ function boot() {
   const rec = document.getElementById('gs-rec');
   if (rec) rec.innerHTML = photo.slice(8, 16).map(cardHTML).join('');
 
-  const extra = document.getElementById('gs-extra-cats');
+  const extra = document.getElementById('shop-all');
   if (extra) {
     extra.innerHTML = CATS.map(([name]) => {
       const items = byCat(name);
@@ -406,24 +406,37 @@ function boot() {
   }
 
   bindFind();
+  if (location.hash === '#shop') scrollMainTo('shop-all');
+}
+
+function scrollMainTo(id) {
+  const target = document.getElementById(id);
+  const mn = document.querySelector('.gs-mn');
+  if (!target || !mn) return false;
+  mn.scrollTo({ top: Math.max(0, target.offsetTop - 12), behavior: 'smooth' });
+  document.getElementById('gs-sb')?.classList.remove('open');
+  document.getElementById('gs-ov')?.classList.remove('on');
+  return true;
 }
 
 document.addEventListener('click', (e) => {
+  const shop = e.target.closest('a[href="#shop"]');
+  if (shop) {
+    e.preventDefault();
+    scrollMainTo('shop-all');
+    return;
+  }
   const a = e.target.closest('a[href^="#cat-"]');
   if (!a) return;
   const id = a.getAttribute('href').slice(1);
-  const target = document.getElementById(id);
-  const mn = document.querySelector('.gs-mn');
-  if (!target || !mn) return;
+  if (!document.getElementById(id)) return;
   e.preventDefault();
   document.querySelectorAll('.gs-sc.active').forEach((el) => el.classList.remove('active'));
   const sc = a.classList.contains('gs-sc')
     ? a
     : document.querySelector('.gs-sc[href="' + a.getAttribute('href') + '"]');
   if (sc) sc.classList.add('active');
-  mn.scrollTo({ top: Math.max(0, target.offsetTop - 12), behavior: 'smooth' });
-  document.getElementById('gs-sb')?.classList.remove('open');
-  document.getElementById('gs-ov')?.classList.remove('on');
+  scrollMainTo(id);
 });
 
 if (document.readyState === 'loading') {

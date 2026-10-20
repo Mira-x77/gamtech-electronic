@@ -4,6 +4,10 @@
   "buildCommand": "npm run build",
   "outputDirectory": "preview/dist",
   "installCommand": "npm install",
+  "rewrites": [
+    { "source": "/admin01", "destination": "/admin.html" },
+    { "source": "/admin01/", "destination": "/admin.html" }
+  ],
   "headers": [
     {
       "source": "/product-images/(.*)",

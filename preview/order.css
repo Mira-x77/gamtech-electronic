@@ -1,0 +1,11 @@
+.or-body{background:#0c0c0e;min-height:100vh}
+.or-page{max-width:720px;margin:0 auto;padding:28px 18px 60px;color:#ececec;font-family:Poppins,sans-serif}
+.or-back{color:#a78bfa;text-decoration:none;font-size:13px}
+.or-kicker{letter-spacing:.16em;text-transform:uppercase;font-size:11px;color:#a1a1aa;margin:22px 0 6px}
+.or-page h1{margin:0 0 6px;font-size:28px}
+.or-id{color:#c4b5fd;font-size:13px;margin:0 0 18px}
+.or-table{width:100%;border-collapse:collapse;background:#18181b;border:1px solid #27272a}
+.or-table th,.or-table td{padding:10px 12px;text-align:left;border-bottom:1px solid #27272a;font-size:13px}
+.or-table th{color:#a1a1aa;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.or-total{font-size:18px;font-weight:700;margin-top:16px}
+.or-miss{color:#f87171}

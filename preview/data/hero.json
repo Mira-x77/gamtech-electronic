@@ -1,0 +1,28 @@
+{
+  "slides": [
+    {
+      "img": "/images/storefront.jpg",
+      "tag": "Boutique GamTech · Lomé",
+      "title": "Toutes solutions",
+      "highlight": "informatiques ✦",
+      "text": "Magasin ouvert à Lomé. Souris, claviers, stockage, réseaux et plus. WhatsApp (00228) 90 59 70 03 / 93 65 55 59",
+      "cta": "Shop Now"
+    },
+    {
+      "img": "/product-images/Logitech-G435.webp",
+      "tag": "Audio Collection",
+      "title": "Premium",
+      "highlight": "Audio ✦",
+      "text": "Headphones, speakers and audio accessories for every need.",
+      "cta": "Explore Audio"
+    },
+    {
+      "img": "/product-images/Logitech-MX-Keys-S.jpg",
+      "tag": "Best Products",
+      "title": "Top Rated",
+      "highlight": "Gear ✦",
+      "text": "Best-selling electronics chosen by our customers.",
+      "cta": "View Best Sellers"
+    }
+  ]
+}

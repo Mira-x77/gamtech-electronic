@@ -41,15 +41,25 @@ async function main() {
   copyFile(catalogFile, path.join(pub, 'catalog-data.js'));
   copyFile(path.join(root, 'preview/catalog.js'), path.join(pub, 'catalog.js'));
 
-  const storefront = path.join(assets, 'images/storefront.jpg');
-  if (fs.existsSync(storefront)) {
-    await writeWebImage(storefront, path.join(pub, 'images/storefront.jpg'));
-  }
-
   const catalog = fs.readFileSync(catalogFile, 'utf8');
   const imgs = new Set();
   for (const m of catalog.matchAll(/"img":\s*"\/product-images\/([^"]+)"/g)) {
     imgs.add(decodeURIComponent(m[1]));
+  }
+
+  const heroFile = path.join(root, 'preview/data/hero.json');
+  if (fs.existsSync(heroFile)) {
+    copyFile(heroFile, path.join(pub, 'hero.json'));
+    const hero = JSON.parse(fs.readFileSync(heroFile, 'utf8'));
+    for (const slide of hero.slides || []) {
+      const m = String(slide.img || '').match(/^\/product-images\/(.+)$/);
+      if (m) imgs.add(decodeURIComponent(m[1]));
+    }
+  }
+
+  const storefront = path.join(assets, 'images/storefront.jpg');
+  if (fs.existsSync(storefront)) {
+    await writeWebImage(storefront, path.join(pub, 'images/storefront.jpg'));
   }
 
   let copied = 0;

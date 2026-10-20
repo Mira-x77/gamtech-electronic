@@ -4,7 +4,7 @@ const CATS = [
   'Adapters & Hubs', 'Replacement Keyboards', 'Batteries', 'Chargers', 'Screens',
 ];
 
-const state = { pin: sessionStorage.getItem('gs-admin-pin') || '', products: [] };
+const state = { pin: sessionStorage.getItem('gs-admin-pin') || '', products: [], hero: { slides: [] } };
 
 function $(id) { return document.getElementById(id); }
 
@@ -26,6 +26,10 @@ function status(msg, ok) {
   const el = $('status');
   el.textContent = msg || '';
   el.className = 'ad-foot ' + (ok === false ? 'bad' : ok ? 'ok' : '');
+}
+
+function formatCFA(n) {
+  return Math.round(Number(n) || 0).toLocaleString('fr-FR') + ' CFA';
 }
 
 function filtered() {
@@ -78,6 +82,75 @@ function readRow(tr) {
   return { ...p, name, cat, listOnly, price: priceRaw === '' ? null : Number(priceRaw) };
 }
 
+function showTab(id) {
+  document.querySelectorAll('.ad-tabs button').forEach((b) => {
+    b.classList.toggle('active', b.dataset.tab === id);
+  });
+  ['dash', 'stock', 'hero'].forEach((t) => {
+    const el = $('panel-' + t);
+    if (el) el.hidden = t !== id;
+  });
+}
+
+function renderStats(data) {
+  const st = data.stats || { total: 0, unique: 0, days: [] };
+  $('st-total').textContent = st.total;
+  $('st-unique').textContent = st.unique;
+  const max = Math.max(1, ...st.days.map((d) => d.visits));
+  $('st-bars').innerHTML = st.days.map((d) => {
+    const h = Math.round((d.visits / max) * 100);
+    const label = d.day.slice(5);
+    return `<div class="ad-bar"><span style="height:${h}%"></span><small>${label}</small><em>${d.visits}</em></div>`;
+  }).join('');
+  const orders = data.orders || [];
+  $('order-rows').innerHTML = orders.length
+    ? orders.map((o) => `<tr>
+        <td>${esc(String(o.at || '').replace('T', ' ').slice(0, 16))}</td>
+        <td>${esc(o.id)}</td>
+        <td>${esc(o.name)}</td>
+        <td>${(o.items || []).length}</td>
+        <td>${formatCFA(o.total)}</td>
+      </tr>`).join('')
+    : '<tr><td colspan="5">No carts sent yet.</td></tr>';
+}
+
+function esc(s) {
+  return String(s || '').replace(/[&<>"']/g, (c) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  }[c]));
+}
+
+function renderHero() {
+  const slides = state.hero.slides || [];
+  $('hero-slides').innerHTML = slides.map((s, i) => `
+    <article class="ad-hero-card" data-i="${i}">
+      <div class="ad-hero-preview" style="background-image:url('${esc(s.img)}')"></div>
+      <label>Tag <input data-k="tag" value="${esc(s.tag)}"></label>
+      <label>Title <input data-k="title" value="${esc(s.title)}"></label>
+      <label>Highlight <input data-k="highlight" value="${esc(s.highlight)}"></label>
+      <label>Text <input data-k="text" value="${esc(s.text)}"></label>
+      <label>Button <input data-k="cta" value="${esc(s.cta)}"></label>
+      <label class="ad-file">Upload photo<input type="file" accept="image/*" data-hero="${i}"></label>
+    </article>
+  `).join('');
+}
+
+function readHeroFromDom() {
+  return {
+    slides: Array.from(document.querySelectorAll('.ad-hero-card')).map((card, i) => {
+      const prev = state.hero.slides[i] || {};
+      return {
+        img: prev.img || '',
+        tag: card.querySelector('[data-k=tag]').value,
+        title: card.querySelector('[data-k=title]').value,
+        highlight: card.querySelector('[data-k=highlight]').value,
+        text: card.querySelector('[data-k=text]').value,
+        cta: card.querySelector('[data-k=cta]').value,
+      };
+    }),
+  };
+}
+
 async function openDesk() {
   const data = await api('/api/admin/catalog');
   state.products = data.products || [];
@@ -86,6 +159,17 @@ async function openDesk() {
   const sel = $('cat');
   sel.innerHTML = '<option value="">All categories</option>' + CATS.map((c) => `<option>${c}</option>`).join('');
   render();
+  try {
+    renderStats(await api('/api/admin/stats'));
+  } catch {
+    renderStats({ stats: { total: 0, unique: 0, days: [] }, orders: [] });
+  }
+  try {
+    state.hero = await api('/api/admin/hero');
+    renderHero();
+  } catch {
+    state.hero = { slides: [] };
+  }
 }
 
 $('login').addEventListener('submit', async (e) => {
@@ -101,6 +185,11 @@ $('login').addEventListener('submit', async (e) => {
     err.hidden = false;
     err.textContent = ex.message;
   }
+});
+
+$('tabs').addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-tab]');
+  if (btn) showTab(btn.dataset.tab);
 });
 
 ['q', 'cat', 'missing'].forEach((id) => $(id).addEventListener('input', render));
@@ -165,6 +254,37 @@ $('rows').addEventListener('change', async (e) => {
     if (i >= 0) state.products[i] = out.product;
     status('Uploaded photo for ' + out.product.name, true);
     render();
+  } catch (ex) {
+    status(ex.message, false);
+  }
+});
+
+$('hero-slides').addEventListener('change', async (e) => {
+  const input = e.target.closest('input[type=file]');
+  if (!input || !input.files || !input.files[0]) return;
+  const index = Number(input.getAttribute('data-hero'));
+  const file = input.files[0];
+  const data = await new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(r.result);
+    r.onerror = reject;
+    r.readAsDataURL(file);
+  });
+  try {
+    const out = await api('/api/admin/hero-image', { index, name: file.name, data });
+    state.hero = out.hero;
+    renderHero();
+    status('Hero photo updated', true);
+  } catch (ex) {
+    status(ex.message, false);
+  }
+});
+
+$('hero-save').addEventListener('click', async () => {
+  try {
+    state.hero = await api('/api/admin/hero', readHeroFromDom());
+    renderHero();
+    status('Hero saved', true);
   } catch (ex) {
     status(ex.message, false);
   }

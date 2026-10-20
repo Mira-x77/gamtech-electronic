@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GamTech cart</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/gamtech-unified.css">
+  <link rel="stylesheet" href="/order.css">
+</head>
+<body class="gs-body or-body">
+  <div class="or-page">
+    <a class="or-back" href="/">← GamTech store</a>
+    <p class="or-kicker">Customer cart</p>
+    <h1 id="or-name">Cart</h1>
+    <p class="or-id" id="or-id"></p>
+    <table class="or-table">
+      <thead>
+        <tr><th>Item</th><th>Qty</th><th>Price</th><th>Line</th></tr>
+      </thead>
+      <tbody id="or-rows"></tbody>
+    </table>
+    <p class="or-total" id="or-total"></p>
+    <p class="or-miss" id="or-miss" hidden>This link has no cart data. Ask the customer to send a new WhatsApp order.</p>
+  </div>
+  <script src="/order.js"></script>
+</body>
+</html>

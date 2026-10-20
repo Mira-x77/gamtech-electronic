@@ -726,6 +726,13 @@ body.gs-body .container{max-width:100%;padding:0;margin:0;width:100%}
 .gs-ct-empty p{margin-bottom:14px;font-size:13px}
 .gs-ct-empty-btn{display:inline-block;background:var(--pu);color:var(--wh);font-size:12px;font-weight:700;padding:8px 18px;border-radius:18px;transition:var(--tr)}
 .gs-ct-empty-btn:hover{background:var(--pud);color:var(--wh)}
+.gs-cart-id{margin:4px 0 0;font-size:11px;color:var(--pul);letter-spacing:.04em}
+.gs-cart-name{display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--mu);margin:10px 0 8px}
+.gs-cart-name input{background:var(--bg3);border:1px solid var(--b2);color:var(--wh);padding:9px 10px;border-radius:var(--rs);font-family:var(--font)}
+.gs-cart-name-err{color:var(--re);font-size:12px;margin:0 0 8px}
+.gs-cookie{position:fixed;left:16px;right:16px;bottom:16px;z-index:80;background:#18181b;border:1px solid #3f3f46;padding:12px 14px;border-radius:12px;display:flex;justify-content:center;box-shadow:0 12px 40px rgba(0,0,0,.45);max-width:280px;margin:0 auto}
+.gs-cookie[hidden]{display:none !important}
+.gs-cookie button{background:var(--pu);color:#fff;border:none;font-weight:700;padding:10px 18px;border-radius:8px;cursor:pointer;font-family:var(--font);width:100%}
 
 @media(max-width:1024px){
   .gs-shop-grid{grid-template-columns:repeat(3,1fr)!important}

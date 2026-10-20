@@ -28,6 +28,8 @@ node_modules/
 preview/dist/
 preview/public/
 preview/catalog-data.js
+preview/data/visits.json
+preview/data/orders.json
 
 # WordPress Playground (npm local runtime / SQLite)
 wp-content/database/
