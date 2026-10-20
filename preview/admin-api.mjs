@@ -56,7 +56,7 @@ export function adminApi(root) {
     configureServer(server) {
       server.middlewares.use((req, _res, next) => {
         const url = req.url ? req.url.split('?')[0] : '';
-        if (url === '/admin01' || url === '/admin01/') req.url = '/admin.html';
+        if (url === '/admin01' || url === '/admin01/') req.url = '/admin01.html';
         next();
       });
       server.middlewares.use(async (req, res, next) => {
@@ -196,7 +196,7 @@ export function adminApi(root) {
     configurePreview(server) {
       server.middlewares.use((req, _res, next) => {
         const url = req.url ? req.url.split('?')[0] : '';
-        if (url === '/admin01' || url === '/admin01/') req.url = '/admin.html';
+        if (url === '/admin01' || url === '/admin01/') req.url = '/admin01.html';
         next();
       });
     },

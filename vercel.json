@@ -5,8 +5,8 @@
   "outputDirectory": "preview/dist",
   "installCommand": "npm install",
   "rewrites": [
-    { "source": "/admin01", "destination": "/admin.html" },
-    { "source": "/admin01/", "destination": "/admin.html" }
+    { "source": "/admin01", "destination": "/admin01.html" },
+    { "source": "/admin01/", "destination": "/admin01.html" }
   ],
   "headers": [
     {

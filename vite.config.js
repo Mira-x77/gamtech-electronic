@@ -69,6 +69,7 @@ export default defineConfig({
       input: {
         main: path.join(rootDir, 'preview/index.html'),
         admin: path.join(rootDir, 'preview/admin.html'),
+        admin01: path.join(rootDir, 'preview/admin01.html'),
         order: path.join(rootDir, 'preview/order.html'),
       },
     },

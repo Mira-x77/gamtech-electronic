@@ -67,10 +67,6 @@ $contact      = $contact_page ? get_permalink( $contact_page ) : home_url( '/con
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
       <?php esc_html_e( 'Deals', 'woodmart' ); ?>
     </a>
-    <a href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' ) ); ?>" class="gs-nav-a<?php echo esc_attr( gamtech_nav_class( 'account' ) ); ?>">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      <?php esc_html_e( 'My Account', 'woodmart' ); ?>
-    </a>
   </div>
 
   <div class="gs-sb-cats">
@@ -120,11 +116,6 @@ $contact      = $contact_page ? get_permalink( $contact_page ) : home_url( '/con
     </div>
 
     <div class="gs-hd-actions">
-      <a href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' ) ); ?>" class="gs-hd-action">
-        <span class="gs-hd-action-sub">Hello, <?php echo esc_html( $user->display_name ? $user->display_name : 'sign in' ); ?></span>
-        <span class="gs-hd-action-main">Account</span>
-      </a>
-
       <button class="gs-hd-action gs-ct-tog-btn" aria-label="Cart">
         <div class="gs-hd-cart">
           <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>

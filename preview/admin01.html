@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>GamTech stock desk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/admin.css">
+</head>
+<body>
+  <div class="ad-gate" id="gate">
+    <div class="ad-ticket">
+      <p class="ad-eyebrow">GamTech · Lomé counter</p>
+      <h1>Stock desk</h1>
+      <p class="ad-copy">Enter the desk PIN to change names, prices, photos, hero slides, and see visits. Batteries, replacement keyboards, internal screens, and chargers stay as name lists unless you attach a photo yourself.</p>
+      <form id="login">
+        <label>Desk PIN
+          <input type="password" id="pin" autocomplete="current-password" autofocus>
+        </label>
+        <button type="submit">Open ledger</button>
+        <p class="ad-hint" id="login-err" hidden></p>
+      </form>
+    </div>
+  </div>
+
+  <div class="ad-app" id="app" hidden>
+    <header class="ad-hd">
+      <a href="/" class="ad-back">← Store</a>
+      <div>
+        <p class="ad-eyebrow">GamTech stock desk</p>
+        <h1>Floor control</h1>
+      </div>
+      <form id="pin-form" class="ad-pin-form">
+        <label>Change PIN <input type="password" id="new-pin" minlength="4" placeholder="new PIN"></label>
+        <button type="submit">Save PIN</button>
+      </form>
+    </header>
+
+    <nav class="ad-tabs" id="tabs">
+      <button type="button" class="active" data-tab="dash">Dashboard</button>
+      <button type="button" data-tab="stock">Stock</button>
+      <button type="button" data-tab="hero">Hero</button>
+    </nav>
+
+    <section class="ad-panel" id="panel-dash">
+      <div class="ad-stats">
+        <div class="ad-stat"><p>Visits</p><strong id="st-total">0</strong></div>
+        <div class="ad-stat"><p>Devices</p><strong id="st-unique">0</strong></div>
+      </div>
+      <p class="ad-copy">Last 14 days. Counts only after a visitor accepts the cookie.</p>
+      <div class="ad-bars" id="st-bars"></div>
+      <h2 class="ad-sub">Recent WhatsApp carts</h2>
+      <div class="ad-table-wrap">
+        <table class="ad-table">
+          <thead>
+            <tr><th>When</th><th>Cart</th><th>Name</th><th>Items</th><th>Total</th></tr>
+          </thead>
+          <tbody id="order-rows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="ad-panel" id="panel-stock" hidden>
+      <div class="ad-toolbar">
+        <input type="search" id="q" placeholder="Find a name, model, brand…">
+        <select id="cat"></select>
+        <label class="ad-check"><input type="checkbox" id="missing"> Missing photo</label>
+        <span class="ad-count" id="count"></span>
+      </div>
+      <div class="ad-table-wrap">
+        <table class="ad-table">
+          <thead>
+            <tr>
+              <th>Photo</th>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Price CFA</th>
+              <th>Name-only</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="ad-panel" id="panel-hero" hidden>
+      <p class="ad-copy">These three slides sit on the home hero. Upload a photo and save the text.</p>
+      <div id="hero-slides"></div>
+      <button type="button" id="hero-save">Save hero</button>
+    </section>
+
+    <p class="ad-foot" id="status"></p>
+  </div>
+  <script src="/admin.js"></script>
+</body>
+</html>
