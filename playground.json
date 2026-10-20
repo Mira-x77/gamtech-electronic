@@ -1,0 +1,27 @@
+{
+  "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+  "landingPage": "/",
+  "login": true,
+  "preferredVersions": {
+    "php": "8.2",
+    "wp": "latest"
+  },
+  "steps": [
+    {
+      "step": "activatePlugin",
+      "pluginPath": "woocommerce/woocommerce.php"
+    },
+    {
+      "step": "activatePlugin",
+      "pluginPath": "woodmart-core/woodmart-core.php"
+    },
+    {
+      "step": "activateTheme",
+      "themeFolderName": "woodmart"
+    },
+    {
+      "step": "activateTheme",
+      "themeFolderName": "woodmart-child"
+    }
+  ]
+}
