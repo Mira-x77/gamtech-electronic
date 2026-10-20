@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { spawnSync } from 'child_process';
 import { fileURLToPath } from 'url';
+import { applyOverrides, loadOverrides, writeCatalogData } from './lib/catalog-store.mjs';
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const imgDir = path.join(root, 'wp-content/uploads/product-images');
@@ -114,9 +115,48 @@ if (fs.existsSync(pricesPath)) {
   }
 }
 
-const out = path.join(root, 'preview/catalog-data.js');
-fs.writeFileSync(
-  out,
-  `window.GAMTECH_PRODUCTS = ${JSON.stringify(products, null, 2)};\n`
-);
+const listePath = path.join(root, 'preview/prix-acte.json');
+if (fs.existsSync(listePath)) {
+  const extra = JSON.parse(fs.readFileSync(listePath, 'utf8'));
+  const byNorm = new Map(products.map((p) => [normName(p.name), p]));
+  let added = 0;
+  let priced = 0;
+  for (const it of extra) {
+    const key = normName(it.name);
+    if (!key) continue;
+    const existing = byNorm.get(key);
+    if (existing) {
+      if (it.price != null) {
+        applyPrice(existing, it.price);
+        priced += 1;
+      }
+      continue;
+    }
+    const confirmHint = {
+      Batteries: 'laptop battery',
+      Chargers: 'laptop charger',
+      'Replacement Keyboards': 'laptop keyboard',
+      Screens: 'laptop screen',
+    };
+    const confirmQ = [it.name, confirmHint[it.cat] || ''].filter(Boolean).join(' ');
+    const product = {
+      id: id++,
+      name: it.name,
+      cat: it.cat,
+      sub: it.sub || it.cat,
+      img: null,
+      price: it.price ?? null,
+      was: null,
+      listOnly: !!it.listOnly,
+      confirmUrl: 'https://www.google.com/search?udm=2&q=' + encodeURIComponent(confirmQ),
+    };
+    products.push(product);
+    byNorm.set(key, product);
+    added += 1;
+  }
+  console.log('Merged price list:', added, 'new items,', priced, 'prices on existing photos');
+}
+
+applyOverrides(products, loadOverrides(root));
+writeCatalogData(root, products);
 console.log('Wrote', products.length, 'real products to preview/catalog-data.js');

@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { defineConfig } from 'vite';
+import { adminApi } from './preview/admin-api.mjs';
 
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
 
@@ -58,7 +59,19 @@ export default defineConfig({
   publicDir: path.join(rootDir, 'preview/public'),
   plugins: [
     serveFolder('/product-images/', path.join(rootDir, 'wp-content/uploads/product-images')),
+    adminApi(rootDir),
   ],
+  build: {
+    outDir: path.join(rootDir, 'preview/dist'),
+    emptyOutDir: true,
+    assetsDir: 'assets',
+    rollupOptions: {
+      input: {
+        main: path.join(rootDir, 'preview/index.html'),
+        admin: path.join(rootDir, 'preview/admin.html'),
+      },
+    },
+  },
   server: {
     port: 3000,
     host: true,
@@ -66,10 +79,5 @@ export default defineConfig({
     fs: {
       allow: [rootDir],
     },
-  },
-  build: {
-    outDir: path.join(rootDir, 'preview/dist'),
-    emptyOutDir: true,
-    assetsDir: 'assets',
   },
 });
