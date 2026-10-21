@@ -202,10 +202,10 @@
   var PACK = { fr: FR, en: EN };
 
   function readLang() {
-    try { return localStorage.getItem('gs_lang') === 'en' ? 'en' : 'fr'; } catch (e) { return 'fr'; }
+    return 'fr'; // Always French
   }
   function readTheme() {
-    try { return localStorage.getItem('gs_theme') === 'light' ? 'light' : 'dark'; } catch (e) { return 'dark'; }
+    return 'dark'; // Always dark mode
   }
   function fill(str, vars) {
     if (!vars) return str;
