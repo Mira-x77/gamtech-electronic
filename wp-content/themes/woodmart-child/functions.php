@@ -354,6 +354,58 @@ add_filter( 'bloginfo', function( $output, $show ) {
 }, 10, 2 );
 
 // =====================================================
+// 13.5 LANGUAGE & THEME SWITCHER SUPPORT
+// =====================================================
+
+/**
+ * Initialize language and theme switcher
+ */
+function gamtech_init_language_theme_support() {
+    // Enqueue translation strings to JavaScript
+    wp_localize_script( 'gamtech-unified-js', 'gtLang', array(
+        'en' => array(
+            'home'        => __( 'Home', 'woodmart' ),
+            'shop_all'    => __( 'Shop All', 'woodmart' ),
+            'new'         => __( 'New Arrivals', 'woodmart' ),
+            'popular'     => __( 'Best Sellers', 'woodmart' ),
+            'deals'       => __( 'Deals', 'woodmart' ),
+            'categories'  => __( 'Categories', 'woodmart' ),
+            'language'    => 'English',
+            'theme'       => 'Light',
+            'menu'        => __( 'Menu', 'woodmart' ),
+            'search'      => 'Search products, brands...',
+            'cart'        => __( 'Cart', 'woodmart' ),
+            'special'     => __( 'Special Offer', 'woodmart' ),
+            'help'        => __( 'Need Help?', 'woodmart' ),
+            'support'     => __( '24/7 Support Center', 'woodmart' ),
+        ),
+        'fr' => array(
+            'home'        => 'Accueil',
+            'shop_all'    => 'Tous les produits',
+            'new'         => 'Nouveautés',
+            'popular'     => 'Meilleures ventes',
+            'deals'       => 'Offres spéciales',
+            'categories'  => 'Catégories',
+            'language'    => 'Français',
+            'theme'       => 'Sombre',
+            'menu'        => 'Menu',
+            'search'      => 'Rechercher des produits, marques...',
+            'cart'        => 'Panier',
+            'special'     => 'Offre spéciale',
+            'help'        => 'Besoin d\'aide?',
+            'support'     => 'Centre d\'assistance 24/7',
+        ),
+    ) );
+
+    // Add HTML lang attribute
+    add_filter( 'language_attributes', function( $output ) {
+        $lang = isset( $_COOKIE['gt_lang'] ) ? sanitize_text_field( $_COOKIE['gt_lang'] ) : 'en';
+        return 'lang="' . esc_attr( $lang === 'fr' ? 'fr' : 'en' ) . '" dir="ltr"';
+    });
+}
+add_action( 'wp_enqueue_scripts', 'gamtech_init_language_theme_support', 10015 );
+
+// =====================================================
 // 14. DISABLE WOODMART POPUPS & OVERLAYS
 // =====================================================
 function cello_disable_woodmart_features() {

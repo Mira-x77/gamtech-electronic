@@ -18,7 +18,7 @@ function showCartId(){
   var el=qs('#gs-cart-id');
   if(!el)return;
   el.hidden=false;
-  el.textContent='Cart '+cartId();
+  el.textContent=(window.gsT?window.gsT('cart.id'):'Panier')+' '+cartId();
 }
 
 function encodeOrder(o){
@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded',function(){
     var html='<div class="gs-ct-item" style="animation:gsfade .3s ease" data-id="'+productId+'">'
       +(img?'<img class="gs-ct-thumb" src="'+img+'" alt="">':'<div class="gs-ct-thumb-ph"><svg width="18" height="18" fill="none" stroke="var(--b2)" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/></svg></div>')
       +'<div class="gs-ct-info"><div class="gs-ct-name">'+name.replace(/</g,'&lt;')+'</div><div class="gs-ct-sub">GamTech</div>'
-      +'<div class="gs-ct-price" data-price="'+pn+'">'+(pn?formatCFA(pn):'Ask for price')+'</div>'
+      +'<div class="gs-ct-price" data-price="'+pn+'">'+(pn?formatCFA(pn):(window.gsT?window.gsT('ask'):'Prix sur demande'))+'</div>'
       +'<div class="gs-qty"><button class="gs-qty-btn" data-action="minus">−</button><span class="gs-qty-n">1</span><button class="gs-qty-btn" data-action="plus">+</button></div></div>'
       +'<button class="gs-ct-del" aria-label="Remove"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button></div>';
     ctItems&&ctItems.insertAdjacentHTML('beforeend',html);
@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded',function(){
     recalc();updateBadge();
     if(window.innerWidth>768)openPanel(ct);
     var orig=btn.innerHTML;
-    btn.innerHTML='<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Added!';
+    btn.innerHTML='<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> '+(window.gsT?window.gsT('added'):'Ajouté');
     btn.style.cssText='background:var(--gr);color:#fff';
     setTimeout(function(){btn.innerHTML=orig;btn.style.cssText='';},1200);
   });
@@ -186,11 +186,11 @@ document.addEventListener('DOMContentLoaded',function(){
       code=code.trim().toUpperCase();
       var msg=qs('#gs-promo-msg');
       if(['TECH10','GAMTECH','SAVE10'].indexOf(code)!==-1){
-        if(msg){msg.textContent='✓ 10% discount applied!';msg.style.color='var(--gr)';}
+        if(msg){msg.textContent=window.gsT?window.gsT('promo.ok'):'✓ Remise de 10 % appliquée';msg.style.color='var(--gr)';}
         var m=document.createElement('span');m.id='gs-promo-applied';m.hidden=true;document.body.appendChild(m);
-        recalc();applyBtn.textContent='Applied';applyBtn.style.background='var(--gr)';applyBtn.disabled=true;
+        recalc();applyBtn.textContent=window.gsT?window.gsT('promo.applied'):'OK';applyBtn.style.background='var(--gr)';applyBtn.disabled=true;
       } else {
-        if(msg){msg.textContent=code?'Invalid code. Try TECH10':'Enter a code.';msg.style.color='var(--re)';}
+        if(msg){msg.textContent=code?(window.gsT?window.gsT('promo.bad'):'Code invalide. Essayez TECH10'):(window.gsT?window.gsT('promo.need'):'Entrez un code.');msg.style.color='var(--re)';}
       }
     });
     var pi=qs('#gs-promo-in');pi&&pi.addEventListener('keydown',function(e){if(e.key==='Enter')applyBtn.click();});
@@ -286,5 +286,137 @@ document.addEventListener('DOMContentLoaded',function(){
     if(banner)banner.hidden=true;
     pingVisit();
   });
+});
+})();
+
+
+  // ═══ THEME TOGGLE (DARK/LIGHT) ═══════════════════════
+  var themeTog=qs('#gs-theme-tog');
+  var themeLabel=qs('#gs-theme-label');
+  var htmlEl=document.documentElement;
+  
+  function initTheme(){
+    var saved=localStorage.getItem('gs-theme')||'dark';
+    if(saved==='light'){
+      htmlEl.classList.add('gs-light-mode');
+      if(themeLabel)themeLabel.textContent='Dark';
+    } else {
+      htmlEl.classList.remove('gs-light-mode');
+      if(themeLabel)themeLabel.textContent='Light';
+    }
+  }
+  
+  if(themeTog){
+    initTheme();
+    themeTog.addEventListener('click',function(){
+      var isDark=htmlEl.classList.contains('gs-light-mode');
+      if(isDark){
+        htmlEl.classList.remove('gs-light-mode');
+        localStorage.setItem('gs-theme','dark');
+        if(themeLabel)themeLabel.textContent='Light';
+      } else {
+        htmlEl.classList.add('gs-light-mode');
+        localStorage.setItem('gs-theme','light');
+        if(themeLabel)themeLabel.textContent='Dark';
+      }
+    });
+  }
+
+  // ═══ LANGUAGE SWITCHER ═══════════════════════════════
+  var langTog=qs('#gs-lang-tog');
+  var langLabel=qs('#gs-lang-label');
+  var langStrings=window.gtLang||{};
+  
+  function getCurrentLang(){
+    var cookie=cookieGet('gt_lang');
+    return cookie==='fr'?'fr':'en';
+  }
+  
+  function setLanguage(lang){
+    cookieSet('gt_lang',lang,365);
+    langLabel.textContent=lang==='fr'?'FR':'EN';
+    updatePageText(lang);
+  }
+  
+  function updatePageText(lang){
+    var strings=langStrings[lang]||{};
+    
+    // Update navigation
+    qa('a.gs-nav-a').forEach(function(a){
+      var text=(a.textContent||'').trim().toLowerCase();
+      if(text.indexOf('home')!==-1&&strings.home)a.textContent=strings.home;
+      if(text.indexOf('shop all')!==-1&&strings.shop_all)a.textContent=strings.shop_all;
+      if(text.indexOf('new')!==-1&&strings.new)a.textContent=strings.new;
+      if(text.indexOf('best')!==-1&&strings.popular)a.textContent=strings.popular;
+      if(text.indexOf('deal')!==-1&&strings.deals)a.textContent=strings.deals;
+    });
+    
+    // Update categories label
+    var catTog=qs('#gs-cats-tog');
+    if(catTog&&strings.categories){
+      catTog.innerHTML='<span>'+strings.categories+'</span><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>';
+    }
+    
+    // Update search placeholder
+    var searchInput=qs('.gs-hd-search-input');
+    if(searchInput&&strings.search){
+      searchInput.placeholder=strings.search;
+    }
+    
+    // Update cart label
+    qa('.gs-ct-tog-btn').forEach(function(btn){
+      var span=btn.querySelector('.gs-hd-action-main');
+      if(span&&strings.cart)span.textContent=strings.cart;
+    });
+    
+    // Update sidebar labels
+    var navLbl=qs('.gs-nav-lbl');
+    if(navLbl&&strings.menu)navLbl.textContent=strings.menu;
+    
+    // Update page lang attribute
+    document.documentElement.lang=lang==='fr'?'fr':'en';
+  }
+  
+  function initLanguage(){
+    var lang=getCurrentLang();
+    setLanguage(lang);
+  }
+  
+  if(langTog){
+    initLanguage();
+    langTog.addEventListener('click',function(e){
+      e.stopPropagation();
+      var dropdownId='gs-lang-dropdown';
+      var existing=qs('#'+dropdownId);
+      if(existing){existing.remove();return;}
+      
+      var currentLang=getCurrentLang();
+      var html='<div class="gs-lang-dropdown" id="'+dropdownId+'">'
+        +'<button class="gs-lang-option'+(currentLang==='en'?' active':'')+'" data-lang="en">English (EN)</button>'
+        +'<button class="gs-lang-option'+(currentLang==='fr'?' active':'')+'" data-lang="fr">Français (FR)</button>'
+        +'</div>';
+      langTog.insertAdjacentHTML('afterend',html);
+      
+      var dropdown=qs('#'+dropdownId);
+      qa('.gs-lang-option').forEach(function(opt){
+        opt.addEventListener('click',function(){
+          var lang=opt.dataset.lang;
+          qa('.gs-lang-option').forEach(function(o){o.classList.remove('active')});
+          opt.classList.add('active');
+          setLanguage(lang);
+          dropdown.remove();
+        });
+      });
+      
+      document.addEventListener('click',function close(e){
+        if(!e.target.closest('#'+dropdownId)&&!e.target.closest('#gs-lang-tog')){
+          dropdown.remove();
+          document.removeEventListener('click',close);
+        }
+      });
+    });
+  }
+
+  // ═══ END THEME & LANGUAGE ════════════════════════════
 });
 })();
