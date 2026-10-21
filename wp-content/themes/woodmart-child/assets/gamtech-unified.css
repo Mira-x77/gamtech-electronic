@@ -35,6 +35,7 @@ button{font-family:var(--font);cursor:pointer;border:none;outline:none;backgroun
   display:flex;flex-direction:column;
   overflow-y:auto;overflow-x:hidden;
   scrollbar-width:thin;scrollbar-color:var(--b2) transparent;
+  position:relative;z-index:160;
 }
 .gs-sb::-webkit-scrollbar{width:3px}
 .gs-sb::-webkit-scrollbar-thumb{background:var(--b2)}
@@ -510,7 +511,7 @@ button{font-family:var(--font);cursor:pointer;border:none;outline:none;backgroun
 
 
 /* overlay */
-.gs-overlay{display:none;position:absolute;inset:0;
+.gs-overlay{display:none;position:absolute;top:0;right:0;bottom:0;left:var(--sw);
   background:rgba(0,0,0,.7);z-index:150;
   backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
 .gs-overlay.on{display:block}
@@ -546,6 +547,7 @@ button{font-family:var(--font);cursor:pointer;border:none;outline:none;backgroun
 
 /* ── 768px: both sidebars become drawers ── */
 @media(max-width:768px){
+  .gs-overlay{left:0}
   .gs-sb{
     position:absolute;top:0;left:0;bottom:0;
     width:280px;

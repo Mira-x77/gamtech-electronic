@@ -31,19 +31,19 @@
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         Home
       </a>
-      <a href="#shop" class="gs-nav-a">
+      <a href="#shop-all" class="gs-nav-a">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
         Shop All
       </a>
-      <a href="#shop" class="gs-nav-a">
+      <a href="#arrivals" class="gs-nav-a">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         New Arrivals
       </a>
-      <a href="#shop" class="gs-nav-a">
+      <a href="#deals" class="gs-nav-a">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
         Best Sellers
       </a>
-      <a href="#shop" class="gs-nav-a">
+      <a href="#deals" class="gs-nav-a">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         Deals
       </a>
@@ -61,7 +61,7 @@
       <p>Limited-time deals on top gadgets</p>
       <a href="#shop">Shop Now</a>
     </div>
-    <a href="#contact" class="gs-sb-support">
+    <a href="https://wa.me/22890597003" class="gs-sb-support" target="_blank" rel="noopener noreferrer">
       <span class="sdot"></span>
       <div><strong>Need Help?</strong>24/7 Support Center</div>
     </a>
@@ -121,7 +121,7 @@
               <div class="gs-hero-tag"><span class="dot"></span>Boutique GamTech · Lomé</div>
               <h1>Toutes solutions<br><span>informatiques ✦</span></h1>
               <p>Magasin ouvert à Lomé. Souris, claviers, stockage, réseaux et plus. WhatsApp (00228) 90 59 70 03 / 93 65 55 59</p>
-              <a href="#shop" class="gs-hero-cta">Shop Now<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+              <a href="#shop-all" class="gs-hero-cta">Shop Now<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
             </div>
           </div>
           <div class="gs-hero-slide" style="background-image:url('/product-images/Logitech-G435.webp')">
@@ -129,7 +129,7 @@
               <div class="gs-hero-tag"><span class="dot"></span>Audio Collection</div>
               <h1>Premium<br><span>Audio ✦</span></h1>
               <p>Headphones, speakers and audio accessories for every need.</p>
-              <a href="#shop" class="gs-hero-cta">Explore Audio<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+              <a href="#cat-headphones-and-audio" class="gs-hero-cta">Explore Audio<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
             </div>
           </div>
           <div class="gs-hero-slide" style="background-image:url('/product-images/Logitech-MX-Keys-S.jpg')">
@@ -137,7 +137,7 @@
               <div class="gs-hero-tag"><span class="dot"></span>Best Products</div>
               <h1>Top Rated<br><span>Gear ✦</span></h1>
               <p>Best-selling electronics chosen by our customers.</p>
-              <a href="#shop" class="gs-hero-cta">View Best Sellers<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+              <a href="#deals" class="gs-hero-cta">View Best Sellers<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
             </div>
           </div>
         </div>
@@ -174,29 +174,31 @@
         <div class="gs-find-ask" id="gs-find-ask" hidden></div>
       </section>
 
-      <div class="gs-sh">
-        <div><h2>Best Deals for You</h2><p>Hand-picked at unbeatable prices</p></div>
-        <a href="#shop" class="gs-viewall">View All</a>
+      <div id="deals">
+        <div class="gs-sh">
+          <div><h2>Best Deals for You</h2><p>Hand-picked at unbeatable prices</p></div>
+          <a href="#shop-all" class="gs-viewall">View All</a>
+        </div>
+        <div class="gs-grid" id="gs-deals"></div>
       </div>
-      <div class="gs-grid" id="gs-deals"></div>
 
-      <div class="gs-sh">
-        <div><h2>Recommended for You</h2><p>Based on popular picks</p></div>
-        <a href="#shop" class="gs-viewall">View All</a>
+      <div id="arrivals">
+        <div class="gs-sh">
+          <div><h2>Recommended for You</h2><p>Based on popular picks</p></div>
+          <a href="#shop-all" class="gs-viewall">View All</a>
+        </div>
+        <div class="gs-grid" id="gs-rec"></div>
       </div>
-      <div class="gs-grid" id="gs-rec"></div>
 
       <div id="shop-all"></div>
     </main>
 
-    <footer class="gs-ft">
+    <footer class="gs-ft" id="contact">
       <div class="gs-ft-links">
         <a href="/">Home</a>
-        <a href="#shop">Shop</a>
-        <a href="#about">About</a>
-        <a href="#contact">Contact</a>
-        <a href="#privacy">Privacy</a>
-        <span class="gs-ft-copy">&copy; 2026 GamTech</span>
+        <a href="#shop-all">Shop</a>
+        <a href="https://wa.me/22890597003" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+        <span class="gs-ft-copy">&copy; 2026 GamTech · Lomé · (00228) 90 59 70 03</span>
       </div>
     </footer>
   </div>
@@ -215,7 +217,7 @@
       <div class="gs-ct-empty">
         <svg width="40" height="40" fill="none" stroke="var(--di)" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
         <p>Your cart is empty</p>
-        <a href="#shop" class="gs-ct-empty-btn">Browse Products</a>
+        <a href="#shop-all" class="gs-ct-empty-btn">Browse Products</a>
       </div>
     </div>
     <div class="gs-ct-promo">
@@ -244,8 +246,8 @@
 </div>
 
 <script src="/catalog-data.js"></script>
-<script src="/catalog.js?v=mix3"></script>
-<script src="/gamtech-unified.js"></script>
+<script src="/catalog.js?v=nav5"></script>
+<script src="/gamtech-unified.js?v=nav5"></script>
 <div class="gs-cookie" id="gs-cookie" hidden>
   <button type="button" id="gs-cookie-accept">Accept cookie</button>
 </div>

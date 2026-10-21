@@ -87,7 +87,18 @@ function initHeroSlider(){
 document.addEventListener('DOMContentLoaded',function(){
   var sb=qs('#gs-sb'), ct=qs('#gs-ct'), ov=qs('#gs-ov');
 
-  function openPanel(el){el.classList.add('open');ov&&ov.classList.add('on');}
+  qa('a.gs-nav-a, a.gs-hd-action').forEach(function(a){
+    var href=(a.getAttribute('href')||'').toLowerCase();
+    var text=(a.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();
+    if(href.indexOf('admin')!==-1||href==='#account'||text.indexOf('my account')!==-1||text.indexOf('stock desk')!==-1){
+      a.remove();
+    }
+  });
+
+  function openPanel(el){
+    el.classList.add('open');
+    if(window.innerWidth<=1024) ov&&ov.classList.add('on');
+  }
   function closeAll(){sb&&sb.classList.remove('open');ct&&ct.classList.remove('open');ov&&ov.classList.remove('on');}
 
   var sbTog=qs('#gs-sb-tog'), ctClose=qs('#gs-ct-close');

@@ -305,9 +305,42 @@ function bindFind() {
   });
 }
 
+function catSlug(name) {
+  return String(name || '')
+    .toLowerCase()
+    .replace(/&/g, 'and')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function catId(name) {
+  return 'cat-' + catSlug(name);
+}
+
+function stripOwnerNav() {
+  document.querySelectorAll('a.gs-nav-a, a.gs-hd-action').forEach((a) => {
+    const href = (a.getAttribute('href') || '').toLowerCase();
+    const text = (a.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
+    if (href.includes('admin') || href === '#account' || text.includes('my account') || text.includes('stock desk')) {
+      a.remove();
+    }
+  });
+}
+
+function shopAllBox() {
+  let extra = document.getElementById('shop-all') || document.getElementById('gs-extra-cats');
+  if (!extra) {
+    extra = document.createElement('div');
+    extra.id = 'shop-all';
+    document.querySelector('.gs-mn')?.appendChild(extra);
+  }
+  extra.id = 'shop-all';
+  return extra;
+}
+
 function catItem([name, ico]) {
   const short = name.length > 12 ? name.slice(0, 11) + '…' : name;
-  return `<a href="#cat-${esc(name)}" class="gs-cat">
+  return `<a href="#${catId(name)}" class="gs-cat">
     <div class="gs-cat-ico"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">${ico}</svg></div>
     <span class="gs-cat-lbl">${esc(short)}</span>
   </a>`;
@@ -361,11 +394,12 @@ function mixByCategory(items) {
 }
 
 function boot() {
+  stripOwnerNav();
   const all = products();
   const sb = document.getElementById('gs-cats-list');
   if (sb) {
     sb.innerHTML = CATS.map(([name, ico]) =>
-      `<a href="#cat-${esc(name)}" class="gs-sb-cat"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">${ico}</svg>${esc(name)}</a>`
+      `<a href="#${catId(name)}" class="gs-sb-cat"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">${ico}</svg>${esc(name)}</a>`
     ).join('');
   }
   const row = document.getElementById('gs-cats-row');
@@ -375,7 +409,7 @@ function boot() {
   if (shortcuts) {
     shortcuts.innerHTML = CATS.map(([name, ico]) => {
       const short = name.length > 10 ? name.slice(0, 9) + '…' : name;
-      return `<a href="#cat-${esc(name)}" class="gs-sc">
+      return `<a href="#${catId(name)}" class="gs-sc">
         <span class="gs-sc-ico"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24">${ico}</svg></span>
         <span class="gs-sc-lbl">${esc(short)}</span>
       </a>`;
@@ -389,55 +423,80 @@ function boot() {
   const rec = document.getElementById('gs-rec');
   if (rec) rec.innerHTML = photo.slice(8, 16).map(cardHTML).join('');
 
-  const extra = document.getElementById('shop-all');
-  if (extra) {
-    extra.innerHTML = CATS.map(([name]) => {
-      const items = byCat(name);
-      if (!items.length) return '';
-      const photos = items.filter((p) => p.img && !p.listOnly);
-      const listed = items.filter((p) => !p.img || p.listOnly);
-      return `<section class="gs-cat-block" id="cat-${esc(name)}">
-        <div class="gs-sh"><div><h2>${esc(name)}</h2><p>${items.length} products</p></div>
-        <a href="#shop" class="gs-viewall">View All</a></div>
-        ${photos.length ? `<div class="gs-grid">${photos.map(cardHTML).join('')}</div>` : ''}
-        ${listed.length ? `<div class="gs-list">${listed.map(listRowHTML).join('')}</div>` : ''}
-      </section>`;
-    }).join('');
-  }
+  const extra = shopAllBox();
+  extra.innerHTML = CATS.map(([name]) => {
+    const items = byCat(name);
+    if (!items.length) return '';
+    const photos = items.filter((p) => p.img && !p.listOnly);
+    const listed = items.filter((p) => !p.img || p.listOnly);
+    return `<section class="gs-cat-block" id="${catId(name)}">
+      <div class="gs-sh"><div><h2>${esc(name)}</h2><p>${items.length} products</p></div>
+      <a href="#shop-all" class="gs-viewall">View All</a></div>
+      ${photos.length ? `<div class="gs-grid">${photos.map(cardHTML).join('')}</div>` : ''}
+      ${listed.length ? `<div class="gs-list">${listed.map(listRowHTML).join('')}</div>` : ''}
+    </section>`;
+  }).join('');
 
   bindFind();
-  if (location.hash === '#shop') scrollMainTo('shop-all');
+  goHash(location.hash);
 }
 
 function scrollMainTo(id) {
-  const target = document.getElementById(id);
   const mn = document.querySelector('.gs-mn');
-  if (!target || !mn) return false;
-  mn.scrollTo({ top: Math.max(0, target.offsetTop - 12), behavior: 'smooth' });
+  if (!mn) return false;
+  if (!id) {
+    mn.scrollTo({ top: 0, behavior: 'smooth' });
+    return true;
+  }
+  const target = document.getElementById(id);
+  if (!target) return false;
+  const top = target.getBoundingClientRect().top - mn.getBoundingClientRect().top + mn.scrollTop - 12;
+  mn.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
   document.getElementById('gs-sb')?.classList.remove('open');
   document.getElementById('gs-ov')?.classList.remove('on');
   return true;
 }
 
+function resolveHash(hash) {
+  const raw = decodeURIComponent(String(hash || '').replace(/^#/, '')).trim();
+  if (!raw || raw === 'shop' || raw === 'shop-all') return 'shop-all';
+  if (raw === 'deals') return 'deals';
+  if (raw === 'arrivals' || raw === 'new') return 'arrivals';
+  if (raw === 'sellers' || raw === 'best') return 'deals';
+  if (raw === 'contact' || raw === 'about' || raw === 'privacy') return 'contact';
+  if (raw.startsWith('cat-')) {
+    if (document.getElementById(raw)) return raw;
+    const slug = catId(raw.slice(4));
+    if (document.getElementById(slug)) return slug;
+  }
+  if (document.getElementById(raw)) return raw;
+  return '';
+}
+
+function goHash(hash) {
+  const id = resolveHash(hash);
+  if (!id) return false;
+  document.querySelectorAll('.gs-sc.active').forEach((el) => el.classList.remove('active'));
+  const sc = document.querySelector('.gs-sc[href="#' + id + '"]');
+  if (sc) sc.classList.add('active');
+  return scrollMainTo(id);
+}
+
 document.addEventListener('click', (e) => {
-  const shop = e.target.closest('a[href="#shop"]');
-  if (shop) {
+  const a = e.target.closest('a[href]');
+  if (!a) return;
+  const href = a.getAttribute('href') || '';
+  if (/admin/i.test(href) || href === '#account') {
     e.preventDefault();
-    scrollMainTo('shop-all');
+    a.remove();
     return;
   }
-  const a = e.target.closest('a[href^="#cat-"]');
-  if (!a) return;
-  const id = a.getAttribute('href').slice(1);
-  if (!document.getElementById(id)) return;
+  if (href.charAt(0) !== '#') return;
   e.preventDefault();
-  document.querySelectorAll('.gs-sc.active').forEach((el) => el.classList.remove('active'));
-  const sc = a.classList.contains('gs-sc')
-    ? a
-    : document.querySelector('.gs-sc[href="' + a.getAttribute('href') + '"]');
-  if (sc) sc.classList.add('active');
-  scrollMainTo(id);
+  goHash(href);
 });
+
+window.addEventListener('hashchange', () => goHash(location.hash));
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', boot);
