@@ -239,7 +239,7 @@
       btn.setAttribute('aria-label', t('lang'));
     });
     document.querySelectorAll('.gs-theme-tog').forEach(function (btn) {
-      btn.setAttribute('aria-pressed', theme === 'light' ? 'true' : 'false');
+      btn.textContent = theme === 'light' ? 'Dark' : 'Light';
       btn.setAttribute('aria-label', t('theme'));
     });
   }
