@@ -70,11 +70,15 @@ export function applyOverrides(products, ov) {
   for (const p of products) {
     const hit = ov[String(p.id)] || ov[normName(p.name)];
     if (!hit || typeof hit !== 'object') continue;
-    for (const key of ['name', 'cat', 'sub', 'img', 'price', 'was', 'listOnly', 'confirmUrl', 'hidden']) {
+    if (hit.deleted) {
+      p.deleted = true;
+      continue;
+    }
+    for (const key of ['name', 'cat', 'sub', 'img', 'price', 'was', 'listOnly', 'confirmUrl', 'hidden', 'also']) {
       if (hit[key] !== undefined) p[key] = hit[key];
     }
   }
-  return products;
+  return products.filter((p) => !p.deleted && !p.hidden);
 }
 
 export function upsertOverride(root, product) {
@@ -92,6 +96,8 @@ export function upsertOverride(root, product) {
     listOnly: !!product.listOnly,
     confirmUrl: product.confirmUrl || '',
     hidden: !!product.hidden,
+    deleted: !!product.deleted,
+    also: product.also || '',
   };
   ov[normName(product.name)] = ov[key];
   saveOverrides(root, ov);

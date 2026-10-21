@@ -4,7 +4,7 @@ const CATS = [
   'Adapters & Hubs', 'Replacement Keyboards', 'Batteries', 'Chargers', 'Screens',
 ];
 
-const state = { pin: sessionStorage.getItem('gs-admin-pin') || '', products: [], hero: { slides: [] } };
+const state = { pin: sessionStorage.getItem('gs-admin-pin') || '', products: [], hero: { slides: [] }, showAll: false };
 
 function $(id) { return document.getElementById(id); }
 
@@ -39,7 +39,8 @@ function filtered() {
   return state.products.filter((p) => {
     if (cat && p.cat !== cat) return false;
     if (missing && p.img) return false;
-    if (q && !`${p.name} ${p.cat} ${p.sub || ''}`.toLowerCase().includes(q)) return false;
+    const blob = `${p.name} ${p.cat} ${p.sub || ''} ${p.also || ''}`.toLowerCase();
+    if (q && !q.split(/\s+/).every((t) => t && blob.includes(t))) return false;
     return true;
   });
 }
@@ -51,35 +52,50 @@ function photoCell(p) {
 
 function rowHTML(p) {
   const catOpts = CATS.map((c) => `<option${c === p.cat ? ' selected' : ''}>${c}</option>`).join('');
+  const ask = p.price == null || p.price === '';
   return `<tr data-id="${p.id}">
     <td>${photoCell(p)}</td>
     <td><input type="text" data-k="name" value="${String(p.name || '').replace(/"/g, '&quot;')}"></td>
+    <td><input type="text" data-k="also" placeholder="laptop names, 19V, 65W" value="${String(p.also || '').replace(/"/g, '&quot;')}"></td>
     <td><select data-k="cat">${catOpts}</select></td>
-    <td><input type="number" data-k="price" value="${p.price ?? ''}" min="0" step="100"></td>
-    <td><input type="checkbox" data-k="listOnly" ${p.listOnly ? 'checked' : ''}></td>
+    <td><input type="number" data-k="price" value="${ask ? '' : p.price}" min="0" step="100" placeholder="Ask"></td>
+    <td><input type="checkbox" data-k="askPrice" ${ask ? 'checked' : ''}></td>
+    <td><input type="checkbox" data-k="listOnly" ${p.listOnly || !p.img ? 'checked' : ''}></td>
     <td class="ad-actions">
       <button type="button" data-act="save">Save</button>
-      <button type="button" data-act="find">Find photo</button>
-      <label class="ad-file">Upload<input type="file" accept="image/*" data-act="upload"></label>
+      <label class="ad-file">Photo<input type="file" accept="image/*" data-act="upload"></label>
+      <button type="button" data-act="clear">No photo</button>
+      <button type="button" data-act="delete">Delete</button>
     </td>
   </tr>`;
 }
 
 function render() {
   const rows = filtered();
+  const cap = state.showAll ? rows.length : 80;
   $('count').textContent = rows.length + ' / ' + state.products.length + ' SKUs';
-  $('rows').innerHTML = rows.slice(0, 80).map(rowHTML).join('') +
-    (rows.length > 80 ? `<tr><td colspan="6">Showing 80 of ${rows.length}. Narrow the search to edit the rest.</td></tr>` : '');
+  $('rows').innerHTML = rows.slice(0, cap).map(rowHTML).join('') +
+    (!state.showAll && rows.length > 80 ? `<tr><td colspan="8">Showing 80 of ${rows.length}. Press Show all or search.</td></tr>` : '');
 }
 
 function readRow(tr) {
   const id = tr.getAttribute('data-id');
-  const p = state.products.find((x) => String(x.id) === String(id));
+  const p = state.products.find((x) => String(x.id) === String(id)) || {};
   const name = tr.querySelector('[data-k=name]').value.trim();
+  const also = tr.querySelector('[data-k=also]').value.trim();
   const cat = tr.querySelector('[data-k=cat]').value;
+  const askPrice = tr.querySelector('[data-k=askPrice]').checked;
   const priceRaw = tr.querySelector('[data-k=price]').value;
   const listOnly = tr.querySelector('[data-k=listOnly]').checked;
-  return { ...p, name, cat, listOnly, price: priceRaw === '' ? null : Number(priceRaw) };
+  return {
+    ...p,
+    name,
+    also,
+    cat,
+    listOnly,
+    askPrice,
+    price: askPrice || priceRaw === '' ? null : Number(priceRaw),
+  };
 }
 
 function showTab(id) {
@@ -192,9 +208,38 @@ $('tabs').addEventListener('click', (e) => {
   if (btn) showTab(btn.dataset.tab);
 });
 
+$('rows').addEventListener('change', (e) => {
+  const ask = e.target.closest('[data-k=askPrice]');
+  if (!ask) return;
+  const price = e.target.closest('tr')?.querySelector('[data-k=price]');
+  if (ask.checked && price) price.value = '';
+});
 ['q', 'cat', 'missing'].forEach((id) => $(id).addEventListener('input', render));
 $('cat').addEventListener('change', render);
 $('missing').addEventListener('change', render);
+$('show-all').addEventListener('click', () => {
+  state.showAll = true;
+  render();
+});
+$('add-item').addEventListener('click', async () => {
+  try {
+    const out = await api('/api/admin/product', {
+      name: 'New item',
+      cat: $('cat').value || 'Computer Accessories',
+      price: null,
+      listOnly: true,
+      img: null,
+      also: '',
+    });
+    state.products.unshift(out.product);
+    $('q').value = out.product.name;
+    state.showAll = true;
+    status('Added. Type the name, price or Ask, photo or no photo, then Save.', true);
+    render();
+  } catch (ex) {
+    status(ex.message, false);
+  }
+});
 
 $('pin-form').addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -220,15 +265,21 @@ $('rows').addEventListener('click', async (e) => {
       const out = await api('/api/admin/product', payload);
       const i = state.products.findIndex((x) => String(x.id) === String(out.product.id));
       if (i >= 0) state.products[i] = out.product;
-      status('Saved ' + out.product.name, true);
+      status('Saved ' + out.product.name + (out.product.price == null ? ' (ask for price)' : ''), true);
       render();
     }
-    if (btn.dataset.act === 'find') {
-      status('Searching photo for ' + payload.name + '…');
-      const out = await api('/api/admin/fetch-image', { id: payload.id, force: true });
+    if (btn.dataset.act === 'clear') {
+      const out = await api('/api/admin/product', { ...payload, clearPhoto: true, listOnly: true });
       const i = state.products.findIndex((x) => String(x.id) === String(out.product.id));
       if (i >= 0) state.products[i] = out.product;
-      status('Photo set: ' + (out.title || out.product.name), true);
+      status('Photo removed. Listed by name only.', true);
+      render();
+    }
+    if (btn.dataset.act === 'delete') {
+      if (!window.confirm('Delete ' + (payload.name || 'this item') + ' from the shop?')) return;
+      await api('/api/admin/delete', { id: payload.id });
+      state.products = state.products.filter((x) => String(x.id) !== String(payload.id));
+      status('Deleted ' + payload.name, true);
       render();
     }
   } catch (ex) {

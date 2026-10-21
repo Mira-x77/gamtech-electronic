@@ -2,8 +2,9 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-const xl = process.argv[2] || path.join(process.env.TEMP || '/tmp', 'prix-acte-xlsx/unpacked/xl');
-const outFile = path.join(path.dirname(fileURLToPath(import.meta.url)), 'prix-acte.json');
+const here = path.dirname(fileURLToPath(import.meta.url));
+const xl = process.argv[2] || path.join(here, 'tmp-xlsx/xl');
+const outFile = path.join(here, 'prix-acte.json');
 
 const SKIP_SHEETS = /commande potentiel/i;
 const HEADER_RE =
@@ -111,6 +112,137 @@ function pickPrice(nums) {
   return Math.max(...money);
 }
 
+const BRAND_COL = /^(hp|dell|lenovo|asus|acer|toshiba|tosh|samsung|sandisk|scandisk|kingston|lexar|transcend|seagate|western digital|apple|macbooks?|sony|fujitsu|fujitshu|medion|comfast|lb link|tp.?link|ubiquiti|ubikiti|mikrotiks?|tenda|d-link|cudy|mercury|zonch|alfa|onten|logitech|logi|surface)$/i;
+const SKIP_NOTE = /^(lum|ori|fr|us|mj|with |uk lum)/i;
+
+function nearestBrand(brands, col) {
+  let best = '';
+  let bestCol = -1;
+  for (const [c, b] of brands) {
+    if (c <= col && c >= bestCol) {
+      bestCol = c;
+      best = b;
+    }
+  }
+  return best;
+}
+
+function chargerHint(spec) {
+  if (/type\s*c|usb[\s-]*c/i.test(spec)) return 'USB-C';
+  if (/\busb\b/i.test(spec)) return 'USB tip';
+  if (/\b(bb|bp|bj|pb|bn|br)\b/i.test(spec)) return 'DC barrel';
+  if (/lame|pointier|rond|pin/i.test(spec)) return '';
+  return '';
+}
+
+function expandAlso(name, cat) {
+  const bits = new Set();
+  const raw = String(name || '');
+  bits.add(raw);
+  bits.add(raw.replace(/\s+/g, ''));
+  const g = raw.match(/(\d{3,4})\s*G\s*(\d{1,2})/i);
+  if (g) {
+    bits.add(g[1] + 'g' + g[2]);
+    bits.add(g[1] + ' g' + g[2]);
+    bits.add(g[1]);
+    if (/^84[05]$/.test(g[1]) || g[1] === '830') bits.add('elitebook ' + g[1]);
+    if (/^64[05]$/.test(g[1]) || g[1] === '645') bits.add('elitebook ' + g[1]);
+    if (/^4[345]0$/.test(g[1])) bits.add('probook ' + g[1]);
+  }
+  if (/zbook/i.test(raw)) bits.add('hp zbook workstation');
+  if (/latitude/i.test(raw)) bits.add('dell latitude');
+  if (/\b(t16|t460|t470|t480|yoga|x1)\b/i.test(raw)) bits.add('lenovo thinkpad');
+  const w = raw.match(/(\d{2,3})\s*W/i);
+  if (w) bits.add(w[1] + ' watt ' + w[1] + 'w');
+  const v = raw.match(/(\d+(?:\.\d+)?)\s*V/i);
+  if (v) bits.add(v[1] + 'v ' + v[1] + ' volt');
+  if (/type\s*c|usb-c|usb c/i.test(raw)) bits.add('usb-c usbc type-c type c');
+  if (/dc barrel|barrel/i.test(raw)) bits.add('barrel tip jack chargeur');
+  if (cat === 'Batteries') bits.add('batterie battery bat');
+  if (cat === 'Chargers') bits.add('chargeur charger adaptateur');
+  if (cat === 'Replacement Keyboards') bits.add('clavier keyboard clavier pc');
+  return [...bits].join(' ');
+}
+
+function extractBrandColumns(rows, kind) {
+  const items = [];
+  const brands = new Map();
+  const sorted = [...rows.entries()].sort((a, b) => a[0] - b[0]);
+  for (const [, cells] of sorted) {
+    cells.sort((a, b) => a.col - b.col);
+    for (let i = 0; i < cells.length; i += 1) {
+      const cell = cells[i];
+      if (typeof cell.val !== 'string') continue;
+      const text = cell.val.replace(/\s+/g, ' ').trim();
+      if (!isProductName(text)) continue;
+      if (BRAND_COL.test(text) && !/\d/.test(text)) {
+        brands.set(cell.col, text.replace(/macbooks/i, 'MacBook').replace(/fujitshu/i, 'Fujitsu'));
+        continue;
+      }
+      if (SKIP_NOTE.test(text) && kind === 'keyboards') continue;
+      const brand = nearestBrand(brands, cell.col);
+      const nums = [];
+      for (const nxt of cells) {
+        if (nxt.col <= cell.col || nxt.col > cell.col + 3) continue;
+        if (typeof nxt.val === 'number') nums.push(nxt.val);
+      }
+      const price = pickPrice(nums);
+      if (price == null && nums.length && Math.max(...nums) < 400 && kind !== 'chargers') continue;
+      let name = brand && !text.toLowerCase().includes(brand.toLowerCase()) ? `${brand} ${text}` : text;
+      if (kind === 'chargers') {
+        const hint = chargerHint(text);
+        if (hint && !name.toLowerCase().includes(hint.toLowerCase())) name += ' ' + hint;
+      }
+      name = name.replace(/\s+/g, ' ').trim();
+      items.push({
+        name,
+        price: price == null ? null : price,
+        also: expandAlso(name, kind === 'chargers' ? 'Chargers' : 'Replacement Keyboards'),
+      });
+    }
+  }
+  return items;
+}
+
+function extractBatteryItems(rows) {
+  const items = [];
+  const brandAt = new Map();
+  const sorted = [...rows.entries()].sort((a, b) => a[0] - b[0]);
+  for (const [, cells] of sorted) {
+    cells.sort((a, b) => a.col - b.col);
+    for (let i = 0; i < cells.length; i += 1) {
+      const cell = cells[i];
+      if (typeof cell.val !== 'string') continue;
+      const text = cell.val.replace(/\s+/g, ' ').trim();
+      if (!isProductName(text)) continue;
+      if (BRAND_COL.test(text) && !/\d/.test(text)) {
+        brandAt.set(cell.col, text.replace(/macbooks/i, 'MacBook').replace(/fujitshu/i, 'Fujitsu'));
+        continue;
+      }
+      const brand = nearestBrand(brandAt, cell.col);
+      let spec = '';
+      const nums = [];
+      for (const nxt of cells) {
+        if (nxt.col <= cell.col || nxt.col > cell.col + 4) continue;
+        if (typeof nxt.val === 'string' && /\d/.test(nxt.val) && /\b(v|wh|mah|w)\b/i.test(nxt.val)) {
+          spec = nxt.val.trim();
+        } else if (typeof nxt.val === 'number') nums.push(nxt.val);
+      }
+      const price = pickPrice(nums);
+      if (price == null && !spec && nums.length && Math.max(...nums) < 400) continue;
+      let name = brand && !text.toLowerCase().includes(brand.toLowerCase()) ? `${brand} ${text}` : text;
+      if (spec && !name.toLowerCase().includes(spec.toLowerCase())) name += ' ' + spec;
+      name = name.replace(/\s+/g, ' ').trim();
+      items.push({
+        name,
+        price: price == null ? null : price,
+        also: expandAlso(name, 'Batteries'),
+      });
+    }
+  }
+  return items;
+}
+
 function extractItems(rows, electrical) {
   const items = [];
   const prefixByCol = new Map();
@@ -210,10 +342,12 @@ for (const sheet of sheets) {
     continue;
   }
   const { cat, listOnly } = catForSheet(sheet.name);
-  const items = extractItems(
-    parseSheet(fs.readFileSync(file, 'utf8'), strings),
-    /bat|chargeur/i.test(sheet.name)
-  );
+  const parsed = parseSheet(fs.readFileSync(file, 'utf8'), strings);
+  let items;
+  if (/claviers/i.test(sheet.name)) items = extractBrandColumns(parsed, 'keyboards');
+  else if (/chargeur/i.test(sheet.name)) items = extractBrandColumns(parsed, 'chargers');
+  else if (/bat /i.test(sheet.name)) items = extractBatteryItems(parsed);
+  else items = extractItems(parsed, /bat|chargeur/i.test(sheet.name));
   let added = 0;
   for (const it of items) {
     const key = norm(it.name);
@@ -226,6 +360,7 @@ for (const sheet of sheets) {
       cat,
       sub: sheet.name.replace(/\s+/g, ' ').trim(),
       listOnly,
+      also: it.also || '',
     });
     added += 1;
   }

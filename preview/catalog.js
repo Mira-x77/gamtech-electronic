@@ -86,18 +86,26 @@ const WA_PHONE = '22890597003';
 function tokens(s) {
   return String(s || '')
     .toLowerCase()
+    .replace(/usb[\s-]*c/g, ' usbc ')
+    .replace(/type[\s-]*c/g, ' usbc ')
     .replace(/[^a-z0-9]+/g, ' ')
     .trim()
     .split(/\s+/)
-    .filter(Boolean);
+    .filter((t) => t && t.length > 1);
 }
 
 function haystack(p) {
-  return tokens([p.name, p.cat, p.sub].filter(Boolean).join(' ')).join(' ');
+  return tokens([p.name, p.cat, p.sub, p.also].filter(Boolean).join(' ')).join(' ');
+}
+
+function tokenHit(hay, tok) {
+  if (!tok) return false;
+  if (hay.includes(tok)) return true;
+  return hay.split(' ').some((w) => w.startsWith(tok) || (tok.length >= 3 && tok.startsWith(w) && w.length >= 3));
 }
 
 function hasAllTokens(hay, toks) {
-  return toks.length > 0 && toks.every((t) => hay.includes(t));
+  return toks.length > 0 && toks.every((t) => tokenHit(hay, t));
 }
 
 function queryLabel(name, model) {

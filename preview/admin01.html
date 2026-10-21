@@ -14,7 +14,7 @@
     <div class="ad-ticket">
       <p class="ad-eyebrow">GamTech · Lomé counter</p>
       <h1>Stock desk</h1>
-      <p class="ad-copy">Enter the desk PIN to change names, prices, photos, hero slides, and see visits. Batteries, replacement keyboards, internal screens, and chargers stay as name lists unless you attach a photo yourself.</p>
+      <p class="ad-copy">PIN opens the desk. Add or delete items, set a price or leave Ask for price, upload a photo or keep name-only. Clients never see this page.</p>
       <form id="login">
         <label>Desk PIN
           <input type="password" id="pin" autocomplete="current-password" autofocus>
@@ -64,19 +64,24 @@
 
     <section class="ad-panel" id="panel-stock" hidden>
       <div class="ad-toolbar">
-        <input type="search" id="q" placeholder="Find a name, model, brand…">
+        <input type="search" id="q" placeholder="Find laptop, part, 65W, 11.1V…">
         <select id="cat"></select>
-        <label class="ad-check"><input type="checkbox" id="missing"> Missing photo</label>
+        <label class="ad-check"><input type="checkbox" id="missing"> No photo</label>
+        <button type="button" id="add-item">Add item</button>
+        <button type="button" id="show-all">Show all</button>
         <span class="ad-count" id="count"></span>
       </div>
+      <p class="ad-copy">Empty price = Ask for price. “Also matches” is extra search text (laptop name, voltage). Name-only lists the item without a picture.</p>
       <div class="ad-table-wrap">
         <table class="ad-table">
           <thead>
             <tr>
               <th>Photo</th>
               <th>Name</th>
+              <th>Also matches</th>
               <th>Category</th>
               <th>Price CFA</th>
+              <th>Ask</th>
               <th>Name-only</th>
               <th></th>
             </tr>

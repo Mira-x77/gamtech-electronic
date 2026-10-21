@@ -138,13 +138,30 @@ export function adminApi(root) {
               p = { id, name: body.name || 'New item', cat: body.cat || 'Computer Accessories', sub: body.sub || '', img: null, price: null, was: null, listOnly: false };
               products.push(p);
             }
-            for (const key of ['name', 'cat', 'sub', 'img', 'price', 'was', 'listOnly', 'confirmUrl', 'hidden']) {
+            for (const key of ['name', 'cat', 'sub', 'img', 'price', 'was', 'listOnly', 'confirmUrl', 'hidden', 'also']) {
               if (body[key] !== undefined) p[key] = body[key];
             }
-            if (body.price === '') p.price = null;
+            if (body.price === '' || body.askPrice) p.price = null;
+            if (body.img === '' || body.clearPhoto) {
+              p.img = null;
+              p.listOnly = true;
+            }
             upsertOverride(root, p);
             writeCatalogData(root, products);
             return send(res, 200, { product: p });
+          }
+
+          if (req.method === 'POST' && url === '/api/admin/delete') {
+            const body = parseJsonBody(await readBody(req));
+            const products = loadProducts(root);
+            const p = products.find((x) => String(x.id) === String(body.id));
+            if (!p) return send(res, 404, { error: 'Product not found' });
+            p.deleted = true;
+            p.hidden = true;
+            upsertOverride(root, p);
+            const kept = products.filter((x) => String(x.id) !== String(p.id));
+            writeCatalogData(root, kept);
+            return send(res, 200, { ok: true, id: p.id });
           }
 
           if (req.method === 'POST' && url === '/api/admin/upload') {

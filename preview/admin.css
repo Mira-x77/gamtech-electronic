@@ -31,7 +31,8 @@ button:hover{background:var(--amber2);color:#fff}
 .ad-check{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--mute)}
 .ad-count{font-family:var(--mono);font-size:12px;color:var(--amber);margin-left:auto}
 .ad-table-wrap{overflow:auto;border:1px solid var(--line);background:var(--card)}
-.ad-table{width:100%;border-collapse:collapse;min-width:900px}
+.ad-table{width:100%;border-collapse:collapse;min-width:1100px}
+.ad-actions button[data-act=delete]{background:#4a241c;color:#f3cfc7}
 .ad-table th{text-align:left;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
   color:var(--mute);padding:10px;border-bottom:1px solid var(--line);background:#1a1611}
 .ad-table td{padding:8px 10px;border-bottom:1px solid #2a251c;vertical-align:middle}

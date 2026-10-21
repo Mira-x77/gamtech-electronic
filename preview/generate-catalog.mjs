@@ -130,6 +130,7 @@ if (fs.existsSync(listePath)) {
         applyPrice(existing, it.price);
         priced += 1;
       }
+      if (it.also) existing.also = [existing.also, it.also].filter(Boolean).join(' ');
       continue;
     }
     const confirmHint = {
@@ -148,6 +149,7 @@ if (fs.existsSync(listePath)) {
       price: it.price ?? null,
       was: null,
       listOnly: !!it.listOnly,
+      also: it.also || '',
       confirmUrl: 'https://www.google.com/search?udm=2&q=' + encodeURIComponent(confirmQ),
     };
     products.push(product);
