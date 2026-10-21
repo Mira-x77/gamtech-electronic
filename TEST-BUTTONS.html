@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Test Buttons</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      padding: 40px;
+      background: var(--bg);
+      color: var(--tx);
+      transition: all 0.3s ease;
+    }
+    
+    html[data-theme="dark"] {
+      --bg: #0f0f0f;
+      --tx: #d4d4d8;
+      --btn-color: #fff;
+    }
+    
+    html[data-theme="light"] {
+      --bg: #ffffff;
+      --tx: #333333;
+      --btn-color: #000;
+    }
+    
+    .gs-prefs {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    
+    .gs-pref-btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      background: transparent;
+      color: var(--btn-color);
+      border: 1.5px solid var(--btn-color);
+      transition: all 0.2s ease;
+    }
+    
+    .gs-pref-btn:hover {
+      background: rgba(124, 58, 237, 0.1);
+      border-color: #7c3aed;
+      color: #7c3aed;
+    }
+    
+    .info {
+      margin-top: 30px;
+      padding: 20px;
+      border: 1px solid var(--btn-color);
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Button Test</h1>
+  <p style="margin: 20px 0;">Click the buttons below to test theme and language switching:</p>
+  
+  <div class="gs-prefs">
+    <button type="button" class="gs-pref-btn gs-theme-tog">Light</button>
+    <button type="button" class="gs-pref-btn gs-lang-tog">EN</button>
+  </div>
+  
+  <div class="info">
+    <h2>Current Settings:</h2>
+    <p id="theme-display">Theme: dark</p>
+    <p id="lang-display">Language: fr</p>
+  </div>
+
+  <script>
+    function readLang() {
+      try { return localStorage.getItem('gs_lang') === 'en' ? 'en' : 'fr'; } catch (e) { return 'fr'; }
+    }
+    function readTheme() {
+      try { return localStorage.getItem('gs_theme') === 'light' ? 'light' : 'dark'; } catch (e) { return 'dark'; }
+    }
+    
+    function updateUI() {
+      var lang = readLang();
+      var theme = readTheme();
+      
+      document.documentElement.lang = lang;
+      document.documentElement.setAttribute('data-theme', theme);
+      
+      document.querySelectorAll('.gs-lang-tog').forEach(function (btn) {
+        btn.textContent = lang === 'fr' ? 'EN' : 'FR';
+      });
+      
+      document.querySelectorAll('.gs-theme-tog').forEach(function (btn) {
+        btn.textContent = theme === 'light' ? 'Dark' : 'Light';
+      });
+      
+      document.getElementById('theme-display').textContent = 'Theme: ' + theme;
+      document.getElementById('lang-display').textContent = 'Language: ' + lang;
+    }
+    
+    document.addEventListener('click', function (e) {
+      var themeBtn = e.target.closest('.gs-theme-tog');
+      if (themeBtn) {
+        var next = readTheme() === 'light' ? 'dark' : 'light';
+        try { localStorage.setItem('gs_theme', next); } catch (err) {}
+        updateUI();
+        console.log('Theme changed to:', next);
+        return;
+      }
+      
+      var langBtn = e.target.closest('.gs-lang-tog');
+      if (langBtn) {
+        var lang = readLang() === 'fr' ? 'en' : 'fr';
+        try { localStorage.setItem('gs_lang', lang); } catch (err) {}
+        updateUI();
+        console.log('Language changed to:', lang);
+      }
+    });
+    
+    updateUI();
+  </script>
+</body>
+</html>

@@ -265,6 +265,42 @@
 <script src="/catalog-data.js"></script>
 <script src="/catalog.js?v=i18n1"></script>
 <script src="/gamtech-unified.js?v=i18n1"></script>
+<script>
+// Force button click handlers to work
+(function() {
+  console.log('Button debug script loaded');
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM ready - attaching button handlers');
+    document.querySelectorAll('.gs-theme-tog').forEach(function(btn) {
+      console.log('Found theme button:', btn);
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        console.log('Theme button clicked');
+        var current = localStorage.getItem('gs_theme') || 'dark';
+        var next = current === 'light' ? 'dark' : 'light';
+        localStorage.setItem('gs_theme', next);
+        document.documentElement.setAttribute('data-theme', next);
+        btn.textContent = next === 'light' ? 'Dark' : 'Light';
+        console.log('Theme changed to:', next);
+      });
+    });
+    
+    document.querySelectorAll('.gs-lang-tog').forEach(function(btn) {
+      console.log('Found lang button:', btn);
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        console.log('Lang button clicked');
+        var current = localStorage.getItem('gs_lang') || 'fr';
+        var next = current === 'fr' ? 'en' : 'fr';
+        localStorage.setItem('gs_lang', next);
+        btn.textContent = next === 'fr' ? 'EN' : 'FR';
+        console.log('Lang changed to:', next);
+        if (window.gsApplyPrefs) window.gsApplyPrefs();
+      });
+    });
+  });
+})();
+</script>
 <div class="gs-cookie" id="gs-cookie" hidden>
   <button type="button" id="gs-cookie-accept" data-i18n="cookie">Accepter le cookie</button>
 </div>
