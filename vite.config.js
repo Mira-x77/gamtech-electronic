@@ -81,5 +81,8 @@ export default defineConfig({
     fs: {
       allow: [rootDir],
     },
+    watch: {
+      ignored: ['**/preview/tmp-xlsx/**'],
+    },
   },
 });

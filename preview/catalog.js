@@ -27,13 +27,21 @@ function esc(s) {
   }[c]));
 }
 
+function t(key, vars) {
+  return window.gsT ? window.gsT(key, vars) : key;
+}
+function catLabel(name) {
+  const s = t('cat.' + name);
+  return !s || s.indexOf('cat.') === 0 ? name : s;
+}
+
 function formatCFA(n) {
   return Math.round(Number(n)).toLocaleString('fr-FR') + ' CFA';
 }
 
 function priceHTML(p) {
   if (p.price == null || p.price === '') {
-    return '<span class="gs-pnow">Ask for price</span>';
+    return '<span class="gs-pnow">' + t('ask') + '</span>';
   }
   const now = Number(p.price);
   const was = p.was != null && p.was !== '' ? Number(p.was) : 0;
@@ -58,8 +66,8 @@ function listRowHTML(p) {
       <div class="gs-card-price">${priceHTML(p)}</div>
     </div>
     <div class="gs-list-actions">
-      <a class="gs-confirm-img" href="${esc(confirmUrl(p))}" target="_blank" rel="noopener noreferrer">Confirm photo</a>
-      <a href="#" class="gs-add-btn" data-id="${esc(p.id)}" data-price="${addPrice}" data-name="${esc(p.name)}" data-img="">Add to Cart</a>
+      <a class="gs-confirm-img" href="${esc(confirmUrl(p))}" target="_blank" rel="noopener noreferrer">${t('confirm')}</a>
+      <a href="#" class="gs-add-btn" data-id="${esc(p.id)}" data-price="${addPrice}" data-name="${esc(p.name)}" data-img="">${t('add')}</a>
     </div>
   </div>`;
 }
@@ -76,7 +84,7 @@ function cardHTML(p) {
     </div>
     <a href="#" class="gs-add-btn" data-id="${esc(p.id)}" data-price="${addPrice}" data-name="${esc(p.name)}" data-img="${esc(p.img || '')}">
       <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-      Add to Cart
+      ${t('add')}
     </a>
   </div>`;
 }
@@ -123,7 +131,7 @@ function waAskHTML(label, note) {
       <strong>${esc(label)}</strong>
       <span>${esc(note)}</span>
     </div>
-    <a class="gs-find-wa" href="${esc(waHref(label))}" target="_blank" rel="noopener noreferrer">Ask on WhatsApp</a>
+    <a class="gs-find-wa" href="${esc(waHref(label))}" target="_blank" rel="noopener noreferrer">${t('find.wa')}</a>
   </div>`;
 }
 
@@ -190,11 +198,11 @@ function renderHits(hits, label, live) {
   if (status) {
     status.hidden = false;
     if (!hits.length) {
-      status.textContent = live ? 'No similar names yet' : 'No catalog match for this model';
+      status.textContent = live ? t('find.noneLive') : t('find.none');
     } else if (live && hits.length > shown.length) {
-      status.textContent = 'Showing ' + shown.length + ' of ' + hits.length + ' similar names';
+      status.textContent = t('find.show', { n: shown.length, t: hits.length });
     } else {
-      status.textContent = hits.length + ' similar name' + (hits.length === 1 ? '' : 's');
+      status.textContent = hits.length === 1 ? t('find.one') : t('find.many', { n: hits.length });
     }
   }
 
@@ -208,9 +216,9 @@ function renderHits(hits, label, live) {
 
   const rows = listed.map(listRowHTML);
   if (!hits.length) {
-    rows.push(waAskHTML(label, 'Not in the catalog — ask the shop for this model'));
+    rows.push(waAskHTML(label, t('find.ask')));
   } else if (!live) {
-    rows.push(waAskHTML(label, 'Not the right one? Ask for this model'));
+    rows.push(waAskHTML(label, t('find.wrong')));
   }
   ask.hidden = !rows.length;
   ask.innerHTML = rows.join('');
@@ -267,7 +275,10 @@ function bindSuggestBox(input, box) {
   });
 }
 
+let findBound = false;
 function bindFind() {
+  if (findBound) return;
+  findBound = true;
   const form = document.getElementById('gs-find-form');
   const formName = document.getElementById('gs-find-name');
   const formModel = document.getElementById('gs-find-model');
@@ -347,7 +358,8 @@ function shopAllBox() {
 }
 
 function catItem([name, ico]) {
-  const short = name.length > 12 ? name.slice(0, 11) + '…' : name;
+  const label = catLabel(name);
+  const short = label.length > 16 ? label.slice(0, 15) + '…' : label;
   return `<a href="#${catId(name)}" class="gs-cat">
     <div class="gs-cat-ico"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">${ico}</svg></div>
     <span class="gs-cat-lbl">${esc(short)}</span>
@@ -407,7 +419,7 @@ function boot() {
   const sb = document.getElementById('gs-cats-list');
   if (sb) {
     sb.innerHTML = CATS.map(([name, ico]) =>
-      `<a href="#${catId(name)}" class="gs-sb-cat"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">${ico}</svg>${esc(name)}</a>`
+      `<a href="#${catId(name)}" class="gs-sb-cat"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">${ico}</svg>${esc(catLabel(name))}</a>`
     ).join('');
   }
   const row = document.getElementById('gs-cats-row');
@@ -416,7 +428,8 @@ function boot() {
   const shortcuts = document.getElementById('gs-shortcuts');
   if (shortcuts) {
     shortcuts.innerHTML = CATS.map(([name, ico]) => {
-      const short = name.length > 10 ? name.slice(0, 9) + '…' : name;
+      const label = catLabel(name);
+      const short = label.length > 12 ? label.slice(0, 11) + '…' : label;
       return `<a href="#${catId(name)}" class="gs-sc">
         <span class="gs-sc-ico"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24">${ico}</svg></span>
         <span class="gs-sc-lbl">${esc(short)}</span>
@@ -438,8 +451,8 @@ function boot() {
     const photos = items.filter((p) => p.img && !p.listOnly);
     const listed = items.filter((p) => !p.img || p.listOnly);
     return `<section class="gs-cat-block" id="${catId(name)}">
-      <div class="gs-sh"><div><h2>${esc(name)}</h2><p>${items.length} products</p></div>
-      <a href="#shop-all" class="gs-viewall">View All</a></div>
+      <div class="gs-sh"><div><h2>${esc(catLabel(name))}</h2><p>${t('products', { n: items.length })}</p></div>
+      <a href="#shop-all" class="gs-viewall">${t('viewall')}</a></div>
       ${photos.length ? `<div class="gs-grid">${photos.map(cardHTML).join('')}</div>` : ''}
       ${listed.length ? `<div class="gs-list">${listed.map(listRowHTML).join('')}</div>` : ''}
     </section>`;
@@ -506,6 +519,7 @@ document.addEventListener('click', (e) => {
 
 window.addEventListener('hashchange', () => goHash(location.hash));
 
+document.addEventListener('gs-lang', boot);
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', boot);
 } else {
