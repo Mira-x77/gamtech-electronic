@@ -251,14 +251,14 @@ button{font-family:var(--font);cursor:pointer;border:none;outline:none;backgroun
 .gs-find{background:var(--card);border:1px solid var(--b1);border-radius:var(--r);
   padding:16px 16px 12px;margin-bottom:22px}
 .gs-find .gs-sh{margin-bottom:12px}
-.gs-find-form{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;margin-bottom:12px}
+.gs-find-form{display:grid;grid-template-columns:2fr 2fr auto;gap:10px;align-items:end;margin-bottom:12px}
 .gs-find-field{display:flex;flex-direction:column;gap:5px;min-width:0}
-.gs-find-field span{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--mu)}
-.gs-find-field input{height:42px;border-radius:8px;border:1.5px solid var(--b2);background:var(--bg);
-  color:var(--wh);font-family:var(--font);font-size:13px;padding:0 12px;outline:none;width:100%}
+.gs-find-field span{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--mu)}
+.gs-find-field input{height:50px;border-radius:10px;border:1.5px solid var(--b2);background:var(--bg);
+  color:var(--wh);font-family:var(--font);font-size:15px;padding:0 18px;outline:none;width:100%}
 .gs-find-field input:focus{border-color:var(--pu);box-shadow:0 0 0 3px var(--pug)}
-.gs-find-btn{height:42px;padding:0 22px;border:none;border-radius:8px;background:var(--pu);color:var(--wh);
-  font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+.gs-find-btn{height:50px;padding:0 24px;border:none;border-radius:10px;background:var(--pu);color:var(--wh);
+  font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
 .gs-find-btn:hover{background:var(--pud)}
 .gs-find-hint,.gs-find-status{font-size:12px;color:var(--mu);margin-bottom:10px;line-height:1.45}
 .gs-find-status{color:var(--pul);font-weight:600}
@@ -323,7 +323,12 @@ button{font-family:var(--font);cursor:pointer;border:none;outline:none;backgroun
 /* ═══ CART PANEL ══════════════════════════════════════════ */
 .gs-ct{width:var(--cw);flex-shrink:0;height:100%;background:var(--bg2);
   border-left:1px solid var(--b1);display:flex;flex-direction:column;
-  overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--b2) transparent}
+  overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--b2) transparent;
+  position:absolute;top:0;right:0;bottom:0;
+  transform:translateX(100%);
+  transition:transform .28s cubic-bezier(.4,0,.2,1);
+  z-index:160}
+.gs-ct.open{transform:translateX(0)}
 .gs-ct::-webkit-scrollbar{width:3px}
 .gs-ct::-webkit-scrollbar-thumb{background:var(--b2)}
 .gs-ct-hd{display:flex;align-items:center;justify-content:space-between;

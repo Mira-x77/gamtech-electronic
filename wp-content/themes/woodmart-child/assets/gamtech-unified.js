@@ -99,13 +99,24 @@ document.addEventListener('DOMContentLoaded',function(){
     el.classList.add('open');
     if(window.innerWidth<=1024) ov&&ov.classList.add('on');
   }
-  function closeAll(){sb&&sb.classList.remove('open');ct&&ct.classList.remove('open');ov&&ov.classList.remove('on');}
+  function closeAll(){
+    if(sb)sb.classList.remove('open');
+    if(ct)ct.classList.remove('open');
+    if(ov)ov.classList.remove('on');
+  }
 
   var sbTog=qs('#gs-sb-tog'), ctClose=qs('#gs-ct-close');
   qa('.gs-ct-tog-btn').forEach(function(btn){btn.addEventListener('click',function(){openPanel(ct);});});
   sbTog&&sbTog.addEventListener('click',function(){openPanel(sb);});
-  ctClose&&ctClose.addEventListener('click',closeAll);
-  ov&&ov.addEventListener('click',closeAll);
+  ctClose&&ctClose.addEventListener('click',function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    closeAll();
+  });
+  ov&&ov.addEventListener('click',function(e){
+    e.preventDefault();
+    closeAll();
+  });
 
   var catsTog=qs('#gs-cats-tog'), catsList=qs('#gs-cats-list');
   if(catsTog&&catsList){
@@ -207,6 +218,117 @@ document.addEventListener('DOMContentLoaded',function(){
     qa('.gs-card,.gs-promo,.gs-ft-card').forEach(function(el){io.observe(el);});
   }
 
+  // Handle hash navigation for menu buttons - show/hide sections
+  function handleHashNavigation(hash) {
+    if (!hash) return;
+    var targetId = hash.replace('#', '');
+    
+    // Special handling for home/shop
+    if (hash === '/' || targetId === 'shop') {
+      // Show hero section, hide all others
+      showSection('shop');
+      updateActiveNav('/');
+      closeAll();
+      return;
+    }
+    
+    var targetEl = document.getElementById(targetId);
+    if (targetEl) {
+      // Show only this section, hide all others
+      showSection(targetId);
+      updateActiveNav(hash);
+      closeAll();
+    }
+  }
+
+  // Show only the target section, hide all others
+  function showSection(targetId) {
+    var mainEl = qs('.gs-mn');
+    if (!mainEl) return;
+    
+    if (targetId === 'shop') {
+      // For home, show all home-related sections
+      var hero = qs('.gs-hero-slider');
+      var cats = qs('#gs-cats-row');
+      var find = qs('#find-model');
+      var deals = qs('#deals');
+      var arrivals = qs('#arrivals');
+      var shopAll = qs('#shop-all');
+      
+      // Show home sections
+      if (hero) hero.style.display = '';
+      if (cats) cats.style.display = 'flex';
+      if (find) find.style.display = 'flex';
+      if (deals) deals.style.display = 'block';
+      if (arrivals) arrivals.style.display = 'block';
+      if (shopAll) shopAll.style.display = 'none'; // Hide shop-all on home
+      
+      mainEl.scrollTop = 0;
+    } else {
+      // Hide home sections
+      var hero = qs('.gs-hero-slider');
+      var cats = qs('#gs-cats-row');
+      var find = qs('#find-model');
+      var deals = qs('#deals');
+      var arrivals = qs('#arrivals');
+      var shopAll = qs('#shop-all');
+      
+      if (hero) hero.style.display = 'none';
+      if (cats) cats.style.display = 'none';
+      if (find) find.style.display = 'none';
+      if (deals) deals.style.display = 'none';
+      if (arrivals) arrivals.style.display = 'none';
+      
+      // Show the target section
+      var targetEl = document.getElementById(targetId);
+      if (targetEl) {
+        targetEl.style.display = 'flex';
+      }
+      
+      mainEl.scrollTop = 0;
+    }
+  }
+
+  // Update active state for navigation menu
+  function updateActiveNav(hash) {
+    qa('.gs-nav-a').forEach(function(link) {
+      link.classList.remove('active');
+    });
+    var activeLink = qs('.gs-nav-a[href="' + hash + '"]');
+    if (activeLink) {
+      activeLink.classList.add('active');
+    } else if (hash === '#shop-all' || hash === '#find-model') {
+      // If it's shop-all or find-model, activate the "Toute la boutique" link
+      var shopLink = qs('.gs-nav-a[href="#shop-all"]');
+      if (shopLink) shopLink.classList.add('active');
+    }
+  }
+
+  // Listen for hash changes
+  window.addEventListener('hashchange', function() {
+    handleHashNavigation(window.location.hash);
+  });
+
+  // Handle clicks on navigation links
+  document.addEventListener('click', function(e) {
+    var link = e.target.closest('a[href^="#"]');
+    if (link && link.getAttribute('href').length > 1) {
+      var hash = link.getAttribute('href');
+      handleHashNavigation(hash);
+    }
+  });
+
+  // Initialize on page load
+  if (window.location.hash) {
+    setTimeout(function() {
+      handleHashNavigation(window.location.hash);
+    }, 100);
+  } else {
+    var homeLink = qs('.gs-nav-a[href="/"]');
+    if (homeLink) homeLink.classList.add('active');
+    showSection('shop'); // Show home by default
+  }
+
   fetch('/api/hero').then(function(r){return r.ok?r.json():Promise.reject();})
     .catch(function(){return fetch('/hero.json').then(function(r){return r.ok?r.json():null;});})
     .then(function(data){if(data)paintHero(data);initHeroSlider();})
@@ -286,9 +408,6 @@ document.addEventListener('DOMContentLoaded',function(){
     if(banner)banner.hidden=true;
     pingVisit();
   });
-});
-})();
-
 
   // ═══ THEME TOGGLE (DARK/LIGHT) ═══════════════════════
   var themeTog=qs('#gs-theme-tog');
