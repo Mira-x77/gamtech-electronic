@@ -59,16 +59,19 @@ function confirmUrl(p) {
 
 function listRowHTML(p) {
   const addPrice = p.price == null || p.price === '' ? 0 : Number(p.price);
-  return `<div class="gs-list-row gs-card">
-    <div class="gs-list-main">
+  return `<div class="gs-card">
+    <div class="gs-card-img gs-card-img-empty">
+      <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="opacity:.3"><rect x="2" y="3" width="20" height="14" rx="2"/><circle cx="8" cy="9" r="2"/><path d="m21 15-5-5L5 20"/></svg>
+    </div>
+    <div class="gs-card-body">
       <span class="gs-card-brand">${esc(p.sub || p.cat || 'GamTech')}</span>
-      <span class="gs-card-name">${esc(p.name)}</span>
+      <a href="#" class="gs-card-name">${esc(p.name)}</a>
       <div class="gs-card-price">${priceHTML(p)}</div>
     </div>
-    <div class="gs-list-actions">
-      <a class="gs-confirm-img" href="${esc(confirmUrl(p))}" target="_blank" rel="noopener noreferrer">${t('confirm')}</a>
-      <a href="#" class="gs-add-btn" data-id="${esc(p.id)}" data-price="${addPrice}" data-name="${esc(p.name)}" data-img="">${t('add')}</a>
-    </div>
+    <a href="#" class="gs-add-btn" data-id="${esc(p.id)}" data-price="${addPrice}" data-name="${esc(p.name)}" data-img="">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      ${t('add')}
+    </a>
   </div>`;
 }
 
@@ -454,7 +457,7 @@ function boot() {
       <div class="gs-sh"><div><h2>${esc(catLabel(name))}</h2><p>${t('products', { n: items.length })}</p></div>
       <a href="#shop-all" class="gs-viewall">${t('viewall')}</a></div>
       ${photos.length ? `<div class="gs-grid">${photos.map(cardHTML).join('')}</div>` : ''}
-      ${listed.length ? `<div class="gs-list">${listed.map(listRowHTML).join('')}</div>` : ''}
+      ${listed.length ? `<div class="gs-grid">${listed.map(listRowHTML).join('')}</div>` : ''}
     </section>`;
   }).join('');
 
