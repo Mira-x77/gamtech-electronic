@@ -282,7 +282,7 @@ document.addEventListener('DOMContentLoaded',function(){
       // Show the target section
       var targetEl = document.getElementById(targetId);
       if (targetEl) {
-        targetEl.style.display = 'flex';
+        targetEl.style.display = (targetId === 'shop-all') ? 'block' : 'flex';
       }
       
       mainEl.scrollTop = 0;
