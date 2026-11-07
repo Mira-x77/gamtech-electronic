@@ -135,16 +135,20 @@ document.addEventListener('DOMContentLoaded',function(){
   });
 
   function recalc(){
-    var sub=0,hasPromo=document.getElementById('gs-promo-applied');
+    var sub=0,hasAsk=false,askLabel=window.gsT?window.gsT('ask'):'Prix sur demande';
+    var hasPromo=document.getElementById('gs-promo-applied');
     qa('.gs-ct-item').forEach(function(item){
       var prEl=item.querySelector('.gs-ct-price');var qEl=item.querySelector('.gs-qty-n');
       if(!prEl||!qEl)return;
-      sub+=(parseFloat(prEl.dataset.price)||0)*(parseInt(qEl.textContent)||1);
+      var p=parseFloat(prEl.dataset.price)||0;
+      if(p>0){sub+=p*(parseInt(qEl.textContent)||1);}else{hasAsk=true;}
     });
     var disc=hasPromo?sub*0.1:0, tot=sub-disc;
-    var s=qs('#gs-sub');if(s)s.textContent=formatCFA(sub);
+    var subTxt=sub>0?formatCFA(sub)+(hasAsk?' + '+askLabel:''):(hasAsk?askLabel:formatCFA(0));
+    var totTxt=tot>0?formatCFA(tot)+(hasAsk?' + '+askLabel:''):(hasAsk?askLabel:formatCFA(0));
+    var s=qs('#gs-sub');if(s)s.textContent=subTxt;
     var d=qs('#gs-disc');if(d)d.textContent=disc>0?'-'+formatCFA(disc):formatCFA(0);
-    var t=qs('#gs-tot');if(t)t.textContent=formatCFA(tot);
+    var t=qs('#gs-tot');if(t)t.textContent=totTxt;
   }
 
   function updateBadge(){
@@ -152,6 +156,8 @@ document.addEventListener('DOMContentLoaded',function(){
     var b1=qs('#gs-badge-hd');if(b1)b1.textContent=n;
     var b2=qs('#gs-badge-mob');if(b2)b2.textContent=n;
     var bc=qs('#gs-ct-cnt');if(bc)bc.textContent=n;
+    // Show the "empty cart" panel only when there is nothing in the cart.
+    var empty=qs('.gs-ct-empty');if(empty)empty.style.display=n?'none':'';
   }
 
   var nameIn=qs('#gs-cart-name');
@@ -159,6 +165,8 @@ document.addEventListener('DOMContentLoaded',function(){
     try{nameIn.value=localStorage.getItem('gs-cart-name')||'';}catch(e){}
     nameIn.addEventListener('input',function(){
       try{localStorage.setItem('gs-cart-name',nameIn.value);}catch(e){}
+      var errEl=qs('#gs-cart-name-err');
+      if(errEl&&String(nameIn.value||'').trim())errEl.hidden=true;
     });
   }
 
@@ -168,8 +176,10 @@ document.addEventListener('DOMContentLoaded',function(){
     if(!btn)return;
     e.preventDefault();
     // Prevent duplicate adds
-    if(isProductInCart(btn.dataset.id)){
+    if(btn.dataset.id&&isProductInCart(btn.dataset.id)){
+      var prev=btn.innerHTML;
       btn.innerHTML='<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> '+(window.gsT?window.gsT('already_added'):'Déjà ajouté');
+      setTimeout(function(){btn.innerHTML=prev;},1200);
       return;
     }
     var card=btn.closest('.gs-card');
@@ -240,8 +250,9 @@ document.addEventListener('DOMContentLoaded',function(){
       entries.forEach(function(en){
         if(en.isIntersecting){
           en.target.classList.add('gs-fade');
-          // Re-observe after fade in
-          setTimeout(function(){io.observe(en.target);}, 100);
+          // Animate once; re-observing would replay the fade every time the
+          // list is scrolled, which looks like the page reloading.
+          io.unobserve(en.target);
         }
       });
     },{threshold:.08});
@@ -426,13 +437,14 @@ document.addEventListener('DOMContentLoaded',function(){
     showCartId();
     var orderData = [];
     var total = 0;
+    var hasAsk = false;
     items.forEach(function(item) {
       var itemName = (item.querySelector('.gs-ct-name') || {}).textContent || 'Product';
       var priceEl = item.querySelector('.gs-ct-price');
       var qtyEl = item.querySelector('.gs-qty-n');
       var price = priceEl ? (parseFloat(priceEl.dataset.price) || 0) : 0;
       var qty = qtyEl ? (parseInt(qtyEl.textContent) || 1) : 1;
-      total += price * qty;
+      if (price > 0) { total += price * qty; } else { hasAsk = true; }
       orderData.push({ name: itemName, price: price, qty: qty });
     });
     var order = { id: id, name: name, items: orderData, total: total };
@@ -447,7 +459,7 @@ document.addEventListener('DOMContentLoaded',function(){
       message += (idx + 1) + '. ' + item.name + '\n';
       message += 'Qty: ' + item.qty + ' x ' + formatCFA(item.price) + ' = ' + formatCFA(item.price * item.qty) + '\n\n';
     });
-    message += 'Total: ' + formatCFA(total) + '\n\n';
+    message += 'Total: ' + formatCFA(total) + (hasAsk ? (total > 0 ? ' + articles sur demande' : 'Articles sur demande') : '') + '\n\n';
     message += 'Open cart: ' + orderPageUrl;
     var whatsappNumber = btn.dataset.phone || '22890597003';
     window.location.href = 'https://wa.me/' + whatsappNumber + '?text=' + encodeURIComponent(message);

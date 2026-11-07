@@ -37,11 +37,16 @@ try {
     return `<tr>
       <td>${esc(item.name)}</td>
       <td>${esc(item.qty)}</td>
-      <td>${item.price ? formatCFA(item.price) : 'Ask'}</td>
+      <td>${item.price ? formatCFA(item.price) : 'Sur demande'}</td>
       <td>${item.price ? formatCFA(line) : '—'}</td>
     </tr>`;
   }).join('');
-  document.getElementById('or-total').textContent = 'Total ' + formatCFA(order.total);
+  const hasAsk = (order.items || []).some((item) => !(Number(item.price) > 0));
+  const totalNum = Number(order.total) || 0;
+  let totalText;
+  if (totalNum > 0) totalText = formatCFA(totalNum) + (hasAsk ? ' + sur demande' : '');
+  else totalText = hasAsk ? 'Sur demande' : formatCFA(0);
+  document.getElementById('or-total').textContent = 'Total ' + totalText;
 } catch {
   miss.hidden = false;
 }

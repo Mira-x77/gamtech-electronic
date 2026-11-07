@@ -41,6 +41,14 @@ async function main() {
   copyFile(catalogFile, path.join(pub, 'catalog-data.js'));
   copyFile(path.join(root, 'preview/catalog.js'), path.join(pub, 'catalog.js'));
 
+  // Plain (non-module) scripts and styles referenced by the HTML pages. Vite
+  // leaves these untouched in the build, so they must live in public/ or the
+  // deployed site would 404 on the cart, order and admin pages.
+  for (const file of ['i18n.js', 'order.js', 'order.css', 'admin.js', 'admin.css']) {
+    const from = path.join(root, 'preview', file);
+    if (fs.existsSync(from)) copyFile(from, path.join(pub, file));
+  }
+
   const catalog = fs.readFileSync(catalogFile, 'utf8');
   const imgs = new Set();
   for (const m of catalog.matchAll(/"img":\s*"\/product-images\/([^"]+)"/g)) {

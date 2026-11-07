@@ -566,6 +566,9 @@ document.addEventListener('click', (e) => {
   }
   if (href.charAt(0) !== '#') return;
   e.preventDefault();
+  // Bare "#" anchors are in-page controls (add-to-cart, card title). They must
+  // not scroll or navigate, otherwise adding an item looks like a refresh.
+  if (href === '#') return;
   goHash(href);
 });
 
