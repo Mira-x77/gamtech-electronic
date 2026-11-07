@@ -49,6 +49,11 @@ async function main() {
     if (fs.existsSync(from)) copyFile(from, path.join(pub, file));
   }
 
+  // The static admin reads the live overrides so it can merge edits before
+  // committing them back to GitHub.
+  const overridesFile = path.join(root, 'preview/data/overrides.json');
+  if (fs.existsSync(overridesFile)) copyFile(overridesFile, path.join(pub, 'overrides.json'));
+
   const catalog = fs.readFileSync(catalogFile, 'utf8');
   const imgs = new Set();
   for (const m of catalog.matchAll(/"img":\s*"\/product-images\/([^"]+)"/g)) {

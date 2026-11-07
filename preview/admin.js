@@ -4,21 +4,123 @@ const CATS = [
   'Adapters & Hubs', 'Replacement Keyboards', 'Batteries', 'Chargers', 'Screens',
 ];
 
-const state = { pin: sessionStorage.getItem('gs-admin-pin') || '', products: [], hero: { slides: [] }, photos: [], photoLimit: 24, page: 0, perPage: 50 };
+const GH_REPO = 'Mira-x77/gamtech-electronic';
+const GH_BRANCH = 'main';
+// SHA-256("gamtech"). The real write protection is the GitHub token: the live
+// site is static, so edits only happen if a token with Contents:write is given.
+const PIN_HASH = '532480b1d38725b3459feb13531b939202cef1d176adaf98299700e0118e8fc9';
+
+const state = {
+  pin: sessionStorage.getItem('gs-admin-pin') || '',
+  products: [],
+  hero: { slides: [] },
+  photos: [],
+  photoLimit: 24,
+  page: 0,
+  perPage: 50,
+  mode: 'server',
+  ghToken: localStorage.getItem('gs-admin-gh') || '',
+  overrides: {},
+  dirtyOverrides: false,
+  dirtyHero: false,
+};
 
 function $(id) { return document.getElementById(id); }
 
-async function api(path, body) {
-  const res = await fetch(path, {
-    method: body ? 'POST' : 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-admin-pin': state.pin,
-    },
-    body: body ? JSON.stringify(body) : undefined,
+function normName(s) {
+  return String(s || '')
+    .toLowerCase()
+    .replace(/^gamtech\s+/i, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+function utf8ToB64(str) {
+  return btoa(unescape(encodeURIComponent(str)));
+}
+
+function b64ToUtf8(b64) {
+  return decodeURIComponent(escape(atob(String(b64).replace(/\s/g, ''))));
+}
+
+async function sha256(text) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+function ghHeaders() {
+  if (!state.ghToken) throw new Error('Paste a GitHub token on the login screen to save on the live site.');
+  return {
+    Authorization: 'Bearer ' + state.ghToken,
+    Accept: 'application/vnd.github+json',
+    'Content-Type': 'application/json',
+  };
+}
+
+async function ghGetFile(path) {
+  const res = await fetch(
+    `https://api.github.com/repos/${GH_REPO}/contents/${path}?ref=${GH_BRANCH}`,
+    { headers: ghHeaders(), cache: 'no-store' }
+  );
+  if (res.status === 404) return { sha: '', text: '' };
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error('GitHub: ' + (data.message || res.status));
+  return { sha: data.sha || '', text: b64ToUtf8(data.content || '') };
+}
+
+async function ghPut(path, b64, message) {
+  const cur = await ghGetFile(path);
+  const body = { message, content: b64, branch: GH_BRANCH };
+  if (cur.sha) body.sha = cur.sha;
+  const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${path}`, {
+    method: 'PUT',
+    headers: ghHeaders(),
+    body: JSON.stringify(body),
   });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || res.statusText);
+  if (!res.ok) throw new Error('GitHub: ' + (data.message || res.status));
+  return data;
+}
+
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = src;
+    s.onload = resolve;
+    s.onerror = () => reject(new Error('Could not load ' + src));
+    document.head.appendChild(s);
+  });
+}
+
+function showLoginError(msg) {
+  const err = $('login-err');
+  if (!err) return;
+  err.hidden = !msg;
+  err.textContent = msg || '';
+}
+
+async function api(path, body) {
+  let res;
+  try {
+    res = await fetch(path, {
+      method: body ? 'POST' : 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-admin-pin': state.pin,
+      },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+  } catch (ex) {
+    const err = new Error('Admin API unreachable');
+    err.network = true;
+    throw err;
+  }
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const err = new Error(data.error || res.statusText || ('HTTP ' + res.status));
+    err.status = res.status;
+    throw err;
+  }
   return data;
 }
 
@@ -248,11 +350,14 @@ function readHeroFromDom() {
 
 async function openDesk() {
   const data = await api('/api/admin/catalog');
+  state.mode = 'server';
   state.products = data.products || [];
   $('gate').hidden = true;
   $('app').hidden = false;
+  showLoginError('');
   const sel = $('cat');
   sel.innerHTML = '<option value="">All categories</option>' + CATS.map((c) => `<option>${c}</option>`).join('');
+  updateModeBar();
   render();
   try {
     renderStats(await api('/api/admin/stats'));
@@ -267,18 +372,234 @@ async function openDesk() {
   }
 }
 
+// ─── Static mode (Vercel) ───────────────────────────────────────────────
+// The deployed site has no API server. The admin loads the published catalog,
+// stores edits in an overrides object, and commits it to GitHub. Vercel then
+// rebuilds the storefront.
+
+async function openDeskStatic() {
+  if ((await sha256(state.pin)) !== PIN_HASH) {
+    showLoginError('Wrong PIN');
+    return;
+  }
+  sessionStorage.setItem('gs-admin-pin', state.pin);
+  state.mode = 'static';
+  if (!window.GAMTECH_PRODUCTS) await loadScript('/catalog-data.js');
+  state.products = (window.GAMTECH_PRODUCTS || []).map((p) => ({ ...p }));
+  try {
+    const res = await fetch('/overrides.json', { cache: 'no-store' });
+    if (res.ok) state.overrides = await res.json();
+  } catch {
+    state.overrides = {};
+  }
+  $('gate').hidden = true;
+  $('app').hidden = false;
+  showLoginError('');
+  const sel = $('cat');
+  sel.innerHTML = '<option value="">All categories</option>' + CATS.map((c) => `<option>${c}</option>`).join('');
+  updateModeBar();
+  render();
+  renderStats({ stats: { total: 0, unique: 0, days: [] }, orders: [] });
+  try {
+    const res = await fetch('/hero.json', { cache: 'no-store' });
+    if (res.ok) {
+      state.hero = await res.json();
+      renderHero();
+    }
+  } catch {
+    state.hero = { slides: [] };
+  }
+}
+
+function updateModeBar() {
+  const note = $('mode-note');
+  const btn = $('gh-publish');
+  if (!note || !btn) return;
+  if (state.mode !== 'static') {
+    note.hidden = true;
+    btn.hidden = true;
+    return;
+  }
+  note.hidden = false;
+  btn.hidden = false;
+  note.textContent = state.ghToken
+    ? 'Live admin · Save marks a change in this browser; Publish live commits it to GitHub. Vercel rebuilds in about a minute.'
+    : 'Live site · read-only. Paste a GitHub token on the login screen to save changes.';
+  const dirty = state.dirtyOverrides || state.dirtyHero;
+  btn.disabled = !state.ghToken || !dirty;
+  btn.textContent = dirty ? 'Publish live' : 'Nothing to publish';
+}
+
+function markDirty(kind) {
+  if (kind === 'hero') state.dirtyHero = true;
+  else state.dirtyOverrides = true;
+  updateModeBar();
+}
+
+function upsertLocal(product) {
+  const ov = state.overrides || {};
+  const key = String(product.id);
+  const rec = {
+    ...(ov[key] || {}),
+    id: product.id,
+    src: product.src || '',
+    name: product.name,
+    cat: product.cat,
+    sub: product.sub || '',
+    img: product.img == null ? null : product.img,
+    price: product.price == null ? null : product.price,
+    was: product.was == null ? null : product.was,
+    listOnly: !!product.listOnly,
+    confirmUrl: product.confirmUrl || '',
+    hidden: !!product.hidden,
+    deleted: !!product.deleted,
+    also: product.also || '',
+  };
+  ov[key] = rec;
+  ov[normName(product.name)] = rec;
+  if (product.src) ov['src:' + product.src] = rec;
+  state.overrides = ov;
+}
+
+function findLocalProduct(id) {
+  return state.products.find((x) => String(x.id) === String(id));
+}
+
+async function publishStatic() {
+  if (!state.ghToken) {
+    status('Paste a GitHub token on the login screen first.', false);
+    return;
+  }
+  const btn = $('gh-publish');
+  if (!btn) return;
+  btn.disabled = true;
+  btn.textContent = 'Publishing…';
+  try {
+    if (state.dirtyOverrides) {
+      await ghPut(
+        'preview/data/overrides.json',
+        utf8ToB64(JSON.stringify(state.overrides, null, 2) + '\n'),
+        'Admin: update product overrides'
+      );
+      state.dirtyOverrides = false;
+    }
+    if (state.dirtyHero) {
+      await ghPut(
+        'preview/data/hero.json',
+        utf8ToB64(JSON.stringify(state.hero, null, 2) + '\n'),
+        'Admin: update hero'
+      );
+      state.dirtyHero = false;
+    }
+    status('Published. Vercel rebuilds in about a minute.', true);
+  } catch (ex) {
+    status(ex.message, false);
+  } finally {
+    updateModeBar();
+  }
+}
+
+async function staticProductAction(act, payload) {
+  const i = state.products.findIndex((x) => String(x.id) === String(payload.id));
+  const p = i >= 0 ? { ...state.products[i], ...payload } : { ...payload };
+  if (payload.price === '' || payload.askPrice) p.price = null;
+  if (act === 'clear') {
+    p.img = null;
+    p.listOnly = true;
+  }
+  if (act === 'delete') {
+    if (!window.confirm('Delete ' + (payload.name || 'this item') + ' from the shop?')) return;
+    p.deleted = true;
+    p.hidden = true;
+    upsertLocal(p);
+    state.products = state.products.filter((x) => String(x.id) !== String(p.id));
+    markDirty();
+    render();
+    status('Deleted here — Publish live to remove it from the shop.', true);
+    return;
+  }
+  upsertLocal(p);
+  if (i >= 0) state.products[i] = p;
+  markDirty();
+  render();
+  status((act === 'clear' ? 'Photo removed' : 'Saved') + ' here — Publish live to push it.', true);
+}
+
+async function staticUpload(id, file, dataUrl) {
+  const p = findLocalProduct(id);
+  if (!p) throw new Error('Product not found');
+  const comma = dataUrl.indexOf(',');
+  const b64 = comma >= 0 ? dataUrl.slice(comma + 1) : dataUrl;
+  const ext = /\.png$/i.test(file.name) ? '.png' : /\.webp$/i.test(file.name) ? '.webp' : /\.gif$/i.test(file.name) ? '.gif' : '.jpg';
+  const slug = String(p.name || 'item').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'item';
+  const name = `${p.id}-${slug}${ext}`;
+  status('Uploading photo to GitHub…');
+  await ghPut('wp-content/uploads/product-images/admin/' + name, b64, 'Admin: upload photo for ' + p.name);
+  p.img = '/product-images/admin/' + name;
+  p.listOnly = false;
+  upsertLocal(p);
+  const i = state.products.findIndex((x) => String(x.id) === String(id));
+  if (i >= 0) state.products[i] = p;
+  markDirty();
+  render();
+  status('Photo uploaded — Publish live to use it on the shop.', true);
+}
+
+function staticHeroSave() {
+  state.hero = readHeroFromDom();
+  markDirty('hero');
+  renderHero();
+  status('Hero saved here — Publish live to push it.', true);
+}
+
+async function staticHeroImage(index, file, dataUrl) {
+  const comma = dataUrl.indexOf(',');
+  const b64 = comma >= 0 ? dataUrl.slice(comma + 1) : dataUrl;
+  const ext = /\.png$/i.test(file.name) ? '.png' : '.jpg';
+  const name = `slide-${index}-${Date.now()}${ext}`;
+  status('Uploading hero photo to GitHub…');
+  await ghPut('wp-content/uploads/product-images/hero/' + name, b64, 'Admin: upload hero image');
+  if (!state.hero.slides[index]) {
+    state.hero.slides[index] = { img: '', tag: '', title: '', highlight: '', text: '', cta: 'Shop Now' };
+  }
+  state.hero.slides[index].img = '/product-images/hero/' + name;
+  markDirty('hero');
+  renderHero();
+  status('Hero photo uploaded — Publish live to push it.', true);
+}
+
 $('login').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const err = $('login-err');
-  err.hidden = true;
+  showLoginError('');
   state.pin = $('pin').value;
+  const token = ($('gh-token').value || '').trim();
+  if (token) {
+    state.ghToken = token;
+    localStorage.setItem('gs-admin-gh', token);
+  }
+  // ?static=1 lets us exercise the Vercel path on the local dev server.
+  if (new URLSearchParams(location.search).get('static') === '1') {
+    try {
+      await openDeskStatic();
+    } catch (ex) {
+      showLoginError(ex.message);
+    }
+    return;
+  }
   try {
     await api('/api/admin/login', { pin: state.pin });
     sessionStorage.setItem('gs-admin-pin', state.pin);
     await openDesk();
   } catch (ex) {
-    err.hidden = false;
-    err.textContent = ex.message;
+    if (ex.status === 404 || ex.network) {
+      try {
+        await openDeskStatic();
+      } catch (e2) {
+        showLoginError(e2.message);
+      }
+    } else {
+      showLoginError(ex.message);
+    }
   }
 });
 
@@ -312,6 +633,10 @@ $('next-page').addEventListener('click', () => {
   render();
 });
 $('add-item').addEventListener('click', async () => {
+  if (state.mode === 'static') {
+    status('Adding new items needs the local desk (save it with the PIN, then Publish live).', false);
+    return;
+  }
   try {
     const out = await api('/api/admin/product', {
       name: 'New item',
@@ -333,6 +658,10 @@ $('add-item').addEventListener('click', async () => {
 
 $('pin-form').addEventListener('submit', async (e) => {
   e.preventDefault();
+  if (state.mode === 'static') {
+    status('PIN change needs the local desk.', false);
+    return;
+  }
   const pin = $('new-pin').value.trim();
   try {
     await api('/api/admin/pin', { pin });
@@ -350,6 +679,14 @@ $('rows').addEventListener('click', async (e) => {
   if (!btn) return;
   const tr = e.target.closest('tr');
   const payload = readRow(tr);
+  if (state.mode === 'static') {
+    try {
+      await staticProductAction(btn.dataset.act, payload);
+    } catch (ex) {
+      status(ex.message, false);
+    }
+    return;
+  }
   try {
     if (btn.dataset.act === 'save') {
       const out = await api('/api/admin/product', payload);
@@ -390,6 +727,10 @@ $('rows').addEventListener('change', async (e) => {
     r.readAsDataURL(file);
   });
   try {
+    if (state.mode === 'static') {
+      await staticUpload(id, file, data);
+      return;
+    }
     const out = await api('/api/admin/upload', { id, name: file.name, data });
     const i = state.products.findIndex((x) => String(x.id) === String(out.product.id));
     if (i >= 0) state.products[i] = out.product;
@@ -400,7 +741,13 @@ $('rows').addEventListener('change', async (e) => {
   }
 });
 
-$('photo-refresh').addEventListener('click', loadPhotos);
+$('photo-refresh').addEventListener('click', () => {
+  if (state.mode === 'static') {
+    $('photo-count').textContent = 'Photo review needs the local desk. The live site can edit products; the photo queue runs locally.';
+    return;
+  }
+  loadPhotos();
+});
 
 $('photo-list').addEventListener('click', (e) => {
   if (e.target.id !== 'photo-more') return;
@@ -467,6 +814,14 @@ $('hero-slides').addEventListener('change', async (e) => {
 });
 
 $('hero-save').addEventListener('click', async () => {
+  if (state.mode === 'static') {
+    try {
+      staticHeroSave();
+    } catch (ex) {
+      status(ex.message, false);
+    }
+    return;
+  }
   try {
     state.hero = await api('/api/admin/hero', readHeroFromDom());
     renderHero();
@@ -476,8 +831,24 @@ $('hero-save').addEventListener('click', async () => {
   }
 });
 
+$('gh-publish').addEventListener('click', publishStatic);
+
 if (state.pin) {
-  openDesk().catch(() => {
+  // On the live site the API does not exist; open in static mode directly so
+  // the desk is not stuck behind a failed login request.
+  const tryOpen = async () => {
+    try {
+      await openDesk();
+    } catch (ex) {
+      if (ex.status === 404 || ex.network) {
+        await openDeskStatic();
+      } else {
+        sessionStorage.removeItem('gs-admin-pin');
+        state.pin = '';
+      }
+    }
+  };
+  tryOpen().catch(() => {
     sessionStorage.removeItem('gs-admin-pin');
     state.pin = '';
   });
