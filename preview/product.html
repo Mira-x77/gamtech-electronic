@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GamTech – Produit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/gamtech-unified.css?v=pd1">
+  <link rel="stylesheet" href="/product.css">
+</head>
+<body class="gs-body pd-body">
+  <main class="pd-page" id="pd-page" hidden>
+    <nav class="pd-crumb" aria-label="breadcrumb">
+      <a href="/">GamTech</a>
+      <span aria-hidden="true">›</span>
+      <a href="/#shop-all" id="pd-crumb-cat">Boutique</a>
+      <span aria-hidden="true">›</span>
+      <span id="pd-crumb-here" aria-current="page"></span>
+    </nav>
+
+    <div class="pd-wrap">
+      <div class="pd-img-col">
+        <div class="pd-img-main" id="pd-img-wrap"></div>
+      </div>
+
+      <div class="pd-info-col">
+        <p class="pd-brand" id="pd-brand"></p>
+        <h1 class="pd-title" id="pd-title"></h1>
+        <p class="pd-sub" id="pd-sub"></p>
+        <p class="pd-price-row">
+          <span class="pd-price" id="pd-price"></span>
+          <span class="pd-was" id="pd-was"></span>
+        </p>
+        <p class="pd-ask" id="pd-ask" hidden>Demandez le prix au magasin — commande via WhatsApp.</p>
+
+        <div class="pd-actions">
+          <button type="button" class="pd-add" id="pd-add-btn"></button>
+          <button type="button" class="pd-buy" id="pd-buy-btn">Commander WhatsApp</button>
+        </div>
+
+        <dl class="pd-specs" id="pd-specs"></dl>
+
+        <p class="pd-id" id="pd-id"></p>
+      </div>
+    </div>
+  </main>
+
+  <div class="pd-nf" id="pd-nf" hidden>
+    <h1>Produit introuvable</h1>
+    <p id="pd-nf-id"></p>
+    <a href="/">← Retour à la boutique</a>
+  </div>
+
+  <script src="/i18n.js?v=2"></script>
+  <script src="/catalog-data.js"></script>
+  <script src="/product.js"></script>
+</body>
+</html>

@@ -73,13 +73,13 @@ function categoryIcon(p) {
 function listRowHTML(p) {
   const addPrice = p.price == null || p.price === '' ? 0 : Number(p.price);
   return `<div class="gs-card">
-    <div class="gs-card-img gs-card-img-empty" role="img" aria-label="${esc(p.name)} — photo à venir">
+    <button type="button" class="gs-card-img gs-card-img-empty" data-pd="${esc(p.id)}" aria-label="${esc(p.name)}">
       <svg class="gs-ph-ico" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.3" viewBox="0 0 24 24">${categoryIcon(p)}</svg>
       <span class="gs-ph-txt">${t('photoSoon') !== 'photoSoon' ? t('photoSoon') : 'Photo à venir'}</span>
-    </div>
+    </button>
     <div class="gs-card-body">
       <span class="gs-card-brand">${esc(p.sub || p.cat || 'GamTech')}</span>
-      <a href="#" class="gs-card-name">${esc(p.name)}</a>
+      <a href="#" class="gs-card-name" data-pd="${esc(p.id)}">${esc(p.name)}</a>
       <div class="gs-card-price">${priceHTML(p)}</div>
     </div>
     <a href="#" class="gs-add-btn" data-id="${esc(p.id)}" data-price="${addPrice}" data-name="${esc(p.name)}" data-img="">
@@ -93,10 +93,10 @@ function cardHTML(p) {
   if (p.listOnly || !p.img) return listRowHTML(p);
   const addPrice = p.price == null || p.price === '' ? 0 : Number(p.price);
   return `<div class="gs-card">
-    <a href="#shop" class="gs-card-img"><img src="${esc(p.img)}" alt="${esc(p.name)}" decoding="async"></a>
+    <button type="button" class="gs-card-img" data-pd="${esc(p.id)}" aria-label="${esc(p.name)}"><img src="${esc(p.img)}" alt="${esc(p.name)}" decoding="async"></button>
     <div class="gs-card-body">
       <span class="gs-card-brand">${esc(p.sub || p.cat || 'GamTech')}</span>
-      <a href="#shop" class="gs-card-name">${esc(p.name)}</a>
+      <a href="#" class="gs-card-name" data-pd="${esc(p.id)}">${esc(p.name)}</a>
       <div class="gs-card-price">${priceHTML(p)}</div>
     </div>
     <a href="#" class="gs-add-btn" data-id="${esc(p.id)}" data-price="${addPrice}" data-name="${esc(p.name)}" data-img="${esc(p.img || '')}">
@@ -554,6 +554,18 @@ function goHash(hash) {
 
   return scrollMainTo(id);
 }
+
+// Clicking a card image or a product name opens its detail page.
+document.addEventListener('click', (e) => {
+  const link = e.target.closest('a[data-pd]');
+  const imgBtn = e.target.closest('.gs-card-img[data-pd]');
+  const hit = link || imgBtn;
+  if (!hit) return;
+  e.preventDefault();
+  const id = hit.getAttribute('data-pd');
+  if (!id) return;
+  window.location.href = '/product.html?id=' + encodeURIComponent(id);
+});
 
 document.addEventListener('click', (e) => {
   const a = e.target.closest('a[href]');

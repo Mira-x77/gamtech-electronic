@@ -6,7 +6,8 @@
   "installCommand": "npm install",
   "rewrites": [
     { "source": "/admin01", "destination": "/admin01.html" },
-    { "source": "/admin01/", "destination": "/admin01.html" }
+    { "source": "/admin01/", "destination": "/admin01.html" },
+    { "source": "/product/:id", "destination": "/product.html" }
   ],
   "headers": [
     {
@@ -27,6 +28,10 @@
     },
     {
       "source": "/gamtech-unified.js",
+      "headers": [{ "key": "Cache-Control", "value": "no-store" }]
+    },
+    {
+      "source": "/product.js",
       "headers": [{ "key": "Cache-Control", "value": "no-store" }]
     }
   ]
