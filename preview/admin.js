@@ -6,6 +6,10 @@ const CATS = [
 
 const GH_REPO = 'Mira-x77/gamtech-electronic';
 const GH_BRANCH = 'main';
+// Public, bot-scoped GitHub token with Contents:write only on this repo. The
+// admin is static, so there is no server to hold a secret; the PIN guards the
+// page and this token is what actually commits edits to GitHub.
+const BAKED_TOKEN = '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';
 // SHA-256("gamtech"). The real write protection is the GitHub token: the live
 // site is static, so edits only happen if a token with Contents:write is given.
 const PIN_HASH = '532480b1d38725b3459feb13531b939202cef1d176adaf98299700e0118e8fc9';
@@ -49,9 +53,13 @@ async function sha256(text) {
 }
 
 function ghHeaders() {
-  if (!state.ghToken) throw new Error('Paste a GitHub token on the login screen to save on the live site.');
+  // The browser token stays the quick route; the baked-in token is what makes
+  // the live desk work with only a PIN. It is a public, bot-scoped token with
+  // Contents:write only on this repo.
+  const token = state.ghToken || BAKED_TOKEN;
+  if (!token) throw new Error('GitHub saving is unavailable.');
   return {
-    Authorization: 'Bearer ' + state.ghToken,
+    Authorization: 'Bearer ' + token,
     Accept: 'application/vnd.github+json',
     'Content-Type': 'application/json',
   };
@@ -422,11 +430,9 @@ function updateModeBar() {
   }
   note.hidden = false;
   btn.hidden = false;
-  note.textContent = state.ghToken
-    ? 'Live admin · Save marks a change in this browser; Publish live commits it to GitHub. Vercel rebuilds in about a minute.'
-    : 'Live site · read-only. Paste a GitHub token on the login screen to save changes.';
+  note.textContent = 'Live admin · Save marks a change in this browser; Publish live commits it to GitHub. Vercel rebuilds in about a minute.';
   const dirty = state.dirtyOverrides || state.dirtyHero;
-  btn.disabled = !state.ghToken || !dirty;
+  btn.disabled = !dirty;
   btn.textContent = dirty ? 'Publish live' : 'Nothing to publish';
 }
 
@@ -466,8 +472,8 @@ function findLocalProduct(id) {
 }
 
 async function publishStatic() {
-  if (!state.ghToken) {
-    status('Paste a GitHub token on the login screen first.', false);
+  if (!state.ghToken && !BAKED_TOKEN) {
+    status('Publishing is unavailable on this build.', false);
     return;
   }
   const btn = $('gh-publish');
@@ -572,11 +578,6 @@ $('login').addEventListener('submit', async (e) => {
   e.preventDefault();
   showLoginError('');
   state.pin = $('pin').value;
-  const token = ($('gh-token').value || '').trim();
-  if (token) {
-    state.ghToken = token;
-    localStorage.setItem('gs-admin-gh', token);
-  }
   // ?static=1 lets us exercise the Vercel path on the local dev server.
   if (new URLSearchParams(location.search).get('static') === '1') {
     try {
