@@ -456,9 +456,14 @@ document.addEventListener('DOMContentLoaded',function(){
     var message = 'New order from ' + name + '\nCart ' + id + '\n\n';
     orderData.forEach(function(item, idx) {
       message += (idx + 1) + '. ' + item.name + '\n';
-      message += 'Qty: ' + item.qty + ' x ' + formatCFA(item.price) + ' = ' + formatCFA(item.price * item.qty) + '\n\n';
+      if (item.price > 0) {
+        message += 'Qty: ' + item.qty + ' x ' + formatCFA(item.price) + ' = ' + formatCFA(item.price * item.qty) + '\n\n';
+      } else {
+        // No price in the catalog: don't send "1 x 0 CFA"; ask the owner instead.
+        message += 'Qty: ' + item.qty + ' — Prix sur demande\n\n';
+      }
     });
-    message += 'Total: ' + formatCFA(total) + '\n\n';
+    if (total > 0) message += 'Total: ' + formatCFA(total) + '\n\n';
     message += 'Open cart: ' + orderPageUrl;
     var whatsappNumber = btn.dataset.phone || '22890597003';
     window.location.href = 'https://wa.me/' + whatsappNumber + '?text=' + encodeURIComponent(message);
