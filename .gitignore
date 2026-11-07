@@ -31,6 +31,8 @@ preview/tmp-xlsx/
 preview/catalog-data.js
 preview/data/visits.json
 preview/data/orders.json
+preview/data/image-candidates.json
+preview/data/image-review/
 
 # WordPress Playground (npm local runtime / SQLite)
 wp-content/database/

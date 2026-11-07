@@ -8,7 +8,10 @@ import {
   upsertOverride,
   writeCatalogData,
 } from './lib/catalog-store.mjs';
-import { findProductImage, slugName, needsStorePhoto } from './lib/find-product-image.mjs';
+import {
+  findProductImageCandidates,
+  slugName,
+} from './lib/find-product-image.mjs';
 import {
   loadHero,
   saveHero,
@@ -50,6 +53,69 @@ function decodeImage(body) {
   return Buffer.from(b64, 'base64');
 }
 
+function imageExt(buf, type = '') {
+  if (type.includes('png') || (buf[0] === 0x89 && buf[1] === 0x50)) return '.png';
+  if (type.includes('webp') || buf.slice(8, 12).toString() === 'WEBP') return '.webp';
+  if (type.includes('gif') || buf.slice(0, 3).toString() === 'GIF') return '.gif';
+  return '.jpg';
+}
+
+const BROWSER_UA =
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+
+async function downloadImage(url) {
+  if (!/^https?:\/\//i.test(String(url || ''))) return null;
+  let referer = '';
+  try {
+    referer = new URL(url).origin + '/';
+  } catch {
+    referer = '';
+  }
+  // Some shops reject a bare request but serve the image when it looks like a
+  // normal browser navigation, so retry with a Referer/Accept pair.
+  const variants = [
+    { 'User-Agent': BROWSER_UA, Accept: 'image/avif,image/webp,image/*,*/*;q=0.8', Referer: referer },
+    { 'User-Agent': 'Mozilla/5.0', Accept: 'image/avif,image/webp,image/*,*/*;q=0.8', Referer: referer },
+    { 'User-Agent': BROWSER_UA },
+    { 'User-Agent': 'Mozilla/5.0' },
+  ];
+  for (const headers of variants) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 20000);
+    try {
+      const res = await fetch(url, { signal: ctrl.signal, redirect: 'follow', headers });
+      if (!res.ok) continue;
+      const type = String(res.headers.get('content-type') || '');
+      if (type.includes('text/html')) continue;
+      const buf = Buffer.from(await res.arrayBuffer());
+      if (buf.length < 800 || buf.length > 8_000_000) continue;
+      return { buf, ext: imageExt(buf, type) };
+    } catch {
+      // try the next header variant
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+  return null;
+}
+
+function queueFile(root) {
+  return path.join(paths(root).dataDir, 'image-candidates.json');
+}
+
+function loadQueue(root) {
+  try {
+    return JSON.parse(fs.readFileSync(queueFile(root), 'utf8'));
+  } catch {
+    return { generatedAt: '', items: [] };
+  }
+}
+
+function saveQueue(root, queue) {
+  fs.mkdirSync(path.dirname(queueFile(root)), { recursive: true });
+  fs.writeFileSync(queueFile(root), JSON.stringify(queue, null, 2) + '\n');
+}
+
 export function adminApi(root) {
   return {
     name: 'gamtech-admin-api',
@@ -88,7 +154,8 @@ export function adminApi(root) {
           if (!checkPin(req, cfg)) return send(res, 401, { error: 'Sign in required' });
 
           if (req.method === 'GET' && url === '/api/admin/catalog') {
-            return send(res, 200, { products: loadProducts(root), pinSet: true });
+            const products = loadProducts(root).filter((p) => !p.hidden && !p.deleted);
+            return send(res, 200, { products, pinSet: true });
           }
 
           if (req.method === 'GET' && url === '/api/admin/stats') {
@@ -183,25 +250,50 @@ export function adminApi(root) {
             return send(res, 200, { product: p });
           }
 
+          if (req.method === 'GET' && url === '/api/admin/photo-candidates') {
+            const queue = loadQueue(root);
+            return send(res, 200, { generatedAt: queue.generatedAt || '', items: queue.items || [] });
+          }
+
+          // Candidate search never publishes anything. The desk shows the
+          // verified thumbnails and the user approves one explicitly.
           if (req.method === 'POST' && url === '/api/admin/fetch-image') {
             const body = parseJsonBody(await readBody(req));
             const products = loadProducts(root);
             const p = products.find((x) => String(x.id) === String(body.id));
             if (!p) return send(res, 404, { error: 'Product not found' });
-            if (!needsStorePhoto({ ...p, listOnly: false, cat: p.cat }) && !body.force) {
-              return send(res, 400, { error: 'This category stays name-only. Tick force to search anyway.' });
-            }
-            const hit = await findProductImage(p);
-            if (!hit) return send(res, 404, { error: 'No photo found for this name' });
-            const dir = path.join(paths(root).imgDir, 'fetched');
+            const candidates = await findProductImageCandidates(p, { limit: 6 });
+            return send(res, 200, { candidates, requiresApproval: true });
+          }
+
+          if (req.method === 'POST' && url === '/api/admin/use-photo') {
+            const body = parseJsonBody(await readBody(req));
+            const products = loadProducts(root);
+            const p = products.find((x) => String(x.id) === String(body.id));
+            if (!p) return send(res, 404, { error: 'Product not found' });
+            const file = await downloadImage(body.image);
+            if (!file) return send(res, 400, { error: 'Could not download that image' });
+            const dir = path.join(paths(root).imgDir, 'verified');
             fs.mkdirSync(dir, { recursive: true });
-            const file = `${p.id}-${slugName(p.name)}${hit.ext}`;
-            fs.writeFileSync(path.join(dir, file), hit.buf);
-            p.img = '/product-images/fetched/' + file;
+            const name = `${p.id}-${slugName(p.name)}${file.ext}`;
+            fs.writeFileSync(path.join(dir, name), file.buf);
+            p.img = '/product-images/verified/' + name;
             p.listOnly = false;
             upsertOverride(root, p);
             writeCatalogData(root, products);
-            return send(res, 200, { product: p, title: hit.title });
+            const queue = loadQueue(root);
+            queue.items = (queue.items || []).filter((x) => String(x.id) !== String(p.id));
+            saveQueue(root, queue);
+            return send(res, 200, { product: p });
+          }
+
+          if (req.method === 'POST' && url === '/api/admin/skip-photo') {
+            const body = parseJsonBody(await readBody(req));
+            const queue = loadQueue(root);
+            const before = (queue.items || []).length;
+            queue.items = (queue.items || []).filter((x) => String(x.id) !== String(body.id));
+            saveQueue(root, queue);
+            return send(res, 200, { ok: true, removed: before - queue.items.length });
           }
 
           return send(res, 404, { error: 'Unknown admin route' });

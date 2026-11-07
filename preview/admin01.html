@@ -40,7 +40,8 @@
 
     <nav class="ad-tabs" id="tabs">
       <button type="button" class="active" data-tab="dash">Dashboard</button>
-      <button type="button" data-tab="stock">Stock</button>
+      <button type="button" data-tab="stock">Products</button>
+      <button type="button" data-tab="photos">Photos</button>
       <button type="button" data-tab="hero">Hero</button>
     </nav>
 
@@ -64,14 +65,16 @@
 
     <section class="ad-panel" id="panel-stock" hidden>
       <div class="ad-toolbar">
-        <input type="search" id="q" placeholder="Find laptop, part, 65W, 11.1V…">
+        <input type="search" id="q" placeholder="Find name, category, laptop, 65W…">
         <select id="cat"></select>
         <label class="ad-check"><input type="checkbox" id="missing"> No photo</label>
+        <label class="ad-check"><input type="checkbox" id="needs-name"> Needs name</label>
         <button type="button" id="add-item">Add item</button>
-        <button type="button" id="show-all">Show all</button>
+        <button type="button" id="prev-page">← Prev</button>
+        <button type="button" id="next-page">Next →</button>
         <span class="ad-count" id="count"></span>
       </div>
-      <p class="ad-copy">Empty price = Ask for price. “Also matches” is extra search text (laptop name, voltage). Name-only lists the item without a picture.</p>
+      <p class="ad-copy">Every listed product is here. Change the name or category, then Save. Delete hides it from the shop. “Needs name” shows placeholder entries such as Product 01.</p>
       <div class="ad-table-wrap">
         <table class="ad-table">
           <thead>
@@ -89,6 +92,15 @@
           <tbody id="rows"></tbody>
         </table>
       </div>
+    </section>
+
+    <section class="ad-panel" id="panel-photos" hidden>
+      <p class="ad-copy">Only products with a known brand and model number are queued. Each image below passed the strict check (brand + model + product type, no wrong variant). Look at it, then approve it — nothing is published until you click <em>Use this photo</em>.</p>
+      <div class="ad-toolbar">
+        <span class="ad-count" id="photo-count"></span>
+        <button type="button" id="photo-refresh">Refresh</button>
+      </div>
+      <div id="photo-list" class="ad-photo-list"></div>
     </section>
 
     <section class="ad-panel" id="panel-hero" hidden>

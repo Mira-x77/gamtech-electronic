@@ -13,6 +13,21 @@ import {
 } from './lib/catalog-store.mjs';
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
+
+// Publish only through the review desk. Bulk auto-publish is opt-in so a
+// verified search hit can never become a product photo without someone
+// looking at it first.
+if (process.env.AUTO_APPROVE !== '1') {
+  console.error(
+    'Bulk auto-publish is disabled.\n' +
+      'Build a review queue instead:\n' +
+      '  npm run images:queue\n' +
+      'Then approve photos at http://localhost:3000/admin01.html → Photos\n' +
+      'To force the old behaviour anyway: set AUTO_APPROVE=1'
+  );
+  process.exit(1);
+}
+
 const limit = Number(process.env.FETCH_LIMIT || 0);
 const products = applyOverrides(loadProducts(root), loadOverrides(root));
 const targets = products.filter((p) => needsStorePhoto(p) && !p.img);

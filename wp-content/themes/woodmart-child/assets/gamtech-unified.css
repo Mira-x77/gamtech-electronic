@@ -263,8 +263,11 @@ button{font-family:var(--font);cursor:pointer;border:none;outline:none;backgroun
 .gs-find-hint,.gs-find-status{font-size:12px;color:var(--mu);margin-bottom:10px;line-height:1.45}
 .gs-find-status{color:var(--pul);font-weight:600}
 .gs-find .gs-grid{margin-bottom:12px}
-.gs-card-img-empty{display:flex;align-items:center;justify-content:center;background:var(--bg3);color:var(--mu);
-  font-size:28px;font-weight:800}
+.gs-card-img-empty,.gs-card-img.gs-card-img-empty{display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:9px;padding:14px;text-align:center;
+  background:linear-gradient(145deg,#f7f7f8 0%,#e9e9ee 100%);color:#a7abb7}
+.gs-ph-ico{width:44px;height:44px;opacity:.85;flex-shrink:0}
+.gs-ph-txt{font-size:9.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#9b9faa}
 .gs-find-ask{display:flex;flex-direction:column;gap:8px;margin-bottom:4px}
 .gs-find-row{display:flex;align-items:center;justify-content:space-between;gap:12px;
   background:var(--bg);border:1px solid var(--b1);border-radius:10px;padding:12px 14px}

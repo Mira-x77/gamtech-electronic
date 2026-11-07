@@ -579,15 +579,15 @@
   position: relative;
   overflow: hidden;
 }
-.gs-cat-item:hover .gs-cat-icon,
-.gs-cat-item.active .gs-cat-icon {
+.gs-cat:hover .gs-cat-icon,
+.gs-cat.active .gs-cat-icon {
   border-color: var(--gs-purple);
   background: rgba(124,58,237,0.12);
   box-shadow: 0 0 0 3px var(--gs-purple-glow);
 }
 .gs-cat-icon svg { color: var(--gs-text-muted); transition: var(--gs-transition); }
-.gs-cat-item:hover .gs-cat-icon svg,
-.gs-cat-item.active .gs-cat-icon svg { color: var(--gs-purple-l); }
+.gs-cat:hover .gs-cat-icon svg,
+.gs-cat.active .gs-cat-icon svg { color: var(--gs-purple-l); }
 
 .gs-cat-label {
   font-size: 11.5px;
@@ -597,8 +597,8 @@
   white-space: nowrap;
   transition: var(--gs-transition);
 }
-.gs-cat-item:hover .gs-cat-label,
-.gs-cat-item.active .gs-cat-label { color: var(--gs-white); }
+.gs-cat:hover .gs-cat-label,
+.gs-cat.active .gs-cat-label { color: var(--gs-white); }
 
 /* =====================================================
    8. PROMO CARDS ROW

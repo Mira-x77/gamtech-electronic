@@ -3,6 +3,7 @@ import path from 'path';
 import { spawnSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { applyOverrides, loadOverrides, writeCatalogData } from './lib/catalog-store.mjs';
+import { identitySignature, sameIdentity } from './lib/image-verify.mjs';
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const imgDir = path.join(root, 'wp-content/uploads/product-images');
@@ -54,6 +55,64 @@ function imageUrl(file) {
   return '/product-images/' + file.split(/[/\\]/).map(encodeURIComponent).join('/');
 }
 
+// Names that clearly describe the same item but whose model spelling differs
+// too much for the generic identity rule. Keep this list tiny and explicit.
+const IDENTITY_ALIASES = new Map([
+  ['logitech souris logi m650 et m650l', 'logitech signature m650l'],
+  ['logitech signature m650l', 'logitech signature m650l'],
+]);
+
+function identityKey(p) {
+  const normalized = normName(p.name);
+  const alias = IDENTITY_ALIASES.get(normalized);
+  if (alias) return 'alias:' + alias;
+  const sig = identitySignature(p);
+  if (!sig) return 'name:' + normalized;
+  return `id:${sig.brand}|${sig.models.join(',')}|${sig.rest.join(' ')}`;
+}
+
+const VERIFIED_RE = /\/verified\//;
+
+// Collapse duplicate catalogue entries. Photo products are built first, so the
+// curated card and its photo win; the duplicate price-list row only contributes
+// its price and search aliases. A human-approved photo from the duplicate is
+// preferred over an unverified curated photo.
+function dedupeProducts(products) {
+  const buckets = new Map();
+  const out = [];
+  let merged = 0;
+  for (const p of products) {
+    if (!p || !p.name) {
+      out.push(p);
+      continue;
+    }
+    const key = identityKey(p);
+    const sig = IDENTITY_ALIASES.has(normName(p.name)) ? null : identitySignature(p);
+    const bucket = buckets.get(key) || [];
+    const match = bucket.find((entry) => !entry.sig || !sig || sameIdentity(entry.sig, sig));
+    if (!match) {
+      bucket.push({ product: p, sig });
+      buckets.set(key, bucket);
+      out.push(p);
+      continue;
+    }
+    const kept = match.product;
+    // Only fill a missing price; when two price-list rows disagree, keep the
+    // first one instead of silently taking whichever row comes last.
+    if (kept.price == null && p.price != null) {
+      kept.price = p.price;
+      kept.was = p.was ?? kept.was;
+    }
+    if (p.also) kept.also = [kept.also, p.also].filter(Boolean).join(' ').trim();
+    if (p.confirmUrl && !kept.confirmUrl) kept.confirmUrl = p.confirmUrl;
+    if (p.img && (!kept.img || (!VERIFIED_RE.test(kept.img) && VERIFIED_RE.test(p.img)))) {
+      kept.img = p.img;
+    }
+    merged += 1;
+  }
+  return { products: out, merged };
+}
+
 const products = [];
 let id = 1;
 let m;
@@ -70,6 +129,7 @@ while ((m = re.exec(php))) {
     name,
     cat,
     sub,
+    src: 'photo:' + String(file).replace(/\\/g, '/'),
     img: imageUrl(file),
     price: null,
     was: null,
@@ -92,6 +152,7 @@ if (fs.existsSync(chargerDir)) {
       name: pretty,
       cat: 'Laptop Accessories',
       sub: 'Chargers',
+      src: 'charger:' + base,
       img: imageUrl('chargers/' + file),
       price: null,
       was: null,
@@ -145,6 +206,7 @@ if (fs.existsSync(listePath)) {
       name: it.name,
       cat: it.cat,
       sub: it.sub || it.cat,
+      src: 'list:' + key,
       img: null,
       price: it.price ?? null,
       was: null,
@@ -159,6 +221,9 @@ if (fs.existsSync(listePath)) {
   console.log('Merged price list:', added, 'new items,', priced, 'prices on existing photos');
 }
 
-applyOverrides(products, loadOverrides(root));
-writeCatalogData(root, products);
-console.log('Wrote', products.length, 'real products to preview/catalog-data.js');
+const visible = applyOverrides(products, loadOverrides(root));
+
+const deduped = dedupeProducts(visible);
+if (deduped.merged) console.log('Merged', deduped.merged, 'duplicate catalogue entries');
+writeCatalogData(root, deduped.products);
+console.log('Wrote', deduped.products.length, 'real products to preview/catalog-data.js');

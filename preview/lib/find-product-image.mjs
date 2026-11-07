@@ -1,3 +1,5 @@
+import { brandOf, isExactModelItem, modelTokens, typeWordsFor, verifyCandidate } from './image-verify.mjs';
+
 const UA =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
 
@@ -27,26 +29,20 @@ export function needsStorePhoto(p) {
 }
 
 export function searchQuery(p) {
-  const hint = {
-    Storage: 'usb flash ssd hdd',
-    Networking: 'network router',
-    'Cables & Converters': 'ethernet cable',
-    'Adapters & Hubs': 'hdmi adapter hub',
-    'Computer Accessories': 'computer accessory',
-    'Laptop Accessories': 'laptop bag',
-    Mouse: 'computer mouse',
-    Keyboards: 'computer keyboard',
-  }[p.cat] || '';
+  const type = typeWordsFor(p)[0] || '';
+  const hint = type ||
+    {
+      Storage: 'usb flash ssd hdd',
+      Networking: 'network router',
+      'Cables & Converters': 'ethernet cable',
+      'Adapters & Hubs': 'hdmi adapter hub',
+      'Computer Accessories': 'computer accessory',
+      'Laptop Accessories': 'laptop bag',
+      Mouse: 'computer mouse',
+      Keyboards: 'computer keyboard',
+    }[p.cat] ||
+    '';
   return [p.name, hint].filter(Boolean).join(' ');
-}
-
-function tokens(s) {
-  return String(s || '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, ' ')
-    .trim()
-    .split(/\s+/)
-    .filter((t) => t.length >= 2);
 }
 
 async function ddgVqd(q) {
@@ -57,6 +53,33 @@ async function ddgVqd(q) {
   ).text();
   const m = html.match(/vqd="([^"]+)"/) || html.match(/vqd='([^']+)'/);
   return m ? m[1] : null;
+}
+
+async function bingImages(q) {
+  const res = await timedFetch(
+    'https://www.bing.com/images/search?q=' +
+      encodeURIComponent(q) +
+      '&form=HDRSC2&first=1',
+    { headers: { 'User-Agent': UA, 'Accept-Language': 'en-US,en;q=0.9' } }
+  );
+  if (!res.ok) return [];
+  const html = await res.text();
+  const out = [];
+  for (const match of html.matchAll(/m="(\{[^"]+?\})"/g)) {
+    try {
+      const data = JSON.parse(match[1].replace(/&quot;/g, '"').replace(/&amp;/g, '&'));
+      if (!data.murl) continue;
+      out.push({
+        title: data.t || data.title || q,
+        image: data.murl,
+        thumbnail: data.turl || data.murl,
+        url: data.purl || '',
+      });
+    } catch {
+      /* skip malformed entry */
+    }
+  }
+  return out;
 }
 
 async function ddgImages(q) {
@@ -76,56 +99,9 @@ async function ddgImages(q) {
   return Array.isArray(data.results) ? data.results : [];
 }
 
-function rank(results, name) {
-  const toks = tokens(name);
-  return results
-    .map((r) => {
-      const title = String(r.title || '').toLowerCase();
-      let score = 0;
-      for (const t of toks) if (title.includes(t)) score += t.length > 3 ? 3 : 1;
-      if ((r.width || 0) >= 400 && (r.height || 0) >= 400) score += 2;
-      if (/aliexpress|pinterest|facebook|tiktok/i.test(r.url || '')) score -= 2;
-      return { r, score };
-    })
-    .sort((a, b) => b.score - a.score)
-    .map((x) => x.r);
-}
-
-async function download(url) {
-  const res = await timedFetch(url, {
-    headers: { 'User-Agent': UA, Referer: 'https://duckduckgo.com/' },
-    redirect: 'follow',
-  });
-  if (!res.ok) return null;
-  const type = String(res.headers.get('content-type') || '');
-  if (type.includes('text/html')) return null;
-  const buf = Buffer.from(await res.arrayBuffer());
-  if (buf.length < 800 || buf.length > 5_000_000) return null;
-  let ext = '.jpg';
-  if (type.includes('png') || buf[0] === 0x89) ext = '.png';
-  else if (type.includes('webp')) ext = '.webp';
-  else if (type.includes('gif')) ext = '.gif';
-  return { buf, ext };
-}
-
-async function fromList(ranked, name) {
-  for (const hit of ranked.slice(0, 6)) {
-    const urls = [hit.image, hit.thumbnail].filter(Boolean);
-    for (const url of urls) {
-      try {
-        const file = await download(url);
-        if (file) return { ...file, source: url, title: hit.title || name };
-      } catch {
-        /* next */
-      }
-    }
-  }
-  return null;
-}
-
 async function wikimedia(q) {
   const url =
-    'https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrlimit=5&gsrnamespace=6&gsrsearch=' +
+    'https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrlimit=6&gsrnamespace=6&gsrsearch=' +
     encodeURIComponent(q) +
     '&prop=imageinfo&iiprop=url&iiurlwidth=1000';
   const data = await (await timedFetch(url, { headers: { 'User-Agent': UA } })).json();
@@ -133,7 +109,7 @@ async function wikimedia(q) {
   return pages
     .map((pg) => {
       const info = (pg.imageinfo && pg.imageinfo[0]) || {};
-      return { title: pg.title || q, image: info.thumburl || info.url, thumbnail: info.thumburl };
+      return { title: pg.title || q, image: info.thumburl || info.url, thumbnail: info.thumburl, url: info.descriptionurl };
     })
     .filter((r) => r.image);
 }
@@ -147,38 +123,127 @@ async function openverse(q) {
     title: r.title || q,
     image: r.url,
     thumbnail: r.thumbnail,
+    url: r.foreign_landing_url || r.url,
     width: r.width,
     height: r.height,
   }));
 }
 
-export async function findProductImage(p) {
-  const queries = [searchQuery(p), String(p.name || '').trim()].filter(
-    (q, i, arr) => q && arr.indexOf(q) === i
-  );
+async function download(url) {
+  const res = await timedFetch(url, {
+    headers: { 'User-Agent': UA, Referer: 'https://duckduckgo.com/' },
+    redirect: 'follow',
+  });
+  if (!res.ok) return null;
+  const type = String(res.headers.get('content-type') || '');
+  if (type.includes('text/html')) return null;
+  const buf = Buffer.from(await res.arrayBuffer());
+  if (buf.length < 800 || buf.length > 8_000_000) return null;
+  let ext = '.jpg';
+  if (type.includes('png') || (buf[0] === 0x89 && buf[1] === 0x50)) ext = '.png';
+  else if (type.includes('webp') || (buf.slice(8, 12).toString() === 'WEBP')) ext = '.webp';
+  else if (type.includes('gif') || buf.slice(0, 3).toString() === 'GIF') ext = '.gif';
+  return { buf, ext };
+}
+
+// Verified candidates, best first. Nothing is downloaded or saved here: the
+// review desk shows these thumbnails and a human picks one.
+export async function findProductImageCandidates(p, { limit = 5 } = {}) {
+  const queries = [searchQuery(p), String(p.name || '').trim()];
+
+  // The price list sometimes writes a letter O where the model uses a zero
+  // ("LO09UiGS" instead of "L009UiGS"). Search engines will not always correct
+  // that on their own, so try a cleaned query as well.
+  const brand = brandOf(p && p.name);
+  const rawModels = modelTokens(p && p.name);
+  const cleanedModels = rawModels.map((t) => t.replace(/o/g, '0'));
+  if (brand && cleanedModels.some((t, i) => t !== rawModels[i])) {
+    const cleaned = [brand.alias, ...cleanedModels, typeWordsFor(p)[0] || '']
+      .filter(Boolean)
+      .join(' ');
+    if (!queries.includes(cleaned)) queries.push(cleaned);
+  }
+
+  // Full price-list names are noisy ("HP K558 LUMINEUX CLAVIER"); a short
+  // brand + model + type query often matches the same listing better.
+  if (brand && rawModels.length) {
+    const short = [brand.alias, ...rawModels, typeWordsFor(p)[0] || '']
+      .filter(Boolean)
+      .join(' ');
+    if (!queries.includes(short)) queries.push(short);
+  }
+  const pool = [];
   for (const q of queries) {
     try {
-      const hit = await fromList(rank(await ddgImages(q), p.name), p.name);
-      if (hit) return hit;
+      pool.push(...(await bingImages(q)));
     } catch {
       /* next source */
     }
-    try {
-      const hit = await fromList(rank(await wikimedia(q), p.name), p.name);
-      if (hit) return hit;
-    } catch {
-      /* next */
-    }
-    try {
-      const hit = await fromList(rank(await openverse(q), p.name), p.name);
-      if (hit) return hit;
-    } catch {
-      /* next */
-    }
-    await new Promise((r) => setTimeout(r, 400));
+    // Keep going through the query variants: a noisy price-list name can fill
+    // the first page with near-misses while the short query hits the exact model.
+    if (pool.length >= 80) break;
+    await new Promise((r) => setTimeout(r, 300));
   }
-  return null;
+  if (pool.length < 4) {
+    for (const q of queries) {
+      try {
+        pool.push(...(await ddgImages(q)));
+      } catch {
+        /* next source */
+      }
+      if (pool.length >= 20) break;
+      await new Promise((r) => setTimeout(r, 1200));
+    }
+  }
+  if (!pool.length) {
+    for (const q of queries) {
+      try {
+        pool.push(...(await wikimedia(q)));
+      } catch {
+        /* next */
+      }
+      try {
+        pool.push(...(await openverse(q)));
+      } catch {
+        /* next */
+      }
+    }
+  }
+
+  const seen = new Set();
+  const verified = [];
+  for (const hit of pool) {
+    const image = hit.image || hit.thumbnail;
+    if (!image || seen.has(image)) continue;
+    const check = verifyCandidate(p, hit);
+    if (!check.ok) continue;
+    seen.add(image);
+    verified.push({
+      title: hit.title || p.name,
+      image,
+      thumbnail: hit.thumbnail || hit.image,
+      pageUrl: hit.url || hit.pageUrl || '',
+      width: Number(hit.width) || 0,
+      height: Number(hit.height) || 0,
+      score: check.score,
+    });
+  }
+  return verified
+    .sort((a, b) => b.score - a.score || (b.width || 0) - (a.width || 0))
+    .slice(0, limit);
 }
+
+// Backwards-compatible single result. Now only returns a candidate that passed
+// strict verification; callers should still treat it as a proposal.
+export async function findProductImage(p) {
+  const [hit] = await findProductImageCandidates(p, { limit: 1 });
+  if (!hit) return null;
+  const file = await download(hit.image);
+  if (!file) return null;
+  return { ...file, source: hit.image, title: hit.title, score: hit.score };
+}
+
+export { isExactModelItem };
 
 export function slugName(name) {
   return String(name || 'item')

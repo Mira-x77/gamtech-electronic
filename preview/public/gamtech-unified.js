@@ -21,6 +21,12 @@ function showCartId(){
   el.textContent=(window.gsT?window.gsT('cart.id'):'Panier')+' '+cartId();
 }
 
+function isProductInCart(productId){
+  return qa('.gs-ct-item').some(function(item){
+    return item.dataset.id === String(productId);
+  });
+}
+
 function encodeOrder(o){
   var compact={i:o.id,n:o.name,t:o.total,l:(o.items||[]).map(function(x){return[x.name,x.qty,x.price];})};
   var json=JSON.stringify(compact);
@@ -51,19 +57,10 @@ function paintHero(data){
   var dots=qs('#gs-hero-dots');
   if(!wrap||!data||!data.slides||!data.slides.length)return false;
   wrap.innerHTML=data.slides.map(function(s,i){
-    var img=s.img||'';
-    return '<div class="gs-hero-slide'+(i===0?' gs-hero-store active':'')+'" style="background-image:url(\''+String(img).replace(/'/g,'')+'\')">'
-      +'<div class="gs-hero-slide-content">'
-      +'<div class="gs-hero-tag"><span class="dot"></span>'+(s.tag||'')+'</div>'
-      +'<h1>'+(s.title||'')+(s.highlight?'<br><span>'+s.highlight+'</span>':'')+'</h1>'
-      +'<p>'+(s.text||'')+'</p>'
-      +'<a href="#shop" class="gs-hero-cta">'+(s.cta||'Shop Now')+'<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>'
-      +'</div></div>';
-  }).join('');
+    var img=s.img|| '';
+    return '<div class="gs-hero-slide'+(i===0?' gs-hero-store active':'')+'" style="background-image:url(\''+String(img).replace(/'/g,'')+'\')">'      +'<div class="gs-hero-slide-content">'      +'<div class="gs-hero-tag"><span class="dot"></span>'+(s.tag||'')+'</div>'      +'<h1>'+(s.title||'')+(s.highlight?'<br><span>'+s.highlight+'</span>':'')+'</h1>'      +'<p>'+(s.text||'')+'</p>'      +'<a href="#shop" class="gs-hero-cta">'+(s.cta||'Shop Now')+'<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>'      +'</div></div>';  }).join('');
   dots.innerHTML=data.slides.map(function(_s,i){
-    return '<span class="gs-hero-dot'+(i===0?' active':'')+'" data-slide="'+i+'"></span>';
-  }).join('');
-  return true;
+    return '<span class="gs-hero-dot'+(i===0?' active':'')+'" data-slide="'+i+'"></span>';  }).join('');  return true;
 }
 
 function initHeroSlider(){
@@ -165,10 +162,16 @@ document.addEventListener('DOMContentLoaded',function(){
     });
   }
 
+  // ═══ ADD-TO-CART WITH DUPLICATE PREVENTION ═══
   document.addEventListener('click',function(e){
     var btn=e.target.closest('.gs-add-btn');
     if(!btn)return;
     e.preventDefault();
+    // Prevent duplicate adds
+    if(isProductInCart(btn.dataset.id)){
+      btn.innerHTML='<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> '+(window.gsT?window.gsT('already_added'):'Déjà ajouté');
+      return;
+    }
     var card=btn.closest('.gs-card');
     var name=btn.dataset.name||(card&&card.querySelector('.gs-card-name')||{}).textContent||'Product';
     var pn=parseFloat(btn.dataset.price)||0;
@@ -190,12 +193,15 @@ document.addEventListener('DOMContentLoaded',function(){
     setTimeout(function(){btn.innerHTML=orig;btn.style.cssText='';},1200);
   });
 
+  // ═══ PROMO CODE WITH ERROR STATE RESET ═══
   var applyBtn=qs('#gs-promo-btn');
   if(applyBtn){
     applyBtn.addEventListener('click',function(){
       var code=(qs('#gs-promo-in')||{}).value||'';
       code=code.trim().toUpperCase();
       var msg=qs('#gs-promo-msg');
+      // Reset error state first
+      if(msg){msg.textContent='';msg.style.color='';}
       if(['TECH10','GAMTECH','SAVE10'].indexOf(code)!==-1){
         if(msg){msg.textContent=window.gsT?window.gsT('promo.ok'):'✓ Remise de 10 % appliquée';msg.style.color='var(--gr)';}
         var m=document.createElement('span');m.id='gs-promo-applied';m.hidden=true;document.body.appendChild(m);
@@ -208,33 +214,78 @@ document.addEventListener('DOMContentLoaded',function(){
   }
 
   qa('.gs-cat').forEach(function(c){
-    c.addEventListener('click',function(){qa('.gs-cat').forEach(function(x){x.classList.remove('active')});c.classList.add('active');});
+    c.addEventListener('click',function(){
+      // Remove active from all cats first
+      qa('.gs-cat').forEach(function(x){x.classList.remove('active');});
+      // Add active to clicked cat
+      c.classList.add('active');
+      
+      // Keep the sidebar category list in sync with the clicked pill.
+      // The anchor's own href already has the correct #cat-<slug>, so let the
+      // hash navigation code below do the actual reveal + scroll.
+      var catHref = c.getAttribute('href') || '';
+      qa('.gs-sb-cat').forEach(function(sb){
+        if (sb.getAttribute('href') === catHref) {
+          sb.classList.add('active');
+        } else {
+          sb.classList.remove('active');
+        }
+      });
+    });
   });
 
+  // ═══ INTERSECTION OBSERVER WITH RE-OBSERVE ═══
   if('IntersectionObserver' in window){
     var io=new IntersectionObserver(function(entries){
-      entries.forEach(function(en){if(en.isIntersecting){en.target.classList.add('gs-fade');io.unobserve(en.target);}});
+      entries.forEach(function(en){
+        if(en.isIntersecting){
+          en.target.classList.add('gs-fade');
+          // Re-observe after fade in
+          setTimeout(function(){io.observe(en.target);}, 100);
+        }
+      });
     },{threshold:.08});
     qa('.gs-card,.gs-promo,.gs-ft-card').forEach(function(el){io.observe(el);});
   }
 
-  // Handle hash navigation for menu buttons - show/hide sections
+  // ═══ HASH NAVIGATION WITH FIXED ACTIVE STATE ═══
   function handleHashNavigation(hash) {
     if (!hash) return;
     var targetId = hash.replace('#', '');
     
     // Special handling for home/shop
     if (hash === '/' || targetId === 'shop') {
-      // Show hero section, hide all others
       showSection('shop');
       updateActiveNav('/');
       closeAll();
       return;
     }
     
+    // Special handling for categories: #cat-mouse, #cat-keyboards, etc.
+    // Category blocks live INSIDE #shop-all, so never hide the shop column —
+    // just reveal the shop + the target block and scroll to it.
+    if (targetId.indexOf('cat-') === 0) {
+      var shopAll = qs('#shop-all');
+      var categorySection = document.getElementById(targetId);
+      var mn = qs('.gs-mn');
+
+      if (shopAll) shopAll.style.display = 'block';
+      if (categorySection) {
+        categorySection.style.display = 'block';
+        if (mn) {
+          var catTop = categorySection.getBoundingClientRect().top
+            - mn.getBoundingClientRect().top + mn.scrollTop - 12;
+          mn.scrollTo({ top: Math.max(0, catTop), behavior: 'smooth' });
+        }
+      }
+
+      updateActiveNav(hash);
+      closeAll();
+      return;
+    }
+    
     var targetEl = document.getElementById(targetId);
     if (targetEl) {
-      // Show only this section, hide all others
       showSection(targetId);
       updateActiveNav(hash);
       closeAll();
@@ -247,7 +298,6 @@ document.addEventListener('DOMContentLoaded',function(){
     if (!mainEl) return;
     
     if (targetId === 'shop') {
-      // For home, show all home-related sections
       var hero = qs('.gs-hero-slider');
       var cats = qs('#gs-cats-row');
       var find = qs('#find-model');
@@ -255,17 +305,15 @@ document.addEventListener('DOMContentLoaded',function(){
       var arrivals = qs('#arrivals');
       var shopAll = qs('#shop-all');
       
-      // Show home sections
       if (hero) hero.style.display = '';
       if (cats) cats.style.display = 'flex';
       if (find) find.style.display = 'flex';
       if (deals) deals.style.display = 'block';
       if (arrivals) arrivals.style.display = 'block';
-      if (shopAll) shopAll.style.display = 'none'; // Hide shop-all on home
+      if (shopAll) shopAll.style.display = 'none';
       
       mainEl.scrollTop = 0;
     } else {
-      // Hide home sections
       var hero = qs('.gs-hero-slider');
       var cats = qs('#gs-cats-row');
       var find = qs('#find-model');
@@ -279,7 +327,6 @@ document.addEventListener('DOMContentLoaded',function(){
       if (deals) deals.style.display = 'none';
       if (arrivals) arrivals.style.display = 'none';
       
-      // Show the target section
       var targetEl = document.getElementById(targetId);
       if (targetEl) {
         targetEl.style.display = (targetId === 'shop-all') ? 'block' : 'flex';
@@ -291,6 +338,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
   // Update active state for navigation menu
   function updateActiveNav(hash) {
+    // Remove active from all nav links first
     qa('.gs-nav-a').forEach(function(link) {
       link.classList.remove('active');
     });
@@ -301,6 +349,26 @@ document.addEventListener('DOMContentLoaded',function(){
       // If it's shop-all or find-model, activate the "Toute la boutique" link
       var shopLink = qs('.gs-nav-a[href="#shop-all"]');
       if (shopLink) shopLink.classList.add('active');
+    }
+    // Handle category hashes like #cat-mouse, #cat-keyboards, etc.
+    var catHash = hash ? hash.replace(/^#/, '') : '';
+    if (catHash.indexOf('cat-') === 0) {
+      // Activate the corresponding sidebar category button
+      qa('.gs-sb-cat').forEach(function(sb) {
+        if (sb.getAttribute('href') === '#' + catHash) {
+          sb.classList.add('active');
+        } else {
+          sb.classList.remove('active');
+        }
+      });
+      // Also activate the corresponding top category button
+      qa('.gs-cat').forEach(function(cat) {
+        if (cat.getAttribute('href') === '#' + catHash) {
+          cat.classList.add('active');
+        } else {
+          cat.classList.remove('active');
+        }
+      });
     }
   }
 
@@ -441,7 +509,7 @@ document.addEventListener('DOMContentLoaded',function(){
     });
   }
 
-  // ═══ LANGUAGE SWITCHER ═══════════════════════════════
+  // ═══ LANGUAGE SWITCHER ════════════════════════════════
   var langTog=qs('#gs-lang-tog');
   var langLabel=qs('#gs-lang-label');
   var langStrings=window.gtLang||{};
@@ -527,12 +595,14 @@ document.addEventListener('DOMContentLoaded',function(){
         });
       });
       
-      document.addEventListener('click',function close(e){
+      // FIXED: Properly track and remove event listener
+      var dropdownClickHandler = function(e){
         if(!e.target.closest('#'+dropdownId)&&!e.target.closest('#gs-lang-tog')){
           dropdown.remove();
-          document.removeEventListener('click',close);
+          document.removeEventListener('click', dropdownClickHandler);
         }
-      });
+      };
+      document.addEventListener('click', dropdownClickHandler);
     });
   }
 

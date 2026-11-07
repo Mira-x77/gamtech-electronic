@@ -68,7 +68,18 @@ export function saveOverrides(root, ov) {
 export function applyOverrides(products, ov) {
   if (!ov || typeof ov !== 'object') return products;
   for (const p of products) {
-    const hit = ov[String(p.id)] || ov[normName(p.name)];
+    // Overrides are saved under both the product id and its normalized name.
+    // IDs shift whenever the price list is re-imported, so an id key can point
+    // at a completely different product. Prefer the name key, and only trust
+    // an id key when the stored name still matches this product.
+    // A stable source key survives renames, category changes and id shifts.
+    const bySrc = p.src ? ov['src:' + p.src] : null;
+    const byName = ov[normName(p.name)];
+    const byId = ov[String(p.id)];
+    const hit =
+      bySrc ||
+      byName ||
+      (byId && typeof byId === 'object' && normName(byId.name) === normName(p.name) ? byId : null);
     if (!hit || typeof hit !== 'object') continue;
     if (hit.deleted) {
       p.deleted = true;
@@ -87,6 +98,7 @@ export function upsertOverride(root, product) {
   ov[key] = {
     ...(ov[key] || {}),
     id: product.id,
+    src: product.src || '',
     name: product.name,
     cat: product.cat,
     sub: product.sub,
@@ -100,6 +112,7 @@ export function upsertOverride(root, product) {
     also: product.also || '',
   };
   ov[normName(product.name)] = ov[key];
+  if (product.src) ov['src:' + product.src] = ov[key];
   saveOverrides(root, ov);
   return ov;
 }

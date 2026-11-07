@@ -57,11 +57,25 @@ function confirmUrl(p) {
   return 'https://www.google.com/search?udm=2&q=' + encodeURIComponent(q);
 }
 
+function categoryIcon(p) {
+  const text = String(p.name || '').toLowerCase();
+  // RAM rows are filed under Storage in the price list, so look at the name
+  // before falling back to the category icon.
+  if (/\bddr\d?[a-z]?\b|\bram\b|memoire|so-?dimm|barette/.test(text)) {
+    return '<rect x="4" y="8" width="16" height="8" rx="1"/><path d="M8 8V6M12 8V6M16 8V6M8 16v2M12 16v2M16 16v2"/>';
+  }
+  const found = CATS.find(([name]) => name === p.cat);
+  return found
+    ? found[1]
+    : '<rect x="2" y="3" width="20" height="14" rx="2"/><circle cx="8" cy="9" r="2"/><path d="m21 15-5-5L5 20"/>';
+}
+
 function listRowHTML(p) {
   const addPrice = p.price == null || p.price === '' ? 0 : Number(p.price);
   return `<div class="gs-card">
-    <div class="gs-card-img gs-card-img-empty">
-      <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="opacity:.3"><rect x="2" y="3" width="20" height="14" rx="2"/><circle cx="8" cy="9" r="2"/><path d="m21 15-5-5L5 20"/></svg>
+    <div class="gs-card-img gs-card-img-empty" role="img" aria-label="${esc(p.name)} — photo à venir">
+      <svg class="gs-ph-ico" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.3" viewBox="0 0 24 24">${categoryIcon(p)}</svg>
+      <span class="gs-ph-txt">${t('photoSoon') !== 'photoSoon' ? t('photoSoon') : 'Photo à venir'}</span>
     </div>
     <div class="gs-card-body">
       <span class="gs-card-brand">${esc(p.sub || p.cat || 'GamTech')}</span>
@@ -498,11 +512,46 @@ function resolveHash(hash) {
 }
 
 function goHash(hash) {
+  const raw = decodeURIComponent(String(hash || '').replace(/^#/, '')).trim();
   const id = resolveHash(hash);
-  if (!id) return false;
+
+  // Highlight the top category pill that was clicked (matches #cat-<slug>)
+  document.querySelectorAll('.gs-cat.active').forEach((el) => el.classList.remove('active'));
+  if (raw.startsWith('cat-')) {
+    const cat = document.querySelector('.gs-cat[href="#' + raw + '"]');
+    if (cat) cat.classList.add('active');
+  }
+
+  // Highlight the matching sidebar category link
+  document.querySelectorAll('.gs-sb-cat.active').forEach((el) => el.classList.remove('active'));
+  if (id) {
+    const sbc = document.querySelector('.gs-sb-cat[href="#' + id + '"]');
+    if (sbc) sbc.classList.add('active');
+  }
+
+  if (!id) {
+    // A category with no dedicated block still needs feedback:
+    // keep the pill highlighted and reveal the full shop instead of doing nothing.
+    if (raw.startsWith('cat-')) {
+      scrollMainTo('shop-all');
+      return true;
+    }
+    return false;
+  }
+
   document.querySelectorAll('.gs-sc.active').forEach((el) => el.classList.remove('active'));
   const sc = document.querySelector('.gs-sc[href="#' + id + '"]');
   if (sc) sc.classList.add('active');
+
+  // Categories live inside #shop-all. The theme nav script hides that block on
+  // the home view, so reveal it before measuring/scrolling to the category.
+  if (raw.indexOf('cat-') === 0) {
+    const shopAll = document.getElementById('shop-all');
+    if (shopAll) shopAll.style.display = 'block';
+    const target = document.getElementById(id);
+    if (target) target.style.display = 'block';
+  }
+
   return scrollMainTo(id);
 }
 

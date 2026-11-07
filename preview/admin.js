@@ -4,7 +4,7 @@ const CATS = [
   'Adapters & Hubs', 'Replacement Keyboards', 'Batteries', 'Chargers', 'Screens',
 ];
 
-const state = { pin: sessionStorage.getItem('gs-admin-pin') || '', products: [], hero: { slides: [] }, showAll: false };
+const state = { pin: sessionStorage.getItem('gs-admin-pin') || '', products: [], hero: { slides: [] }, photos: [], photoLimit: 24, page: 0, perPage: 50 };
 
 function $(id) { return document.getElementById(id); }
 
@@ -32,13 +32,20 @@ function formatCFA(n) {
   return Math.round(Number(n) || 0).toLocaleString('fr-FR') + ' CFA';
 }
 
+function needsName(p) {
+  const name = String(p.name || '').trim();
+  return !name || /^product\s*[\d-]*$/i.test(name) || /^new item$/i.test(name);
+}
+
 function filtered() {
   const q = ($('q').value || '').toLowerCase().trim();
   const cat = $('cat').value;
   const missing = $('missing').checked;
+  const untitled = $('needs-name').checked;
   return state.products.filter((p) => {
     if (cat && p.cat !== cat) return false;
     if (missing && p.img) return false;
+    if (untitled && !needsName(p)) return false;
     const blob = `${p.name} ${p.cat} ${p.sub || ''} ${p.also || ''}`.toLowerCase();
     if (q && !q.split(/\s+/).every((t) => t && blob.includes(t))) return false;
     return true;
@@ -46,12 +53,15 @@ function filtered() {
 }
 
 function photoCell(p) {
-  if (p.img) return `<img class="ad-thumb" src="${p.img}" alt="">`;
-  return `<div class="ad-ph">no<br>photo</div>`;
+  if (p.img) {
+    return `<a href="${p.img}" target="_blank" rel="noopener" title="Open photo"><img class="ad-thumb" src="${p.img}" alt="" loading="lazy"></a>`;
+  }
+  return '<div class="ad-ph">no<br>photo</div>';
 }
 
 function rowHTML(p) {
-  const catOpts = CATS.map((c) => `<option${c === p.cat ? ' selected' : ''}>${c}</option>`).join('');
+  const cats = p.cat && !CATS.includes(p.cat) ? [p.cat, ...CATS] : CATS;
+  const catOpts = cats.map((c) => `<option${c === p.cat ? ' selected' : ''}>${c}</option>`).join('');
   const ask = p.price == null || p.price === '';
   return `<tr data-id="${p.id}">
     <td>${photoCell(p)}</td>
@@ -72,10 +82,16 @@ function rowHTML(p) {
 
 function render() {
   const rows = filtered();
-  const cap = state.showAll ? rows.length : 80;
-  $('count').textContent = rows.length + ' / ' + state.products.length + ' SKUs';
-  $('rows').innerHTML = rows.slice(0, cap).map(rowHTML).join('') +
-    (!state.showAll && rows.length > 80 ? `<tr><td colspan="8">Showing 80 of ${rows.length}. Press Show all or search.</td></tr>` : '');
+  const pages = Math.max(1, Math.ceil(rows.length / state.perPage));
+  if (state.page >= pages) state.page = pages - 1;
+  if (state.page < 0) state.page = 0;
+  const start = state.page * state.perPage;
+  const end = Math.min(rows.length, start + state.perPage);
+  const range = rows.length ? `${start + 1}–${end}` : '0';
+  $('count').textContent = `${range} of ${rows.length} shown · ${state.products.length} products · page ${state.page + 1}/${pages}`;
+  $('prev-page').disabled = state.page <= 0;
+  $('next-page').disabled = state.page >= pages - 1;
+  $('rows').innerHTML = rows.slice(start, end).map(rowHTML).join('');
 }
 
 function readRow(tr) {
@@ -102,10 +118,73 @@ function showTab(id) {
   document.querySelectorAll('.ad-tabs button').forEach((b) => {
     b.classList.toggle('active', b.dataset.tab === id);
   });
-  ['dash', 'stock', 'hero'].forEach((t) => {
+  ['dash', 'stock', 'photos', 'hero'].forEach((t) => {
     const el = $('panel-' + t);
     if (el) el.hidden = t !== id;
   });
+  if (id === 'photos') loadPhotos();
+}
+
+async function loadPhotos() {
+  $('photo-count').textContent = 'Loading…';
+  try {
+    const data = await api('/api/admin/photo-candidates');
+    state.photos = data.items || [];
+    renderPhotos(data.generatedAt);
+  } catch (ex) {
+    $('photo-count').textContent = ex.message;
+  }
+}
+
+function renderPhotos(generatedAt) {
+  const items = (state.photos || []).slice().sort(
+    (a, b) =>
+      (b.candidates || []).length - (a.candidates || []).length ||
+      String(a.name).localeCompare(String(b.name))
+  );
+  const count = items.reduce((n, x) => n + (x.candidates || []).length, 0);
+  $('photo-count').textContent =
+    `${items.length} product(s) · ${count} candidate photo(s)` +
+    (generatedAt ? ` · ${String(generatedAt).slice(0, 10)}` : '');
+  if (!items.length) {
+    $('photo-list').innerHTML =
+      '<p class="ad-empty">No candidates queued. Run <code>node preview/find-image-candidates.mjs</code> to build the queue.</p>';
+    return;
+  }
+  const visible = items.slice(0, state.photoLimit);
+  $('photo-list').innerHTML =
+    visible
+      .map((item) => {
+        const cands = item.candidates || [];
+        return `<article class="ad-photo-item" data-id="${esc(item.id)}">
+        <header>
+          <div><strong>${esc(item.name)}</strong><span>${esc(item.cat)}${item.sub ? ' · ' + esc(item.sub) : ''}</span></div>
+          <button type="button" data-act="skip">Skip</button>
+        </header>
+        <div class="ad-cands">
+          ${
+            cands.length
+              ? cands
+                  .map(
+                    (c, i) => `<figure>
+            <img src="${esc(c.file || c.thumbnail || c.image)}" alt="${esc(c.title)}" loading="lazy">
+            <figcaption>${esc(c.title)}</figcaption>
+            <button type="button" data-act="use" data-i="${i}">Use this photo</button>
+          </figure>`
+                  )
+                  .join('')
+              : '<p class="ad-empty">No verified match found. Keep it name-only or upload a shop photo.</p>'
+          }
+        </div>
+      </article>`;
+      })
+      .join('') +
+    (items.length > visible.length
+      ? `<button type="button" id="photo-more">Show ${Math.min(
+          24,
+          items.length - visible.length
+        )} more (${items.length - visible.length} left)</button>`
+      : '');
 }
 
 function renderStats(data) {
@@ -214,11 +293,22 @@ $('rows').addEventListener('change', (e) => {
   const price = e.target.closest('tr')?.querySelector('[data-k=price]');
   if (ask.checked && price) price.value = '';
 });
-['q', 'cat', 'missing'].forEach((id) => $(id).addEventListener('input', render));
-$('cat').addEventListener('change', render);
-$('missing').addEventListener('change', render);
-$('show-all').addEventListener('click', () => {
-  state.showAll = true;
+['q', 'missing', 'needs-name'].forEach((id) =>
+  $(id).addEventListener('input', () => {
+    state.page = 0;
+    render();
+  })
+);
+$('cat').addEventListener('change', () => {
+  state.page = 0;
+  render();
+});
+$('prev-page').addEventListener('click', () => {
+  state.page = Math.max(0, state.page - 1);
+  render();
+});
+$('next-page').addEventListener('click', () => {
+  state.page += 1;
   render();
 });
 $('add-item').addEventListener('click', async () => {
@@ -233,7 +323,7 @@ $('add-item').addEventListener('click', async () => {
     });
     state.products.unshift(out.product);
     $('q').value = out.product.name;
-    state.showAll = true;
+    state.page = 0;
     status('Added. Type the name, price or Ask, photo or no photo, then Save.', true);
     render();
   } catch (ex) {
@@ -306,6 +396,51 @@ $('rows').addEventListener('change', async (e) => {
     status('Uploaded photo for ' + out.product.name, true);
     render();
   } catch (ex) {
+    status(ex.message, false);
+  }
+});
+
+$('photo-refresh').addEventListener('click', loadPhotos);
+
+$('photo-list').addEventListener('click', (e) => {
+  if (e.target.id !== 'photo-more') return;
+  state.photoLimit += 24;
+  renderPhotos();
+});
+
+$('photo-list').addEventListener('click', async (e) => {
+  const btn = e.target.closest('button[data-act]');
+  if (!btn) return;
+  const card = e.target.closest('.ad-photo-item');
+  const id = card && card.getAttribute('data-id');
+  if (!id) return;
+  const item = state.photos.find((x) => String(x.id) === String(id));
+  try {
+    if (btn.dataset.act === 'skip') {
+      await api('/api/admin/skip-photo', { id });
+      state.photos = state.photos.filter((x) => String(x.id) !== String(id));
+      renderPhotos();
+      status('Skipped ' + (item ? item.name : 'item'), true);
+    }
+    if (btn.dataset.act === 'use') {
+      const cand = item && item.candidates[Number(btn.dataset.i)];
+      if (!cand) return;
+      btn.disabled = true;
+      btn.textContent = 'Saving…';
+      const out = await api('/api/admin/use-photo', {
+        id,
+        image: cand.image,
+        title: cand.title,
+      });
+      const i = state.products.findIndex((x) => String(x.id) === String(out.product.id));
+      if (i >= 0) state.products[i] = out.product;
+      state.photos = state.photos.filter((x) => String(x.id) !== String(id));
+      renderPhotos();
+      status('Photo approved for ' + out.product.name, true);
+    }
+  } catch (ex) {
+    btn.disabled = false;
+    btn.textContent = btn.dataset.act === 'use' ? 'Use this photo' : 'Skip';
     status(ex.message, false);
   }
 });

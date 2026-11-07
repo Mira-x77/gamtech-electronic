@@ -4,6 +4,7 @@
   "description": "GamTech static store for Vercel",
   "scripts": {
     "prepare-store": "node preview/generate-catalog.mjs && node preview/prepare-static.mjs",
+    "images:queue": "node preview/find-image-candidates.mjs",
     "dev": "npm run prepare-store && vite",
     "start": "npm run prepare-store && vite",
     "build": "npm run prepare-store && vite build",
