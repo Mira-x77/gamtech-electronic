@@ -437,14 +437,13 @@ document.addEventListener('DOMContentLoaded',function(){
     showCartId();
     var orderData = [];
     var total = 0;
-    var hasAsk = false;
     items.forEach(function(item) {
       var itemName = (item.querySelector('.gs-ct-name') || {}).textContent || 'Product';
       var priceEl = item.querySelector('.gs-ct-price');
       var qtyEl = item.querySelector('.gs-qty-n');
       var price = priceEl ? (parseFloat(priceEl.dataset.price) || 0) : 0;
       var qty = qtyEl ? (parseInt(qtyEl.textContent) || 1) : 1;
-      if (price > 0) { total += price * qty; } else { hasAsk = true; }
+      total += price * qty;
       orderData.push({ name: itemName, price: price, qty: qty });
     });
     var order = { id: id, name: name, items: orderData, total: total };
@@ -459,7 +458,7 @@ document.addEventListener('DOMContentLoaded',function(){
       message += (idx + 1) + '. ' + item.name + '\n';
       message += 'Qty: ' + item.qty + ' x ' + formatCFA(item.price) + ' = ' + formatCFA(item.price * item.qty) + '\n\n';
     });
-    message += 'Total: ' + formatCFA(total) + (hasAsk ? (total > 0 ? ' + articles sur demande' : 'Articles sur demande') : '') + '\n\n';
+    message += 'Total: ' + formatCFA(total) + '\n\n';
     message += 'Open cart: ' + orderPageUrl;
     var whatsappNumber = btn.dataset.phone || '22890597003';
     window.location.href = 'https://wa.me/' + whatsappNumber + '?text=' + encodeURIComponent(message);
