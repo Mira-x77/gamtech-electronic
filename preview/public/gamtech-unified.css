@@ -269,6 +269,20 @@ button{font-family:var(--font);cursor:pointer;border:none;outline:none;backgroun
 .gs-ph-ico{width:44px;height:44px;opacity:.85;flex-shrink:0}
 .gs-ph-txt{font-size:9.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#9b9faa}
 .gs-find-ask{display:flex;flex-direction:column;gap:8px;margin-bottom:4px}
+/* Name-only matches are rendered as cards. Inside the search results that
+   becomes a huge empty photo tile, so lay them out as compact rows instead. */
+.gs-find-ask .gs-card{display:grid;grid-template-columns:64px minmax(0,1fr) auto;
+  align-items:center;gap:12px;padding:8px 12px}
+.gs-find-ask .gs-card:hover{transform:none;box-shadow:none;border-color:var(--b1)}
+.gs-find-ask .gs-card-img{width:64px;height:64px;aspect-ratio:auto;border-radius:8px}
+.gs-find-ask .gs-card-img-empty{padding:0}
+.gs-find-ask .gs-ph-txt{display:none}
+.gs-find-ask .gs-ph-ico{width:22px;height:22px}
+.gs-find-ask .gs-card-body{padding:0;gap:2px}
+.gs-find-ask .gs-card-price{margin-top:0}
+.gs-find-ask .gs-add-btn{width:auto;height:36px;padding:0 14px;background:transparent;
+  border:1px solid var(--b2);border-radius:8px;color:var(--tx)}
+.gs-find-ask .gs-add-btn:hover{background:var(--pu);border-color:var(--pu);color:#fff}
 .gs-find-row{display:flex;align-items:center;justify-content:space-between;gap:12px;
   background:var(--bg);border:1px solid var(--b1);border-radius:10px;padding:12px 14px}
 .gs-find-row-text{display:flex;flex-direction:column;gap:3px;min-width:0}
