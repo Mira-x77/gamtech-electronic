@@ -318,7 +318,7 @@ document.addEventListener('DOMContentLoaded',function(){
       
       if (hero) hero.style.display = '';
       if (cats) cats.style.display = 'flex';
-      if (find) find.style.display = 'flex';
+      if (find) find.style.display = '';
       if (deals) deals.style.display = 'block';
       if (arrivals) arrivals.style.display = 'block';
       if (shopAll) shopAll.style.display = 'none';
@@ -340,7 +340,7 @@ document.addEventListener('DOMContentLoaded',function(){
       
       var targetEl = document.getElementById(targetId);
       if (targetEl) {
-        targetEl.style.display = (targetId === 'shop-all') ? 'block' : 'flex';
+        targetEl.style.display = (targetId === 'shop-all' || targetId === 'find-model') ? 'block' : 'flex';
       }
       
       mainEl.scrollTop = 0;
@@ -407,6 +407,16 @@ document.addEventListener('DOMContentLoaded',function(){
     if (homeLink) homeLink.classList.add('active');
     showSection('shop'); // Show home by default
   }
+
+  // Expose the home view so the catalog search can restore it. Without this a
+  // search started from "Toute la boutique" (or Contact) renders its results
+  // inside the hidden #find-model section and the page appears to jump to the
+  // first category instead.
+  window.gsShowHome = function () {
+    showSection('shop');
+    updateActiveNav('/');
+    closeAll();
+  };
 
   fetch('/api/hero').then(function(r){return r.ok?r.json():Promise.reject();})
     .catch(function(){return fetch('/hero.json').then(function(r){return r.ok?r.json():null;});})

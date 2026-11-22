@@ -181,10 +181,33 @@ function findMatches(nameQ, modelQ) {
 }
 
 function scrollToFind() {
+  const find = document.getElementById('find-model');
   const mn = document.querySelector('.gs-mn');
-  const target = document.getElementById('find-model');
-  if (!mn || !target) return;
-  mn.scrollTo({ top: Math.max(0, target.offsetTop - 12), behavior: 'smooth' });
+  if (!find) return;
+  if (!mn) {
+    find.scrollIntoView({ block: 'start' });
+    return;
+  }
+  // Measure after the section switches above have been applied: if the find
+  // section is still display:none its rect is (0,0) and the scroll lands at
+  // the top of the shop, which looks like "jumped to the Mouse category".
+  const top = find.getBoundingClientRect().top - mn.getBoundingClientRect().top + mn.scrollTop - 12;
+  mn.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+}
+
+// The theme's hash navigation shows one section at a time (Toute la boutique,
+// Deals, Contact…). Searching must bring the home view back so the results in
+// #find-model are visible instead of scrolling to the first shop category.
+function revealFindView() {
+  const find = document.getElementById('find-model');
+  if (!find) return;
+  const shopAll = document.getElementById('shop-all');
+  const hidden = getComputedStyle(find).display === 'none';
+  const shopOpen = shopAll && getComputedStyle(shopAll).display !== 'none';
+  if ((hidden || shopOpen) && typeof window.gsShowHome === 'function') {
+    window.gsShowHome();
+  }
+  if (getComputedStyle(find).display === 'none') find.style.display = '';
 }
 
 const LIVE_CAP = 40;
@@ -251,6 +274,7 @@ function runFind(nameQ, modelQ, opts) {
   const model = (formModel && formModel.value) || '';
   const label = queryLabel(name, model);
   const hits = label ? findMatches(name, model) : [];
+  if (!live) revealFindView();
   renderHits(hits, label, live);
   if (!live && label) scrollToFind();
 }
@@ -476,7 +500,9 @@ function boot() {
   }).join('');
 
   bindFind();
-  goHash(location.hash);
+  // Only restore a section the visitor actually asked for. Passing an empty
+  // hash used to scroll the shop to #shop-all, i.e. the first category.
+  if (location.hash) goHash(location.hash);
 }
 
 function scrollMainTo(id) {
